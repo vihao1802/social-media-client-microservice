@@ -20,11 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+        <AppRouterCacheProvider>
           <main className="flex flex-row">
             <LeftSideBar />
             {children}
-            <RightSideBar />
           </main>
         </AppRouterCacheProvider>
       </body>
