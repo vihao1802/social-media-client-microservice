@@ -2,11 +2,13 @@ import { Box, Drawer, IconButton, TextField } from "@mui/material";
 import AvatarName from "@/components/shared/AvatarName";
 import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
-import { AddPhotoAlternateOutlined, SendRounded } from "@mui/icons-material";
+import {
+  AddPhotoAlternateOutlined,
+  CancelRounded,
+  SendRounded,
+} from "@mui/icons-material";
 import FlexBetween from "../shared/FlexBetween";
-import { InputBase } from "@mui/material";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 
 interface IMessage {
   id: number;
@@ -88,55 +90,87 @@ const messageData: IMessage[] = [
     sentDate: new Date("2023-09-01T10:09:00"),
     content: "Sounds great! Enjoy!",
   },
+  {
+    id: 11,
+    senderName: "Alice",
+    position: "left",
+    sentDate: new Date("2023-09-01T10:08:00"),
+    content: "Just relaxing, maybe some hiking.",
+  },
+  {
+    id: 12,
+    senderName: "Bob",
+    position: "right",
+    sentDate: new Date("2023-09-01T10:09:00"),
+    content: "Sounds great! Enjoy!",
+  },
+  {
+    id: 13,
+    senderName: "Alice",
+    position: "left",
+    sentDate: new Date("2023-09-01T10:08:00"),
+    content: "Just relaxing, maybe some hiking.",
+  },
+  {
+    id: 14,
+    senderName: "Bob",
+    position: "right",
+    sentDate: new Date("2023-09-01T10:09:00"),
+    content: "Sounds great! Enjoy!",
+  },
 ];
 
-const inputProps = {
-  step: 300,
-};
-
 const RightListContentMessages = () => {
-  const [switchIcon, setSwitchIcon] = useState(false); // true: send icon, false: other
-  // handle message text field
-  let messageTextField = "";
-  useEffect(() => {
-    if (document.getElementById("text-field-message")) {
-      messageTextField = (
-        document.getElementById("text-field-message") as HTMLInputElement
-      ).value;
-    }
-  }, []);
+  const [messageTextField, setMessageTextField] = useState("");
+  const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
+  const [hasImage, setHasImage] = useState(false);
+  const [photoSrc, setPhotoSrc] = useState("");
 
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    messageTextField = event.target.value;
+    const value = event.target.value;
+    setMessageTextField(value);
 
-    if (messageTextField === "") setSwitchIcon(false); // other
-    else setSwitchIcon(true); // send icon
-    console.log(messageTextField);
+    if (value.trim() === "") {
+      setSwitchIcon(false); // Change to other icon
+    } else {
+      setSwitchIcon(true); // Change to send icon
+    }
+    console.log(value);
+  };
 
-    /* const sendMessageButton = document.getElementById(
-      "send-message-button-icon"
-    );
+  const addPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Get the uploaded file
+    if (file) {
+      const blobUrl = URL.createObjectURL(file); // Create a Blob URL
+      setPhotoSrc(blobUrl); // Set the Blob URL to state
+      setHasImage(true);
+    }
+  };
 
-    if (sendMessageButton) {
-      // Check if the element exists
-      if (messageTextField.trim() !== "") {
-        sendMessageButton.style.color = "#009265";
-      } else {
-        sendMessageButton.style.color = "gray";
-      }
-    } */
+  const removePhoto = () => {
+    if (photoSrc) {
+      URL.revokeObjectURL(photoSrc); // Clean up the Blob URL
+    }
+    setPhotoSrc("");
+    setHasImage(false);
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "unset",
+        height: "calc(100% - 70px)",
+      }}
+    >
       <Box
         // ref={boxRef}
         sx={{
-          height: "calc(100vh - 140px)",
+          height: "100%",
           overflowY: "scroll",
-          // backgroundColor: "#e7e7e7",
           padding: "10px 14px",
           "::-webkit-scrollbar": { width: "10px" },
           "::-webkit-scrollbar-track": {
@@ -192,64 +226,141 @@ const RightListContentMessages = () => {
         sx={{
           borderRadius: "25px",
           margin: "10px 14px",
-          border: "2px solid #e7e7e7",
+          border: "2px solid #c7c5c5",
+          alignItems: "end",
         }}
       >
-        <TextField
-          id="text-field-message"
-          placeholder="Type a message..."
-          sx={{
-            width: "100%",
-            padding: "0",
-            color: "black",
-            maxHeight: "150px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                border: "none",
+        {!hasImage ? (
+          <TextField
+            id="text-field-message"
+            placeholder="Type a message..."
+            sx={{
+              width: "100%",
+              padding: "0",
+              color: "black",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "none",
+                },
+                "&:hover fieldset": {
+                  border: "none",
+                },
+                "&.Mui-focused fieldset": {
+                  border: "none",
+                },
               },
-              "&:hover fieldset": {
-                border: "none",
-              },
-              "&.Mui-focused fieldset": {
-                border: "none",
-              },
-            },
-          }}
-          //   variant="outlined"
-          size="small"
-          minRows={1}
-          maxRows={8}
-          multiline
-          onChange={handleTextFieldChange}
-          onKeyDown={async (event: React.KeyboardEvent<HTMLInputElement>) => {
-            const messageText = (event.target as HTMLInputElement).value.trim();
+            }}
+            //   variant="outlined"
+            size="small"
+            multiline
+            maxRows={8}
+            value={messageTextField}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const { value } = event.target;
+              if (value.length <= 1000) {
+                // Check length
+                setMessageTextField(value); // Update the state with the new value
+                handleTextFieldChange(event);
+              }
+            }}
+            onKeyDown={async (event: React.KeyboardEvent<HTMLInputElement>) => {
+              const messageText = (
+                event.target as HTMLInputElement
+              ).value.trim();
 
-            if (event.key === "Enter" && event.shiftKey) {
-              // Allow new line
-              return;
-            } else if (event.key === "Enter" && messageText !== "") {
-              event.preventDefault(); // Prevent new line
-              // handleSendMessageTF(); // Call your send message function here
-            } else if (event.key === "Enter" && messageText === "") {
-              event.preventDefault(); // Prevent new line
-            }
-          }}
-        />
-        {switchIcon ? (
+              if (event.key === "Enter" && event.shiftKey) {
+                // Allow new line
+                return;
+              } else if (event.key === "Enter" && messageText !== "") {
+                event.preventDefault(); // Prevent new line
+                // handleSendMessageTF(); // Call your send message function here
+              } else if (event.key === "Enter" && messageText === "") {
+                event.preventDefault(); // Prevent new line
+              }
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              padding: "10px 15px",
+            }}
+          >
+            <Box
+              sx={{
+                position: "relative",
+                width: "80px",
+                height: "80px",
+              }}
+            >
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  right: "-10px",
+                  top: "-10px",
+                  padding: "4px",
+                }}
+                onClick={removePhoto}
+              >
+                <CancelRounded
+                  sx={{
+                    color: "#363738",
+                    backgroundColor: "white",
+                    borderRadius: "50%",
+                    padding: 0,
+                    ":hover": {
+                      color: "#525355",
+                    },
+                  }}
+                />
+              </IconButton>
+              <img
+                src={photoSrc}
+                className="w-full h-full rounded-xl object-cover"
+              />
+            </Box>
+          </Box>
+        )}
+
+        {switchIcon || hasImage ? (
           <IconButton
             id="send-message-button"
-
+            sx={{
+              ":hover": {
+                color: "black",
+              },
+            }}
             // onClick={handleSendMessageTF}
           >
-            <SendRounded id="send-message-button-icon" sx={{ color: "gray" }} />
+            <SendRounded id="send-message-button-icon" />
           </IconButton>
         ) : (
-          <IconButton
-            id="add-photo-button"
-            // onClick={handSendPhoto}
+          <Box
+            sx={{
+              display: "flex",
+              width: "40px",
+              height: "40px",
+            }}
           >
-            <AddPhotoAlternateOutlined />
-          </IconButton>
+            <label htmlFor="image-upload" className="h-full w-full p-2">
+              <AddPhotoAlternateOutlined
+                sx={{
+                  color: "gray",
+                  cursor: "pointer",
+                  ":hover": {
+                    color: "black",
+                  },
+                }}
+              />
+            </label>
+            <input
+              type="file"
+              hidden
+              id="image-upload"
+              accept="image/*"
+              onChange={addPhoto}
+            />
+          </Box>
         )}
       </FlexBetween>
     </Box>

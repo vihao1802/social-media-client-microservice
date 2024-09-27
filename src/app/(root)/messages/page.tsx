@@ -24,7 +24,8 @@ const Messages = () => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        width: "100%",
+        width: "calc(100% - 80px)",
+        marginLeft: "auto",
       }}
     >
       <LeftSideBarMessages />

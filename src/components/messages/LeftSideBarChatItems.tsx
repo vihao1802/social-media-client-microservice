@@ -153,7 +153,7 @@ const LeftSideBarMessages = () => {
       sx={{
         width: leftBarWidth,
         height: "100%",
-        borderRight: "2px solid #E5E7EB",
+        borderRight: "2px solid #c7c5c5",
       }}
     >
       <Box

@@ -9,7 +9,7 @@ const RightContentMessages = () => {
     <Box
       sx={{
         width: `calc(100% - ${leftBarWidth})`,
-        height: "100%",
+        height: "100vh",
       }}
     >
       <RightHeaderContentMessages />

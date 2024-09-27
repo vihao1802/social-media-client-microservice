@@ -70,7 +70,7 @@ const NotificationPanel = ({ open }: { open: boolean }) => {
         {users.length > 0 && (
           <List>
             {users.map((user) => (
-              <ListItem alignItems="flex-start" disablePadding>
+              <ListItem alignItems="flex-start" disablePadding key={user.id}>
                 <ListItemButton>
                   <ListItemAvatar>
                     <Avatar alt="Remy Sharp" src={user.avatar} />
