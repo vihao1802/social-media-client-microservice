@@ -26,10 +26,16 @@ import Image from "next/image";
 import logo from "@/assets/logo.png";
 import SearchPanel from "../widgets/SearchPanel";
 import NotificationPanel from "../widgets/NotificationPanel";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { log } from "console";
 
 const dacingScript = Dancing_Script({ subsets: ["latin"], weight: ["700"] });
 
 const LeftSideBar = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClickMenuMore = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -38,7 +44,9 @@ const LeftSideBar = () => {
   const handleCloseMenuMore = () => {
     setAnchorEl(null);
   };
-  const [openleftSideBar, setOpenLeftSideBar] = useState(true);
+  const [openleftSideBar, setOpenLeftSideBar] = useState(
+    pathname !== "/messages" ? true : false
+  );
 
   const [selectedIndex, setSelectedIndex] = useState(1);
 
@@ -125,50 +133,80 @@ const LeftSideBar = () => {
             }}
           >
             <List>
-              {sideBarItems.map((item, index) => (
-                <ListItem key={index}>
-                  <ListItemButton
-                    sx={
-                      openleftSideBar
-                        ? {
-                            "&:hover": {
-                              cursor: "pointer",
-                            },
-                            padding: "7px 12px",
-                            borderRadius: "7px",
+              {sideBarItems.map((item, index) => {
+                const isActive =
+                  (pathname.includes(item.route) && item.route.length > 1) ||
+                  pathname === item.route;
+
+                return (
+                  <Link href={item.route} key={index}>
+                    <ListItem key={index}>
+                      <ListItemButton
+                        sx={{
+                          "&:hover": {
+                            cursor: "pointer",
+                          },
+                          padding: "7px 12px",
+                          borderRadius: "7px",
+                          height: "46px",
+                        }}
+                        onClick={() => {
+                          if (pathname.includes("messages")) {
+                            if (item.id === 2) {
+                              setOpenSearch(!openSearch);
+                              setOpenLeftSideBar(false);
+                              setOpenNotification(false);
+                            } else if (item.id === 6) {
+                              setOpenNotification(!openNotification);
+                              setOpenLeftSideBar(false);
+                              setOpenSearch(false);
+                            } else if (item.id === 5) {
+                              setOpenLeftSideBar(false);
+                              setOpenSearch(false);
+                              setOpenNotification(false);
+                            } else {
+                              setOpenLeftSideBar(true);
+                              setOpenSearch(false);
+                              setOpenNotification(false);
+                            }
+                          } else if (item.id === 2) {
+                            setOpenSearch(!openSearch);
+                            setOpenLeftSideBar(openSearch);
+                            setOpenNotification(false);
+                          } else if (item.id === 6) {
+                            setOpenNotification(!openNotification);
+                            setOpenLeftSideBar(openNotification);
+                            setOpenSearch(false);
+                          } else if (item.id === 5) {
+                            setOpenLeftSideBar(false);
+                            setOpenSearch(false);
+                            setOpenNotification(false);
+                          } else {
+                            setOpenLeftSideBar(true);
+                            setOpenSearch(false);
+                            setOpenNotification(false);
                           }
-                        : {
-                            "&:hover": {
-                              cursor: "pointer",
-                            },
-                            padding: "7px 12px",
-                            borderRadius: "7px",
-                            height: "46px",
-                          }
-                    }
-                    selected={selectedIndex === index}
-                    onClick={(event) => {
-                      handleListItemClick(event, index);
-                      if (item.id == 2 || item.id == 6)
-                        setOpenLeftSideBar(!openleftSideBar);
-                      else setOpenLeftSideBar(true);
-                      if (item.id == 2) {
-                        setOpenSearch(true);
-                        setOpenLeftSideBar(false);
-                      } else setOpenSearch(false);
-                      if (item.id == 6) {
-                        setOpenNotification(true);
-                        setOpenLeftSideBar(false);
-                      } else setOpenNotification(false);
-                    }}
-                  >
-                    <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>
-                      {item.icon}
-                    </ListItemIcon>
-                    {openleftSideBar && <ListItemText primary={item.label} />}
-                  </ListItemButton>
-                </ListItem>
-              ))}
+                        }}
+                      >
+                        <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>
+                          {isActive ? item.iconActive : item.iconNonActive}
+                        </ListItemIcon>
+                        {openleftSideBar && (
+                          <ListItemText
+                            primary={
+                              <Typography
+                                fontWeight={isActive ? "bold" : "normal"}
+                              >
+                                {item.label}
+                              </Typography>
+                            }
+                          />
+                        )}
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                );
+              })}
             </List>
             <List>
               <ListItem>
@@ -191,12 +229,12 @@ const LeftSideBar = () => {
                           height: "52px",
                         }
                   }
-                  selected={selectedIndex === 8}
+                  selected={selectedIndex === 1}
                   onClick={(event) => {
                     setOpenLeftSideBar(true);
                     setOpenSearch(false);
                     setOpenNotification(false);
-                    handleListItemClick(event, 8);
+                    handleListItemClick(event, 1);
                   }}
                 >
                   <ListItemIcon>
@@ -206,7 +244,7 @@ const LeftSideBar = () => {
                       width={25}
                     />
                   </ListItemIcon>
-                  {openleftSideBar && <ListItemText primary="Hu chuynh" />}
+                  {openleftSideBar && <ListItemText primary="Profile" />}
                 </ListItemButton>
               </ListItem>
               <ListItem>
