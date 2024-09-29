@@ -97,8 +97,8 @@ const SearchPanel = ({ open }: { open: boolean }) => {
         />
         {users.length > 0 && (
           <List>
-            {users.map((user) => (
-              <ListItem alignItems="flex-start" disablePadding key={user.id}>
+            {users.map((user, index) => (
+              <ListItem alignItems="flex-start" disablePadding key={index}>
                 <ListItemButton>
                   <ListItemAvatar>
                     <Avatar alt="Remy Sharp" src={user.avatar} />
