@@ -51,7 +51,6 @@ const RightHeaderContentMessages = () => {
           alignItems: "center",
           gap: "20px",
           fontSize: "28px",
-          padding: "0 20px",
         }}
       >
         <IconButton>
