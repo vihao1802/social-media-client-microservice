@@ -1,24 +1,18 @@
-// @ts-nocheck
 "use client";
-import { Avatar, Box, Button, Tooltip, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import LeftSideBarMessages from "@/components/messages/LeftSideBarChatItems";
 import RightContentMessages from "@/components/messages/RightContentMessages";
-import FlexBetween from "@/components/shared/FlexBetween";
-import AvatarName from "@/components/shared/AvatarName";
-import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
-import {
-  ErrorOutline,
-  InfoOutlined,
-  LocalPhone,
-  PhoneEnabled,
-  PhoneEnabledOutlined,
-  PhoneOutlined,
-} from "@mui/icons-material";
-
-const leftBarWidth = "350px";
+import { useState } from "react";
+import { Friends } from "@/types";
 
 const Messages = () => {
+  const [chatFriendItem, setChatFriendItem] = useState<Friends | null>(null);
+
+  const handleSelectedChatFriendItem = (data: Friends) => {
+    setChatFriendItem(data);
+  };
+
   return (
     <Box
       sx={{
@@ -28,8 +22,10 @@ const Messages = () => {
         marginLeft: "auto",
       }}
     >
-      <LeftSideBarMessages />
-      <RightContentMessages />
+      <LeftSideBarMessages
+        onChatFriendItemSelect={handleSelectedChatFriendItem}
+      />
+      <RightContentMessages chatFriendItem={chatFriendItem} />
     </Box>
   );
 };
