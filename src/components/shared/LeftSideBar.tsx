@@ -149,7 +149,12 @@ const LeftSideBar = () => {
                     selected={selectedIndex === index}
                     onClick={(event) => {
                       handleListItemClick(event, index);
-                      if (item.id == 2 || item.id == 6)
+                      if (
+                        item.id == 2 ||
+                        item.id == 6 ||
+                        item.id == 5 ||
+                        item.id == 7
+                      )
                         setOpenLeftSideBar(!openleftSideBar);
                       else setOpenLeftSideBar(true);
                       if (item.id == 2) {
