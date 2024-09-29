@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import AvatarName from "@/components/shared/AvatarName";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, LogoutRounded } from "@mui/icons-material";
 import { useState } from "react";
 import RightModalImageContentMessages from "./RightModalImageContentMessages";
 
@@ -91,10 +91,21 @@ const RightDrawerContentMessages = ({
         sx={{
           position: "absolute",
           color: "black",
+          margin: "15px",
+          padding: "0",
         }}
         onClick={closeDrawer}
       >
-        <ArrowBack fontSize="large" />
+        <LogoutRounded
+          fontSize="large"
+          sx={{
+            color: "gray",
+            ":hover": {
+              color: "black",
+            },
+            transition: "0.2s ease",
+          }}
+        />
       </IconButton>
       <RightModalImageContentMessages
         imgSrc={imgSrc}

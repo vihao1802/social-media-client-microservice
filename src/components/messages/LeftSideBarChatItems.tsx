@@ -224,6 +224,7 @@ const LeftSideBarMessages = () => {
                     alignItems: "start",
                     paddingLeft: "10px",
                     paddingRight: "20px",
+                    paddingTop: "10px",
                   }}
                 >
                   <Box
