@@ -1,22 +1,8 @@
-// @ts-nocheck
 "use client";
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  InputBase,
-  List,
-  ListItem,
-  ListItemButton,
-  Paper,
-  Skeleton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { ChatItem, ChatList } from "react-chat-elements";
+import { Box, List, ListItem, ListItemButton, Typography } from "@mui/material";
 import AvatarName from "../shared/AvatarName";
+import { useEffect, useState } from "react";
+import { Friends } from "@/types";
 
 const leftBarWidth = "350px";
 
@@ -45,14 +31,8 @@ function timeAgo(itemDate: Date): string {
   }
 }
 
-interface Friends {
-  id: number;
-  name: string;
-  text: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  date: Date;
+interface LeftSideBarMessagesProps {
+  onChatFriendItemSelect: (data: Friends) => void;
 }
 
 const listFriends: Friends[] = [
@@ -147,7 +127,22 @@ const listFriends: Friends[] = [
     date: new Date("2023-09-12T11:30:00"),
   },
 ];
-const LeftSideBarMessages = () => {
+
+const LeftSideBarMessages = ({
+  onChatFriendItemSelect,
+}: LeftSideBarMessagesProps) => {
+  const [selectedChatFriendItem, setSelectedChatFriendItem] =
+    useState<Friends | null>(listFriends[0]);
+
+  const handleSelect = (data: Friends) => {
+    setSelectedChatFriendItem(data);
+    onChatFriendItemSelect(data);
+  };
+
+  useEffect(() => {
+    if (selectedChatFriendItem) onChatFriendItemSelect(selectedChatFriendItem);
+  }, []);
+
   return (
     <Box
       sx={{
@@ -178,24 +173,6 @@ const LeftSideBarMessages = () => {
           height: "calc(100vh - 70px)",
         }}
       >
-        {/* <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            margin: "0 24px 10px",
-            padding: "6px 10px",
-            borderRadius: "10px",
-            backgroundColor: "#e7e7e7",
-          }}
-        >
-          <SearchIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-          <TextField
-            placeholder="Search"
-            sx={{
-              width: "100%",
-            }}
-          />
-        </Box> */}
         <List
           sx={{
             height: "100%",
@@ -213,6 +190,59 @@ const LeftSideBarMessages = () => {
             },
           }}
         >
+          {/* Chat Items Skeleton */}
+          {/* <Box
+            sx={{
+              display: "flex",
+              paddingLeft: "10px",
+              paddingRight: "20px",
+              paddingTop: "10px",
+              height: "70px",
+            }}
+          >
+            <Skeleton
+              variant="circular"
+              width={40}
+              height={40}
+              sx={{
+                margin: "0 10px",
+              }}
+              animation="wave"
+            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "calc(100% - 60px)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  paddingBottom: "10px",
+                }}
+              >
+                <Skeleton
+                  variant="rounded"
+                  sx={{ fontSize: "1rem", width: "140px" }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rounded"
+                  sx={{ fontSize: "1rem", width: "65px", marginLeft: "auto" }}
+                  animation="wave"
+                />
+              </Box>
+              <Skeleton
+                variant="rounded"
+                sx={{ fontSize: "17px", width: "100%" }}
+                animation="wave"
+              />
+            </Box>
+          </Box> */}
           {listFriends.map((item: Friends, index: number) => (
             <Box key={index}>
               <ListItem disablePadding>
@@ -225,7 +255,13 @@ const LeftSideBarMessages = () => {
                     paddingLeft: "10px",
                     paddingRight: "20px",
                     paddingTop: "10px",
+                    backgroundColor:
+                      selectedChatFriendItem &&
+                      item.id === selectedChatFriendItem.id
+                        ? "#EEF0F2"
+                        : "white",
                   }}
+                  onClick={() => handleSelect(item)}
                 >
                   <Box
                     sx={{

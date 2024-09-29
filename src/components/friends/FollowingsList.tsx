@@ -206,6 +206,7 @@ const FollowingsList = () => {
           sx={{
             display: "flex",
             flexDirection: "row",
+            justifyContent: "space-between",
             gap: "15px",
           }}
         >
@@ -216,7 +217,12 @@ const FollowingsList = () => {
               flexDirection: "column",
               flex: "2.4",
               width: "100%",
-              maxWidth: "460px",
+              marginRight: "auto",
+              maxWidth: {
+                sm: "200px",
+                md: "350px",
+                lg: "460px",
+              },
             }}
           >
             <Link href="/" underline="hover" color="black">
@@ -246,6 +252,7 @@ const FollowingsList = () => {
               alignItems: "center",
               justifyContent: "space-between",
               flex: "1",
+              maxWidth: "200px",
             }}
           >
             <Button

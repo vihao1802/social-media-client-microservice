@@ -7,9 +7,10 @@ const FollowersList = () => {
       sx={{
         display: "grid",
         gridTemplateColumns: {
-          sm: "repeat(1, 1fr)", // small
-          md: "repeat(2, 1fr)", // medium
-          lg: "repeat(3, 1fr)", // large
+          // sm: "repeat(1, 1fr)", // small
+          md: "repeat(1, 1fr)", // medium
+          lg: "repeat(2, 1fr)", // large
+          xl: "repeat(3, 1fr)",
         },
         gap: "10px",
       }}
@@ -20,6 +21,7 @@ const FollowersList = () => {
           sx={{
             display: "flex",
             flexDirection: "row",
+            justifyContent: "space-between",
             padding: "12px 15px",
             gap: "15px",
             alignItems: "center",
@@ -32,9 +34,15 @@ const FollowersList = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
+              flex: 1,
+              marginRight: "auto",
               width: "100%",
-              maxWidth: "300px",
+              maxWidth: {
+                sm: "200px",
+                md: "400px",
+                lg: "250px",
+                xl: "200px",
+              },
             }}
           >
             <Link href="/" underline="hover" color="black">

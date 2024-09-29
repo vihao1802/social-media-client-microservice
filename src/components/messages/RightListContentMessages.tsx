@@ -8,7 +8,8 @@ import {
   SendRounded,
 } from "@mui/icons-material";
 import FlexBetween from "../shared/FlexBetween";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Friends } from "@/types";
 
 interface IMessage {
   id: number;
@@ -120,11 +121,26 @@ const messageData: IMessage[] = [
   },
 ];
 
-const RightListContentMessages = () => {
+interface RightListContentMessagesProps {
+  chatFriendItem: Friends | null;
+}
+
+const RightListContentMessages = ({
+  chatFriendItem,
+}: RightListContentMessagesProps) => {
   const [messageTextField, setMessageTextField] = useState("");
   const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
   const [hasImage, setHasImage] = useState(false);
   const [photoSrc, setPhotoSrc] = useState("");
+
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollContainer = boxRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+  }, [chatFriendItem]);
 
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -167,7 +183,7 @@ const RightListContentMessages = () => {
       }}
     >
       <Box
-        // ref={boxRef}
+        ref={boxRef}
         sx={{
           height: "100%",
           overflowY: "scroll",

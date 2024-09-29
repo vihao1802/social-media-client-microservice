@@ -48,7 +48,7 @@ const Friends = () => {
     <Box
       sx={{
         height: "100%",
-        width: "calc(100% - 80px)",
+        width: "calc(100% - 250px)",
         marginLeft: "auto",
       }}
     >

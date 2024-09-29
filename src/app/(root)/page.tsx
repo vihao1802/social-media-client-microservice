@@ -78,7 +78,7 @@ export default function Home() {
         <StoryBar />
 
         {posts.map((post) => (
-          <Post />
+          <Post key={post.id} />
         ))}
       </Box>
       <RightSideBar />
