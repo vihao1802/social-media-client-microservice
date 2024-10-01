@@ -7,10 +7,10 @@ const SuggestionsList = () => {
         display: "grid",
         gridTemplateColumns: {
           xs: "repeat(1, 1fr)", // extra small
-          sm: "repeat(2, 1fr)", // small
-          md: "repeat(3, 1fr)", // medium
-          lg: "repeat(4, 1fr)", // large
-          xl: "repeat(5, 1fr)", // extra large
+          // sm: "repeat(1, 1fr)", // small
+          md: "repeat(2, 1fr)", // medium
+          // lg: "repeat(2, 1fr)", // large
+          xl: "repeat(3, 1fr)", // extra large
         },
         gap: "15px",
       }}
@@ -53,14 +53,13 @@ const SuggestionsList = () => {
           </Box>
           <Button
             sx={{
-              backgroundColor: "#DBDBDB",
-              color: "black",
+              backgroundColor: "#4491F5",
+              color: "white",
               height: "30px",
               width: "100%",
-              borderRadius: "20px",
               textTransform: "none",
               ":hover": {
-                backgroundColor: "#CECECE",
+                backgroundColor: "#1877F2",
               },
             }}
           >

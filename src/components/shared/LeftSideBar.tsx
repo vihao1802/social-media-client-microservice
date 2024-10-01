@@ -14,6 +14,7 @@ import {
   Fade,
 } from "@mui/material";
 import { Dancing_Script } from "next/font/google";
+import dynamic from "next/dynamic";
 import {
   MenuOutlined,
   SettingsOutlined,
@@ -21,7 +22,7 @@ import {
 } from "@mui/icons-material";
 import { sideBarItems } from "../../constants/index";
 import OnlineAvatar from "@/components/widgets/OnlineAvatar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import SearchPanel from "../widgets/SearchPanel";
@@ -29,7 +30,9 @@ import NotificationPanel from "../widgets/NotificationPanel";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { log } from "console";
-
+const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
+  ssr: false,
+});
 const dacingScript = Dancing_Script({ subsets: ["latin"], weight: ["700"] });
 
 const LeftSideBar = () => {
@@ -45,20 +48,19 @@ const LeftSideBar = () => {
     setAnchorEl(null);
   };
   const [openleftSideBar, setOpenLeftSideBar] = useState(
-    pathname !== "/messages" ? true : false
+    pathname !== "/messages"
   );
 
   const [selectedIndex, setSelectedIndex] = useState(1);
 
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
-  };
-
   const [openSearch, setOpenSearch] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
+
+  useEffect(() => {
+    console.log("Hello");
+
+    setOpenLeftSideBar(pathname !== "/messages");
+  }, []);
 
   return (
     <Box
@@ -107,7 +109,7 @@ const LeftSideBar = () => {
             }}
           >
             {openleftSideBar ? (
-              <Fade in={openleftSideBar}>
+              <FadeComponent in={openleftSideBar}>
                 <Typography
                   fontSize="27px"
                   color="black"
@@ -116,11 +118,11 @@ const LeftSideBar = () => {
                 >
                   Ninstagram
                 </Typography>
-              </Fade>
+              </FadeComponent>
             ) : (
-              <Fade in={!openleftSideBar}>
+              <FadeComponent in={!openleftSideBar}>
                 <Image src={logo} alt="instagram" width={40} height={40} />
-              </Fade>
+              </FadeComponent>
             )}
           </Box>
 
@@ -149,6 +151,11 @@ const LeftSideBar = () => {
                           padding: "7px 12px",
                           borderRadius: "7px",
                           height: "46px",
+                          border:
+                            (item.id === 2 && openSearch) ||
+                            (item.id === 6 && openNotification)
+                              ? "1px solid #DBDBDB"
+                              : "",
                         }}
                         onClick={() => {
                           if (pathname.includes("messages")) {
@@ -189,7 +196,11 @@ const LeftSideBar = () => {
                         }}
                       >
                         <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>
-                          {isActive ? item.iconActive : item.iconNonActive}
+                          {isActive ||
+                          (item.id === 2 && openSearch) ||
+                          (item.id === 6 && openNotification)
+                            ? item.iconActive
+                            : item.iconNonActive}
                         </ListItemIcon>
                         {openleftSideBar && (
                           <ListItemText
@@ -230,11 +241,10 @@ const LeftSideBar = () => {
                         }
                   }
                   selected={selectedIndex === 1}
-                  onClick={(event) => {
+                  onClick={() => {
                     setOpenLeftSideBar(true);
                     setOpenSearch(false);
                     setOpenNotification(false);
-                    handleListItemClick(event, 1);
                   }}
                 >
                   <ListItemIcon>

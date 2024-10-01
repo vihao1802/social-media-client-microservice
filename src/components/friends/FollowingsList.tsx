@@ -119,7 +119,6 @@ const FollowingsList = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        maxWidth: "720px",
         width: "100%",
         margin: "0 auto",
         gap: "25px",
@@ -221,7 +220,6 @@ const FollowingsList = () => {
               maxWidth: {
                 sm: "200px",
                 md: "350px",
-                lg: "460px",
               },
             }}
           >
@@ -232,6 +230,7 @@ const FollowingsList = () => {
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                   width: "100%",
+                  fontSize: "15px",
                 }}
               >
                 {item.name}
@@ -240,6 +239,7 @@ const FollowingsList = () => {
             <Typography
               sx={{
                 color: "gray",
+                fontSize: "13px",
               }}
             >
               123 followers
@@ -252,7 +252,7 @@ const FollowingsList = () => {
               alignItems: "center",
               justifyContent: "space-between",
               flex: "1",
-              maxWidth: "200px",
+              maxWidth: "180px",
             }}
           >
             <Button
@@ -276,15 +276,16 @@ const FollowingsList = () => {
                 height: "35px",
                 padding: "6px 16px",
                 color: "black",
-                border: "2px solid #DBDBDB",
                 borderRadius: "5px",
-                backgroundColor: "#DBDBDB",
                 gap: "15px",
                 ":hover": {
-                  backgroundColor: "#CECECE",
+                  backgroundColor: "#DBDBDB",
                 },
               }}
-              onClick={() => router.push("/messages")}
+              onClick={() => {
+                router.push("/messages");
+                router.refresh();
+              }}
             >
               <Typography sx={{ fontSize: "14px" }}>Message</Typography>
             </Button>
