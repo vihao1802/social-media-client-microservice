@@ -7,11 +7,12 @@ const FollowersList = () => {
       sx={{
         display: "grid",
         gridTemplateColumns: {
-          sm: "repeat(1, 1fr)", // small
-          md: "repeat(2, 1fr)", // medium
-          lg: "repeat(3, 1fr)", // large
+          // sm: "repeat(1, 1fr)", // small
+          // md: "repeat(1, 1fr)", // medium
+          lg: "repeat(1, 1fr)", // large
+          xl: "repeat(2, 1fr)",
         },
-        gap: "10px",
+        gap: "15px",
       }}
     >
       {Array.from(new Array(15)).map((item, index) => (
@@ -20,7 +21,8 @@ const FollowersList = () => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            padding: "12px 15px",
+            justifyContent: "space-between",
+            padding: "20px 15px",
             gap: "15px",
             alignItems: "center",
             border: "2px solid #e3e3e3",
@@ -32,9 +34,15 @@ const FollowersList = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
+              flex: 1,
+              marginRight: "auto",
               width: "100%",
-              maxWidth: "300px",
+              maxWidth: {
+                sm: "200px",
+                md: "400px",
+                // lg: "250px",
+                xl: "150px",
+              },
             }}
           >
             <Link href="/" underline="hover" color="black">
@@ -44,6 +52,7 @@ const FollowersList = () => {
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                   width: "100%",
+                  fontSize: "15px",
                 }}
               >
                 Nguyen Van A Nguyen Van ANguyen Van A Nguyen Van A
@@ -52,6 +61,7 @@ const FollowersList = () => {
             <Typography
               sx={{
                 color: "gray",
+                fontSize: "13px",
               }}
             >
               123 followers
@@ -59,13 +69,13 @@ const FollowersList = () => {
           </Box>
           <Button
             sx={{
-              backgroundColor: "#DBDBDB",
-              color: "black",
+              backgroundColor: "#4491F5",
+              color: "white",
               height: "30px",
-              borderRadius: "20px",
+              fontSize: "12px",
               textTransform: "none",
               ":hover": {
-                backgroundColor: "#CECECE",
+                backgroundColor: "#1877F2",
               },
             }}
           >

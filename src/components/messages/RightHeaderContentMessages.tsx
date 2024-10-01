@@ -4,8 +4,15 @@ import AvatarName from "@/components/shared/AvatarName";
 import { InfoOutlined, PhoneOutlined } from "@mui/icons-material";
 import { useState } from "react";
 import RightDrawerContentMessages from "./RightDrawerContentMessages";
+import { Friends } from "@/types";
 
-const RightHeaderContentMessages = () => {
+interface RightHeaderContentMessagesProps {
+  chatFriendItem: Friends | null;
+}
+
+const RightHeaderContentMessages = ({
+  chatFriendItem,
+}: RightHeaderContentMessagesProps) => {
   const [open, setOpen] = useState(false);
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -33,16 +40,18 @@ const RightHeaderContentMessages = () => {
           alignItems: "center",
         }}
       >
-        <AvatarName name="Nguyen Van A" />
-        <Typography
-          sx={{
-            fontSize: "17px",
-            color: "black",
-            paddingLeft: "10px",
-          }}
-        >
-          {"Nguyen Van A"}
-        </Typography>
+        {chatFriendItem && <AvatarName name={chatFriendItem.name} />}
+        {chatFriendItem && (
+          <Typography
+            sx={{
+              fontSize: "17px",
+              color: "black",
+              paddingLeft: "10px",
+            }}
+          >
+            {chatFriendItem.name}
+          </Typography>
+        )}
       </Box>
 
       <Box
