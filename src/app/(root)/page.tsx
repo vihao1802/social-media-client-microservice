@@ -71,7 +71,7 @@ export default function Home() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          padding: "20px",
+          padding: "10px",
           gap: "20px",
         }}
       >

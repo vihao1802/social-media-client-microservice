@@ -151,63 +151,57 @@ const users = [
 
 const StoryBar = () => {
   const [number, setNumber] = useState(0);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const usersPerPage = 8; // Number of users per page
 
-  // const totalPages = Math.ceil(users.length / usersPerPage);
+  // Define the width of a single card, including gaps
+  const cardWidth = 85; // Assumed: 70px for avatar + 15px gap
+  const visibleCards = 8; // Number of cards visible in the view (can be adjusted)
+
+  // Calculate total width of the slider content
+  const maxTranslate = -(cardWidth * (users.length - visibleCards));
 
   const handlePrevious = () => {
-    // if (currentPage > 1) {
-    //   setCurrentPage(currentPage - 1);
-    // }
-    setNumber(number + 100);
+    setNumber((prev) => Math.min(prev + cardWidth, 0));
   };
 
   const handleNext = () => {
-    // if (currentPage < totalPages) {
-    //   setCurrentPage(currentPage + 1);
-    // }
-    setNumber(number - 100);
+    setNumber((prev) => Math.max(prev - cardWidth, maxTranslate));
   };
-
-  // const displayedUsers = users.slice(
-  //   (currentPage - 1) * usersPerPage,
-  //   currentPage * usersPerPage
-  // );
   return (
-    <Paper
+    <Box
       sx={{
-        width: "730px",
+        width: "670px",
         height: "130px",
         borderRadius: "20px",
         display: "flex",
         flexDirection: "row",
         position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* {currentPage > 1 && ( */}
-      <IconButton
-        sx={{
-          height: "32px",
-          width: "32px",
-          position: "absolute",
-          top: "50%",
-          left: "15px",
-          transform: "translateY(-50%)",
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#fff",
-          border: "1px solid #ddd",
-          padding: "10px",
-          cursor: "pointer",
-          zIndex: 1,
-          "&:hover": {
-            backgroundColor: "#f0f0f0",
-          },
-        }}
-      >
-        <KeyboardArrowLeftRounded onClick={handlePrevious} />
-      </IconButton>
-      {/* )} */}
+      {number < 0 && (
+        <IconButton
+          sx={{
+            height: "28px",
+            width: "28px",
+            position: "absolute",
+            top: "50%",
+            left: "15px",
+            transform: "translateY(-50%)",
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "#fff",
+            border: "1px solid #ddd",
+            padding: "10px",
+            cursor: "pointer",
+            zIndex: 1,
+            "&:hover": {
+              backgroundColor: "#f0f0f0",
+            },
+          }}
+          onClick={handlePrevious}
+        >
+          <KeyboardArrowLeftRounded onClick={handlePrevious} />
+        </IconButton>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -217,8 +211,8 @@ const StoryBar = () => {
           alignItems: "center",
           margin: "0 auto",
           padding: "20px 0",
-          transform: `translate3d(${number}, 0px, 0px)`,
-          overflow: "hidden",
+          transform: `translate3d(${number}px, 0px, 0px)`,
+          transition: "transform 0.3s ease",
         }}
       >
         {users.map((user) => (
@@ -233,31 +227,32 @@ const StoryBar = () => {
         ))}
       </Box>
 
-      {/* {currentPage < totalPages && ( */}
-      <IconButton
-        sx={{
-          height: "32px",
-          width: "32px",
-          position: "absolute",
-          top: "50%" /* Đặt nút ở giữa theo chiều dọc */,
-          right: "15px" /* Cách mép phải 10px */,
-          transform:
-            "translateY(-50%)" /* Điều chỉnh để căn giữa theo chiều dọc */,
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#fff",
-          border: "1px solid #ddd",
-          padding: "10px",
-          cursor: "pointer",
-          zIndex: 1,
-          "&:hover": {
-            backgroundColor: "#f0f0f0",
-          },
-        }}
-      >
-        <KeyboardArrowRightRounded onClick={handleNext} />
-      </IconButton>
-      {/* )} */}
-    </Paper>
+      {number > maxTranslate && (
+        <IconButton
+          sx={{
+            height: "28px",
+            width: "28px",
+            position: "absolute",
+            top: "50%" /* Đặt nút ở giữa theo chiều dọc */,
+            right: "15px" /* Cách mép phải 10px */,
+            transform:
+              "translateY(-50%)" /* Điều chỉnh để căn giữa theo chiều dọc */,
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "#fff",
+            border: "1px solid #ddd",
+            padding: "10px",
+            cursor: "pointer",
+            zIndex: 1,
+            "&:hover": {
+              backgroundColor: "#f0f0f0",
+            },
+          }}
+          onClick={handleNext}
+        >
+          <KeyboardArrowRightRounded onClick={handleNext} />
+        </IconButton>
+      )}
+    </Box>
   );
 };
 

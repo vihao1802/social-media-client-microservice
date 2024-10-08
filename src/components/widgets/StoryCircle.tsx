@@ -15,9 +15,10 @@ const StoryCircle = ({ userId, name, nickName, followers, avatar }: User) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "10px",
+        gap: "0px",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
       }}
     >
       <Box

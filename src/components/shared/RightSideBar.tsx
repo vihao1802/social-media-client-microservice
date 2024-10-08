@@ -57,7 +57,7 @@ const RightSideBar = () => {
       sx={{
         paddingTop: "20px",
         position: "fixed",
-        right: "70px",
+        right: "100px",
       }}
     >
       <Paper
