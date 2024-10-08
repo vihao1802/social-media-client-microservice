@@ -1,80 +1,167 @@
-import React from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Image from "next/image";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useState } from "react";
+import AspectRatio from "@mui/joy/AspectRatio";
+import Avatar from "@mui/joy/Avatar";
+import Box from "@mui/joy/Box";
+import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
+import CardOverflow from "@mui/joy/CardOverflow";
+import Link from "@mui/joy/Link";
+import IconButton from "@mui/joy/IconButton";
+import Input from "@mui/joy/Input";
+import Typography from "@mui/joy/Typography";
+import MoreHoriz from "@mui/icons-material/MoreHoriz";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
+import SendOutlined from "@mui/icons-material/SendOutlined";
+import Face from "@mui/icons-material/Face";
+import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
+import PostComment from "@/components/shared/PostComment";
+import postImage from "@/assets/images/post-img2.jpg";
 
-export default function RecipeReviewCard() {
+export default function Post() {
+  const [openComment, setOpenComment] = useState(false);
+
   return (
-    <Card
-      sx={{ width: "730px", borderRadius: "20px", boder: "1px solid #E2E8F0" }}
-    >
-      <CardHeader
-        avatar={
-          <Avatar
-            src="https://material-ui.com/static/images/avatar/3.jpg"
+    <>
+      <Card variant="outlined" sx={{ minWidth: 300 }}>
+        <CardContent
+          orientation="horizontal"
+          sx={{ alignItems: "center", gap: 1 }}
+        >
+          <Box
             sx={{
-              height: "40px",
-              width: "40px",
+              position: "relative",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+                m: "-2px",
+                borderRadius: "50%",
+                background:
+                  "linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)",
+              },
             }}
-          />
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
+          >
+            <Avatar
+              size="sm"
+              src="https://material-ui.com/static/images/avatar/3.jpg"
+              sx={{
+                width: "30px",
+                height: "30px",
+                border: "2px solid",
+                borderColor: "background.body",
+              }}
+            />
+          </Box>
+          <Typography sx={{ fontWeight: "lg" }}>MUI</Typography>
+          <IconButton
+            variant="plain"
+            color="neutral"
+            size="sm"
+            sx={{ ml: "auto" }}
+          >
+            <MoreHoriz />
           </IconButton>
-        }
-        title={
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: "bold",
-            }}
+        </CardContent>
+        <CardOverflow>
+          <AspectRatio>
+            <img src={postImage.src} alt="" loading="lazy" />
+          </AspectRatio>
+        </CardOverflow>
+        <CardContent
+          orientation="horizontal"
+          sx={{
+            alignItems: "center",
+            mx: -1,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
+            <IconButton variant="plain" color="neutral" size="sm">
+              <FavoriteBorder />
+            </IconButton>
+            <IconButton
+              variant="plain"
+              color="neutral"
+              size="sm"
+              onClick={() => {
+                setOpenComment(true);
+                console.log("Comment");
+              }}
+            >
+              <ModeCommentOutlined />
+            </IconButton>
+            <IconButton variant="plain" color="neutral" size="sm">
+              <SendOutlined />
+            </IconButton>
+          </Box>
+
+          <Box sx={{ width: 0, display: "flex", flexDirection: "row-reverse" }}>
+            <IconButton variant="plain" color="neutral" size="sm">
+              <BookmarkBorderRoundedIcon />
+            </IconButton>
+          </Box>
+        </CardContent>
+        <CardContent>
+          <Link
+            component="button"
+            underline="none"
+            textColor="text.primary"
+            sx={{ fontSize: "sm", fontWeight: "lg" }}
           >
-            User 1
+            8.1M Likes
+          </Link>
+          <Typography sx={{ fontSize: "sm" }}>
+            <Link
+              component="button"
+              color="neutral"
+              textColor="text.primary"
+              sx={{ fontWeight: "lg" }}
+            >
+              MUI
+            </Link>{" "}
+            The React component library you always wanted
           </Typography>
-        }
-        subheader={
-          <Typography
-            sx={{
-              fontSize: "14px",
-              color: "#475569",
-            }}
+          <Link
+            component="button"
+            underline="none"
+            startDecorator="…"
+            sx={{ fontSize: "sm", color: "text.tertiary" }}
           >
-            @Nickname 1 • 1h
-          </Typography>
-        }
-        sx={{ borderBottom: "1px solid #E2E8F0" }}
+            more
+          </Link>
+          <Link
+            component="button"
+            underline="none"
+            sx={{ fontSize: "10px", color: "text.tertiary", my: 0.5 }}
+          >
+            2 DAYS AGO
+          </Link>
+        </CardContent>
+        <CardContent orientation="horizontal" sx={{ gap: 1 }}>
+          <IconButton size="sm" variant="plain" color="neutral" sx={{ ml: -1 }}>
+            <Face />
+          </IconButton>
+          <Input
+            variant="plain"
+            size="sm"
+            placeholder="Add a comment…"
+            sx={{ flex: 1, px: 0, "--Input-focusedThickness": "0px" }}
+          />
+          <Link disabled underline="none" role="button">
+            Post
+          </Link>
+        </CardContent>
+      </Card>
+      <PostComment
+        isOpen={openComment}
+        handleClose={() => setOpenComment(false)}
       />
-      <CardMedia
-        component="img"
-        height="194"
-        image="https://material-ui.com/static/images/cards/paella.jpg"
-        sx={{ padding: "20px" }}
-      />
-      <CardContent>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
+    </>
   );
 }

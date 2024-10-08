@@ -1,8 +1,6 @@
 import {
   HomeOutlined,
   HomeRounded,
-  SearchOutlined,
-  SearchRounded,
   ExploreOutlined,
   ExploreRounded,
   VideoLibraryOutlined,
