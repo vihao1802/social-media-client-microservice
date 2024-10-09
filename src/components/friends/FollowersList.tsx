@@ -45,7 +45,7 @@ const FollowersList = () => {
               },
             }}
           >
-            <Link href="/" underline="hover" color="black">
+            <Link href="/" underline="none" color="black">
               <Typography
                 sx={{
                   overflow: "hidden",

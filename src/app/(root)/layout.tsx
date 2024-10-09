@@ -3,7 +3,8 @@ import { Roboto } from "next/font/google";
 import type { Metadata } from "next";
 import LeftSideBar from "@/components/shared/LeftSideBar";
 import "../globals.css";
-
+import StreamVideoProvider from "@/providers/StreamClientProvider";
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 const roboto = Roboto({ subsets: ["latin"], weight: ["500"] });
 
 export const metadata: Metadata = {
@@ -20,10 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto.className}>
         <AppRouterCacheProvider>
-          <main className="flex flex-row">
-            <LeftSideBar />
-            {children}
-          </main>
+          <StreamVideoProvider>
+            <main className="flex flex-row">
+              <LeftSideBar />
+              {children}
+            </main>
+          </StreamVideoProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

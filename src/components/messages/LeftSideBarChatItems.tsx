@@ -3,6 +3,7 @@ import { Box, List, ListItem, ListItemButton, Typography } from "@mui/material";
 import AvatarName from "../shared/AvatarName";
 import { useEffect, useState } from "react";
 import { Friends } from "@/types";
+import { useRouter } from "next/navigation";
 
 const leftBarWidth = "350px";
 
@@ -29,10 +30,6 @@ function timeAgo(itemDate: Date): string {
   } else {
     return `${diffInYears} year${diffInYears === 1 ? "" : "s"} ago`;
   }
-}
-
-interface LeftSideBarMessagesProps {
-  onChatFriendItemSelect: (data: Friends) => void;
 }
 
 const listFriends: Friends[] = [
@@ -128,20 +125,17 @@ const listFriends: Friends[] = [
   },
 ];
 
-const LeftSideBarMessages = ({
-  onChatFriendItemSelect,
-}: LeftSideBarMessagesProps) => {
+const LeftSideBarMessages = () => {
   const [selectedChatFriendItem, setSelectedChatFriendItem] =
-    useState<Friends | null>(listFriends[0]);
+    useState<Friends | null>(null);
+  const router = useRouter();
+  const handleSelect = (user: Friends) => {
+    console.log(user);
 
-  const handleSelect = (data: Friends) => {
-    setSelectedChatFriendItem(data);
-    onChatFriendItemSelect(data);
+    setSelectedChatFriendItem(user);
+    // onChatFriendItemSelect(data);
+    router.push(`/messages/${user.id}`);
   };
-
-  useEffect(() => {
-    if (selectedChatFriendItem) onChatFriendItemSelect(selectedChatFriendItem);
-  }, []);
 
   return (
     <Box
@@ -258,7 +252,7 @@ const LeftSideBarMessages = ({
                     backgroundColor:
                       selectedChatFriendItem &&
                       item.id === selectedChatFriendItem.id
-                        ? "#EEF0F2"
+                        ? "#DFE0E0"
                         : "white",
                   }}
                   onClick={() => handleSelect(item)}
@@ -293,6 +287,11 @@ const LeftSideBarMessages = ({
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           paddingBottom: "5px",
+                          fontWeight:
+                            selectedChatFriendItem &&
+                            item.id === selectedChatFriendItem.id
+                              ? "600"
+                              : "400",
                         }}
                       >
                         {item.name}
@@ -310,11 +309,15 @@ const LeftSideBarMessages = ({
                     <Typography
                       sx={{
                         fontSize: "15px",
-                        fontWeight: "400",
                         color: "#555555",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
+                        fontWeight:
+                          selectedChatFriendItem &&
+                          item.id === selectedChatFriendItem.id
+                            ? "500"
+                            : "400",
                       }}
                     >
                       {item.text}

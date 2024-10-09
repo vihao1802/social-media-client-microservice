@@ -48,7 +48,7 @@ const LeftSideBar = () => {
     setAnchorEl(null);
   };
   const [openleftSideBar, setOpenLeftSideBar] = useState(
-    pathname !== "/messages"
+    !pathname.includes("/messages")
   );
 
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -56,11 +56,11 @@ const LeftSideBar = () => {
   const [openSearch, setOpenSearch] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log("Hello");
 
-    setOpenLeftSideBar(pathname !== "/messages");
-  }, []);
+    setOpenLeftSideBar(!pathname.includes("/messages"));
+  }, []); */
 
   return (
     <Box
