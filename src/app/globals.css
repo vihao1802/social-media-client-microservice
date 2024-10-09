@@ -3,13 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
+  --background: #fff;
   --foreground: #171717;
+  ::-webkit-scrollbar { width: 10px };
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  };
+  ::-webkit-scrollbar-thumb {
+    background: #858585;
+  };
+  ::-webkit-scrollbar-thumb:hover {
+    background: #777;
+  };
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #f8fafc;
+    --background: #fff;
     --foreground: #0a0a0a;
   }
 }

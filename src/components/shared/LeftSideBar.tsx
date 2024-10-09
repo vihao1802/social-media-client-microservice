@@ -24,16 +24,19 @@ import { sideBarItems } from "../../constants/index";
 import OnlineAvatar from "@/components/widgets/OnlineAvatar";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/images/logo.png";
 import SearchPanel from "../widgets/SearchPanel";
 import NotificationPanel from "../widgets/NotificationPanel";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { log } from "console";
 const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
   ssr: false,
 });
-const dacingScript = Dancing_Script({ subsets: ["latin"], weight: ["700"] });
+const dacingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
 
 const LeftSideBar = () => {
   const router = useRouter();
@@ -51,16 +54,8 @@ const LeftSideBar = () => {
     !pathname.includes("/messages")
   );
 
-  const [selectedIndex, setSelectedIndex] = useState(1);
-
   const [openSearch, setOpenSearch] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
-
-  /*   useEffect(() => {
-    console.log("Hello");
-
-    setOpenLeftSideBar(!pathname.includes("/messages"));
-  }, []); */
 
   return (
     <Box
@@ -219,44 +214,48 @@ const LeftSideBar = () => {
                 );
               })}
             </List>
+
             <List>
-              <ListItem>
-                <ListItemButton
-                  sx={
-                    openleftSideBar
-                      ? {
-                          "&:hover": {
-                            cursor: "pointer",
-                          },
-                          padding: "10px 12px",
-                          borderRadius: "7px",
-                        }
-                      : {
-                          "&:hover": {
-                            cursor: "pointer",
-                          },
-                          padding: "10px 12px",
-                          borderRadius: "7px",
-                          height: "52px",
-                        }
-                  }
-                  selected={selectedIndex === 1}
-                  onClick={() => {
-                    setOpenLeftSideBar(true);
-                    setOpenSearch(false);
-                    setOpenNotification(false);
-                  }}
-                >
-                  <ListItemIcon>
-                    <OnlineAvatar
-                      imgURL="https://material-ui.com/static/images/avatar/1.jpg"
-                      height={25}
-                      width={25}
-                    />
-                  </ListItemIcon>
-                  {openleftSideBar && <ListItemText primary="Profile" />}
-                </ListItemButton>
-              </ListItem>
+              <Link href="/profile/1">
+                <ListItem>
+                  <ListItemButton
+                    sx={
+                      openleftSideBar
+                        ? {
+                            "&:hover": {
+                              cursor: "pointer",
+                            },
+                            padding: "10px 12px",
+                            borderRadius: "7px",
+                          }
+                        : {
+                            "&:hover": {
+                              cursor: "pointer",
+                            },
+                            padding: "10px 12px",
+                            borderRadius: "7px",
+                            height: "52px",
+                          }
+                    }
+                    // selected={selectedIndex === 1}
+                    onClick={() => {
+                      setOpenLeftSideBar(true);
+                      setOpenSearch(false);
+                      setOpenNotification(false);
+                    }}
+                  >
+                    <ListItemIcon>
+                      <OnlineAvatar
+                        imgURL="https://material-ui.com/static/images/avatar/1.jpg"
+                        height={25}
+                        width={25}
+                      />
+                    </ListItemIcon>
+                    {openleftSideBar && <ListItemText primary="Profile" />}
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+
               <ListItem>
                 <ListItemButton
                   sx={
