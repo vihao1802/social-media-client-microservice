@@ -1,31 +1,33 @@
 "use client";
-import { Box } from "@mui/material";
 import LeftSideBarMessages from "@/components/messages/LeftSideBarChatItems";
-import RightContentMessages from "@/components/messages/RightContentMessages";
-import "react-chat-elements/dist/main.css";
-import { useState } from "react";
 import { Friends } from "@/types";
+import { AccountCircle, AccountCircleOutlined } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 
 const Messages = () => {
-  const [chatFriendItem, setChatFriendItem] = useState<Friends | null>(null);
-
-  const handleSelectedChatFriendItem = (data: Friends) => {
-    setChatFriendItem(data);
-  };
-
   return (
     <Box
       sx={{
+        width: `calc(100% - 430px)`,
+        height: "100vh",
         display: "flex",
-        flexDirection: "row",
-        width: "calc(100% - 80px)",
-        marginLeft: "auto",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <LeftSideBarMessages
-        onChatFriendItemSelect={handleSelectedChatFriendItem}
-      />
-      <RightContentMessages chatFriendItem={chatFriendItem} />
+      <Box
+        sx={{
+          textAlign: "center",
+        }}
+      >
+        <AccountCircle
+          sx={{
+            fontSize: "100px",
+            fontWeight: "500",
+          }}
+        />
+        <Typography>Select a friend to send messages</Typography>
+      </Box>
     </Box>
   );
 };

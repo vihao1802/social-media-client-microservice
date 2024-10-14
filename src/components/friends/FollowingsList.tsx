@@ -108,10 +108,12 @@ const listFriends: Friends[] = [
 
 const FollowingsList = () => {
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (user: Friends) => {
+    setOpen(true);
+    setFollowingItem(user);
+  };
   const handleClose = () => setOpen(false);
-
-  const router = useRouter();
+  const [followingItem, setFollowingItem] = useState<Friends | null>(null);
 
   return (
     <Box
@@ -157,7 +159,7 @@ const FollowingsList = () => {
               component="h2"
               sx={{ mt: 2, textAlign: "center" }}
             >
-              Nguyen Van A
+              {followingItem && followingItem.name}
             </Typography>
             <Typography sx={{ mt: 2, textAlign: "center", fontWeight: 300 }}>
               Are you sure want to unfollow this fellow?
@@ -223,7 +225,7 @@ const FollowingsList = () => {
               },
             }}
           >
-            <Link href="/" underline="hover" color="black">
+            <Link href="/" underline="none" color="black">
               <Typography
                 sx={{
                   overflow: "hidden",
@@ -264,31 +266,34 @@ const FollowingsList = () => {
                 borderRadius: "5px",
                 ":hover": {
                   backgroundColor: "white",
+                  color: "red",
                 },
               }}
-              onClick={handleOpen}
+              onClick={() => handleOpen(item)}
             >
               <Typography sx={{ fontSize: "14px" }}>Unfollow</Typography>
             </Button>
-            <Button
+            <Link
               sx={{
                 textTransform: "none",
                 height: "35px",
                 padding: "6px 16px",
                 color: "black",
                 borderRadius: "5px",
+                textDecoration: "none",
                 gap: "15px",
                 ":hover": {
                   backgroundColor: "#DBDBDB",
                 },
               }}
-              onClick={() => {
+              /* onClick={() => {
                 router.push("/messages");
                 router.refresh();
-              }}
+              }} */
+              href={`/messages/${item.id}`}
             >
               <Typography sx={{ fontSize: "14px" }}>Message</Typography>
-            </Button>
+            </Link>
           </Box>
         </Box>
       ))}

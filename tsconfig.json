@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/constants/index.js",
-    "src/app/(root)/messages/page.tsx"
+    "src/app/(root)/messages/[id]/page.tsx"
   ],
   "exclude": [
     "node_modules"
