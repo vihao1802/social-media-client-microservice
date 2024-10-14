@@ -69,13 +69,13 @@ const FollowersList = () => {
           </Box>
           <Button
             sx={{
-              backgroundColor: "#4491F5",
+              backgroundColor: "var(--buttonColor)",
               color: "white",
               height: "30px",
               fontSize: "12px",
               textTransform: "none",
               ":hover": {
-                backgroundColor: "#1877F2",
+                backgroundColor: "var(--buttonHoverColor)",
               },
             }}
           >
