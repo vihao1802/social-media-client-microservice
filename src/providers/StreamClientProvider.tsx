@@ -1,6 +1,7 @@
 "use client";
 
 import { tokenProvider } from "@/actions/stream.action";
+import GradientCircularProgress from "@/components/shared/Loader";
 import { Box, CircularProgress } from "@mui/material";
 import { StreamVideo, StreamVideoClient } from "@stream-io/video-react-sdk";
 import { ReactNode, useEffect, useState } from "react";
@@ -35,7 +36,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
           transform: "translate(-50%,-50%)",
         }}
       >
-        <CircularProgress size={40} />
+        <GradientCircularProgress />
       </Box>
     );
 

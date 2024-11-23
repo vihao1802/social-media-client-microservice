@@ -22,13 +22,14 @@ import {
 } from "@mui/icons-material";
 import { sideBarItems } from "../../constants/index";
 import OnlineAvatar from "@/components/widgets/OnlineAvatar";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import SearchPanel from "../widgets/SearchPanel";
 import NotificationPanel from "../widgets/NotificationPanel";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ProgressBarContext } from "@/app/(root)/layout";
 const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
   ssr: false,
 });
@@ -41,6 +42,8 @@ const dacingScript = Dancing_Script({
 const LeftSideBar = () => {
   const router = useRouter();
   const pathname = usePathname();
+
+  const { setIsLoadingProgress } = useContext(ProgressBarContext);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -153,6 +156,7 @@ const LeftSideBar = () => {
                               : "",
                         }}
                         onClick={() => {
+                          setIsLoadingProgress(true);
                           if (pathname.includes("messages")) {
                             if (item.id === 2) {
                               setOpenSearch(!openSearch);
@@ -188,6 +192,7 @@ const LeftSideBar = () => {
                             setOpenSearch(false);
                             setOpenNotification(false);
                           }
+                          setIsLoadingProgress(false);
                         }}
                       >
                         <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>

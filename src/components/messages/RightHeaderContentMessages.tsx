@@ -34,7 +34,7 @@ const RightHeaderContentMessages = ({
     try {
       const callId = crypto.randomUUID();
       const call = client.call("default", callId);
-      await call.create();
+      await call.getOrCreate();
 
       router.push(`/call/${callId}`);
     } catch (error) {
