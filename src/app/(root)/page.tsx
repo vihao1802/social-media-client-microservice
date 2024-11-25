@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 
 import RightSideBar from "@/components/shared/RightSideBar";
 import React, { useState } from "react";
-import StoryBar from "@/components/widgets/StoryBar";
+import StoryBar from "@/components/shared/StoryBar";
 import Post from "@/components/widgets/Post";
 
 const posts: any[] = [

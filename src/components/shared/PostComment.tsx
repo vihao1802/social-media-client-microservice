@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   IconButton,
+  InputBase,
   Modal,
   TextField,
   Typography,
@@ -594,33 +595,9 @@ const PostComment = ({
               borderTop: "1px solid #e0e0e0",
             }}
           >
-            <TextField
-              label="Add a comment..."
-              variant="outlined"
-              size="small"
-              color="primary"
-              sx={{
-                width: "90%",
-                height: "40px",
-                margin: "0 auto",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#E0E3E7",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#B2BAC2",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#6F7E8C",
-                  },
-                },
-                "& label.Mui-focused": {
-                  color: "#A0AAB4",
-                },
-                "& .MuiInput-underline:after": {
-                  borderBottomColor: "#B2BAC2",
-                },
-              }}
+            <InputBase
+              placeholder="Add comment..."
+              sx={{ color: "black", flexGrow: 1, ml: 1 }}
             />
             <Button
               sx={{
