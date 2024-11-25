@@ -1,6 +1,11 @@
 import { Favorite, Forum } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
-const ExploreImage = () => {
+
+interface ExploreImageProps {
+  imageSrc: string;
+}
+
+const ExploreImage = ({ imageSrc }: ExploreImageProps) => {
   return (
     <Box
       className="card"
@@ -25,9 +30,7 @@ const ExploreImage = () => {
           height: "100%",
           objectFit: "cover",
         }}
-        src={
-          "https://scontent.xx.fbcdn.net/v/t1.15752-9/460188017_1683354479131141_1343734346609888834_n.png?_nc_cat=106&ccb=1-7&_nc_sid=0024fc&_nc_ohc=Ie5vxqE_UN0Q7kNvgEJusgr&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&_nc_gid=AHFdCeiumbOFlfqT4bjDD1H&oh=03_Q7cD1QHt110ENEN3Y4vB8CuJ_A3w9MZTjC8yFCmxUg2SGFW7Yw&oe=671CCEC9"
-        }
+        src={imageSrc}
       />
 
       {/* Dark overlay that appears on hover */}

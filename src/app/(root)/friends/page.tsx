@@ -3,16 +3,7 @@ import FollowersList from "@/components/friends/FollowersList";
 import FollowingsList from "@/components/friends/FollowingsList";
 import SuggestionsList from "@/components/friends/SuggestionsList";
 import AvatarName from "@/components/shared/AvatarName";
-import {
-  Box,
-  Button,
-  colors,
-  Link,
-  List,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 
 interface TabPanelProps {

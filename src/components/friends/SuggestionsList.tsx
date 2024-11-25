@@ -40,8 +40,8 @@ const SuggestionsList = () => {
               flexGrow: 1,
             }}
           >
-            <Link href="/" underline="hover" color="black">
-              <Typography>Nguyen Van A </Typography>
+            <Link href="/" underline="none" color="black">
+              <Typography>Nguyen Van A</Typography>
             </Link>
             <Typography
               sx={{

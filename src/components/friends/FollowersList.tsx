@@ -45,7 +45,7 @@ const FollowersList = () => {
               },
             }}
           >
-            <Link href="/" underline="hover" color="black">
+            <Link href="/" underline="none" color="black">
               <Typography
                 sx={{
                   overflow: "hidden",
@@ -69,13 +69,13 @@ const FollowersList = () => {
           </Box>
           <Button
             sx={{
-              backgroundColor: "#4491F5",
+              backgroundColor: "var(--buttonColor)",
               color: "white",
               height: "30px",
               fontSize: "12px",
               textTransform: "none",
               ":hover": {
-                backgroundColor: "#1877F2",
+                backgroundColor: "var(--buttonHoverColor)",
               },
             }}
           >
