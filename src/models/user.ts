@@ -1,12 +1,8 @@
-import { Role } from "./role";
-
 export interface UserBase {
   username: string;
   email: string;
-  phoneNumber: string;
-  day_of_birth: string;
   gender: boolean;
-  bio: string;
+  dayOfBirth: string;
 }
 
 export interface User extends UserBase {
@@ -14,6 +10,7 @@ export interface User extends UserBase {
   isDisabled: boolean;
   created_at: string;
   profile_img: string;
+  bio: string;
 }
 
 export interface UserRequest extends UserBase {

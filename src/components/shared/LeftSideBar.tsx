@@ -30,6 +30,7 @@ import NotificationPanel from "../widgets/NotificationPanel";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProgressBarContext } from "@/app/(root)/layout";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
   ssr: false,
 });
@@ -44,7 +45,7 @@ const LeftSideBar = () => {
   const pathname = usePathname();
 
   const { setIsLoadingProgress } = useContext(ProgressBarContext);
-
+  const { logout } = useAuthenticatedUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClickMenuMore = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -59,6 +60,11 @@ const LeftSideBar = () => {
 
   const [openSearch, setOpenSearch] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/sign-in");
+  };
 
   return (
     <Box
@@ -306,7 +312,7 @@ const LeftSideBar = () => {
                     <ListItemIcon>
                       <ExitToAppOutlined />
                     </ListItemIcon>
-                    <ListItemText primary="Log out" />
+                    <ListItemText primary="Log out" onClick={handleLogout} />
                   </ListItemButton>
                 </ListItem>
               </List>

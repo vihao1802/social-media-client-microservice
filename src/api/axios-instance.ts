@@ -1,4 +1,4 @@
-import { Error } from "@/types/interfaces";
+import { Error } from "@/types";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -19,11 +19,7 @@ let isRefreshing = false;
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = cookies.get("token");
-    if (
-      token &&
-      config.method &&
-      config.url
-    ) {
+    if (token && config.method && config.url) {
       const tokenPayload = JSON.parse(atob(token.split(".")[1]));
       const currentTime = Math.floor(Date.now() / 1000);
       const remainingTime = tokenPayload.exp - currentTime;

@@ -19,6 +19,7 @@
     "@mux/mux-player-react": "^3.0.0",
     "@stream-io/node-sdk": "^0.4.4",
     "@stream-io/video-react-sdk": "^1.4.4",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",
     "next": "14.2.11",
