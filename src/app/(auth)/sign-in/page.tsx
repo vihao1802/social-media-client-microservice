@@ -8,23 +8,51 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import * as Yup from "yup";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { useState } from "react";
 import { Visibility, VisibilityOffOutlined } from "@mui/icons-material";
-
-const SignInSchema = Yup.object().shape({
-  email: Yup.string().email("Email is not valid").required("Email is required"),
-  password: Yup.string().required("Password is required"),
-});
+import { SignInSchema } from "@/validations/signin.schema";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useRouter } from "next/navigation";
+import { LoginRequest } from "@/models/auth-login";
+import toast from "react-hot-toast";
+import GradientCircularProgress from "@/components/shared/Loader";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const router = useRouter();
+  const { login } = useAuthenticatedUser({
+    revalidateOnMount: false,
+  });
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleSignIn = async (payload: LoginRequest) => {
+    setIsLogin(true);
+    try {
+      const res = await login(payload);
+      if (res && res.status === 200) {
+        toast.success("Sign in successfully");
+
+        /* if (res.scope === "ADMIN") {
+          router.push("/dashboard");
+          return;
+        } */
+
+        router.push("/");
+      } else {
+        toast.error("Sign in failed");
+      }
+    } catch (error) {
+      toast.error("Sign in failed");
+      console.log(error);
+    } finally {
+      setIsLogin(false);
+    }
+  };
   return (
     <Box
       sx={{
@@ -60,7 +88,7 @@ const SignInPage = () => {
           initialValues={{ email: "", password: "" }}
           validationSchema={SignInSchema}
           onSubmit={async (values) => {
-            console.log(values);
+            handleSignIn(values);
           }}
         >
           {({ errors, touched }) => (
@@ -113,18 +141,33 @@ const SignInPage = () => {
 
               <Button
                 type="submit"
-                size="medium"
+                size="large"
+                disabled={isLogin}
                 sx={{
-                  marginTop: "10px",
+                  marginTop: "25px",
                   width: "100%",
                   color: "white",
                   backgroundColor: "var(--buttonColor)",
                   ":hover": {
                     backgroundColor: "var(--buttonHoverColor)",
                   },
+                  ":disabled": {
+                    backgroundColor: "#e7e7e7",
+                  },
                 }}
               >
-                Sign In
+                {isLogin ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <GradientCircularProgress width={25} />
+                  </Box>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </Form>
           )}

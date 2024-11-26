@@ -4,11 +4,12 @@ import {
   LogoutRequest,
   RefreshTokenRequest,
   RefreshTokenResponse,
-} from "@/models/auth";
+} from "@/models/auth-login";
 import axiosInstance from "./axios-instance";
 import { User, UserRequest } from "@/models/user";
 import toast from "react-hot-toast";
 import cookies from "js-cookie";
+import { RegisterRequest, RegisterResponse } from "@/models/auth-register";
 
 const prefix = "/auth";
 export const authApi = {
@@ -55,7 +56,7 @@ export const authApi = {
     if (cookies.get("token") === null) {
       return null;
     }
-    const res = await axiosInstance.get<User>("/users/my-info");
+    const res = await axiosInstance.get<User>("/user/me");
 
     console.log("getAuthenticatedUser");
 
@@ -72,9 +73,11 @@ export const authApi = {
     return res.data;
   },
 
-  // tạm thời
-  async register(request: UserRequest) {
-    const res = await axiosInstance.post<User>("/users/register", request);
+  async register(request: RegisterRequest) {
+    const res = await axiosInstance.post<RegisterResponse>(
+      `${prefix}/register`,
+      request
+    );
 
     if (res.status === 400) {
       return;
