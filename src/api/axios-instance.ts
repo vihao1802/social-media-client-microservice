@@ -14,26 +14,7 @@ const axiosInstance = axios.create({
 });
 let isRefreshing = false;
 
-const PUBLIC_ENDPOINTS_POST_METHOD = [
-  "api/v1/auth/login",
-  "api/v1/auth/introspect",
-  "api/v1/auth/refresh-token",
-  "api/v1/auth/logout",
-  "api/v1/users/register",
-];
-const PUBLIC_ENDPOINTS_GET_METHOD = ["api/v1/court-types", "api/v1/courts"];
 
-function isPublicEndpoint(method: string, url: string) {
-  const publicEndpoints =
-    method === "POST"
-      ? PUBLIC_ENDPOINTS_POST_METHOD
-      : method === "GET"
-      ? PUBLIC_ENDPOINTS_GET_METHOD
-      : [];
-
-  // Match if `url` starts with any of the public endpoints
-  return publicEndpoints.some((endpoint) => url.startsWith(endpoint));
-}
 
 axiosInstance.interceptors.request.use(
   async (config) => {
@@ -41,8 +22,7 @@ axiosInstance.interceptors.request.use(
     if (
       token &&
       config.method &&
-      config.url &&
-      !isPublicEndpoint(config.method, config.url)
+      config.url
     ) {
       const tokenPayload = JSON.parse(atob(token.split(".")[1]));
       const currentTime = Math.floor(Date.now() / 1000);

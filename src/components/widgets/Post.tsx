@@ -18,8 +18,9 @@ import Face from "@mui/icons-material/Face";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
 import PostComment from "@/components/shared/PostComment";
 import postImage from "@/assets/images/post-img2.jpg";
+import { Post } from "@/models/post";
 
-export default function Post() {
+export default function PostComponent({ post }: { post: Post }) {
   const [openComment, setOpenComment] = useState(false);
 
   return (
@@ -48,7 +49,7 @@ export default function Post() {
           >
             <Avatar
               size="sm"
-              src="https://material-ui.com/static/images/avatar/3.jpg"
+              src={post.creator.profile_img}
               sx={{
                 width: "30px",
                 height: "30px",
@@ -57,7 +58,9 @@ export default function Post() {
               }}
             />
           </Box>
-          <Typography sx={{ fontWeight: "lg" }}>MUI</Typography>
+          <Typography sx={{ fontWeight: "lg" }}>
+            {post.creator.username}
+          </Typography>
           <IconButton
             variant="plain"
             color="neutral"

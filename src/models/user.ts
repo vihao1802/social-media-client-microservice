@@ -1,18 +1,19 @@
 import { Role } from "./role";
 
 export interface UserBase {
-  userName: string;
+  username: string;
   email: string;
   phoneNumber: string;
-  dayOfBirth: string;
+  day_of_birth: string;
+  gender: boolean;
+  bio: string;
 }
 
 export interface User extends UserBase {
   id: string;
   isDisabled: boolean;
-  role: Role;
-  createdAt: string;
-  profileImage: string;
+  created_at: string;
+  profile_img: string;
 }
 
 export interface UserRequest extends UserBase {

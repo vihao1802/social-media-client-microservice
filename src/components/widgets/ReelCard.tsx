@@ -11,7 +11,7 @@ import {
   Avatar,
   Fade,
 } from "@mui/material";
-import demoUrl from "@/assets/videos/demo.mp4";
+// import demoUrl from "@/assets/videos/demo.mp4";
 import avatar from "@/assets/images/logo.png";
 import {
   VolumeOffRounded,
@@ -52,7 +52,7 @@ const VideoCard = () => {
           {/* Video Section */}
           <CardMedia
             component="video"
-            image={demoUrl} // Replace with your video URL or file path
+            image={""} // Replace with your video URL or file path
             autoPlay
             loop
             muted={muted}
