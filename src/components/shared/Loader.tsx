@@ -1,7 +1,13 @@
 import * as React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function GradientCircularProgress() {
+interface GradientCircularProgressProps {
+  width?: number;
+}
+
+export default function GradientCircularProgress({
+  width = 40,
+}: GradientCircularProgressProps) {
   return (
     <React.Fragment>
       <svg width={0} height={0}>
@@ -13,7 +19,10 @@ export default function GradientCircularProgress() {
         </defs>
       </svg>
       <CircularProgress
-        sx={{ "svg circle": { stroke: "url(#my_gradient)" } }}
+        size={width}
+        sx={{
+          "svg circle": { stroke: "url(#my_gradient)" },
+        }}
       />
     </React.Fragment>
   );

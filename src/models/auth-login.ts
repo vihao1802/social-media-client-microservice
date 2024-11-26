@@ -3,15 +3,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface LoginResponse {
+  token: string;
+  email: string;
+}
+
 export interface LogoutRequest {}
 
 export interface RefreshTokenRequest {
   token: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  authenticated: boolean;
 }
 
 export interface RefreshTokenResponse {
