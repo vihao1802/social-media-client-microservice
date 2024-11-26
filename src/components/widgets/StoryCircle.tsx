@@ -1,5 +1,7 @@
+"use client";
 import { Box, Avatar, Typography } from "@mui/material";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 interface User {
   userId: number;
@@ -10,6 +12,7 @@ interface User {
 }
 
 const StoryCircle = ({ userId, name, nickName, followers, avatar }: User) => {
+  const router = useRouter();
   return (
     <Box
       sx={{
@@ -20,6 +23,7 @@ const StoryCircle = ({ userId, name, nickName, followers, avatar }: User) => {
         justifyContent: "center",
         position: "relative",
       }}
+      onClick={() => router.push("/stories")}
     >
       <Box
         sx={{

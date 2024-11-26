@@ -1,5 +1,5 @@
 export interface UserBase {
-  userName: string;
+  username: string;
   email: string;
   gender: boolean;
   dayOfBirth: string;
@@ -7,6 +7,10 @@ export interface UserBase {
 
 export interface User extends UserBase {
   id: string;
+  isDisabled: boolean;
+  created_at: string;
+  profile_img: string;
+  bio: string;
 }
 
 export interface UserRequest extends UserBase {
