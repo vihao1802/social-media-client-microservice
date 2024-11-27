@@ -8,7 +8,8 @@ export interface PostBase {
 }
 
 export interface Post extends PostBase {
-    id: string;
+    id: number;
     visibility: Visibility;
     creator: User,
+    postReactions: number;
 }

@@ -19,31 +19,33 @@ import {
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
 } from "@mui/icons-material";
-import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import postImg from "@/assets/images/post-img.jpg";
 import postImg1 from "@/assets/images/post-img1.jpg";
 import postImg2 from "@/assets/images/post-img2.jpg";
 import postImg3 from "@/assets/images/post-img3.jpg";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+import ImageSwiper from "../post/ImageSwiper";
+import { MediaContent } from "@/models/media-content";
+import { Post } from "@/models/post";
+import { PostContext } from "@/context/post-context";
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
 
-import { Pagination, Navigation } from "swiper/modules";
-import { Swiper as SwiperType } from "swiper";
-
+// Kích hoạt plugin
+dayjs.extend(relativeTime);
 const postImages = [postImg, postImg1, postImg2, postImg3];
 
 const PostComment = ({
   isOpen,
+  postMedia,
   handleClose,
 }: {
   isOpen: boolean;
+  postMedia: MediaContent[];
   handleClose: () => void;
 }) => {
-  const swiperRef = useRef<SwiperType>();
+  const { post } = useContext(PostContext);
 
   return (
     <Modal
@@ -67,97 +69,8 @@ const PostComment = ({
           borderRadius: "7px",
         }}
       >
-        <Box
-          sx={{
-            width: "auto",
-            maxWidth: "600px",
-            backgroundColor: "black",
-            position: "relative",
-          }}
-        >
-          {postImages.length > 1 && (
-            <IconButton
-              onClick={() => swiperRef.current?.slidePrev()}
-              sx={{
-                height: "28px",
-                width: "28px",
-                position: "absolute",
-                top: "50%",
-                left: "15px",
-                transform: "translateY(-50%)",
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#fff",
-                border: "1px solid #ddd",
-                padding: "10px",
-                cursor: "pointer",
-                zIndex: 10,
-                "&:hover": {
-                  backgroundColor: "#f0f0f0",
-                },
-              }}
-            >
-              <KeyboardArrowLeftRounded />
-            </IconButton>
-          )}
+        <ImageSwiper postMedia={postMedia} />
 
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={30}
-            loop={true}
-            pagination={{
-              clickable: true,
-            }}
-            onBeforeInit={(swiper) => {
-              swiperRef.current = swiper;
-            }}
-            modules={[Pagination, Navigation]}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            {postImages.map((img, index) => (
-              <SwiperSlide key={index} style={{ display: "flex" }}>
-                <Image
-                  src={img.src}
-                  alt="Post Image"
-                  width={img.width}
-                  height={img.height}
-                  layout="intrinsic"
-                  style={{
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          {postImages.length > 1 && (
-            <IconButton
-              onClick={() => swiperRef.current?.slideNext()}
-              sx={{
-                height: "28px",
-                width: "28px",
-                position: "absolute",
-                top: "50%" /* Đặt nút ở giữa theo chiều dọc */,
-                right: "15px" /* Cách mép phải 10px */,
-                transform:
-                  "translateY(-50%)" /* Điều chỉnh để căn giữa theo chiều dọc */,
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                backgroundColor: "#fff",
-                border: "1px solid #ddd",
-                padding: "10px",
-                cursor: "pointer",
-                zIndex: 10,
-                "&:hover": {
-                  backgroundColor: "#f0f0f0",
-                },
-              }}
-            >
-              <KeyboardArrowRightRounded />
-            </IconButton>
-          )}
-        </Box>
         <Box
           sx={{
             width: "500px",
@@ -184,11 +97,11 @@ const PostComment = ({
               }}
             >
               <Avatar
-                src={postImg.src}
+                src={post?.creator.profile_img}
                 sx={{ height: "32px", width: "32px" }}
               />
               <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                User 1
+                {post?.creator.username}
               </Typography>
             </Box>
             <IconButton>
@@ -576,10 +489,10 @@ const PostComment = ({
             </Box>
             <Box sx={{ padding: "0 20px" }}>
               <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                18,998 likes
+                {post?.postReactions} likes
               </Typography>
               <Typography sx={{ fontSize: "12px", color: "#858585 " }}>
-                19 hours ago
+                {dayjs(post?.created_at).fromNow()}
               </Typography>
             </Box>
           </Box>
