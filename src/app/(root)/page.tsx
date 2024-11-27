@@ -5,12 +5,13 @@ import { Box } from "@mui/material";
 import RightSideBar from "@/components/shared/RightSideBar";
 import React, { useState } from "react";
 import StoryBar from "@/components/shared/StoryBar";
-import PostComponent from "@/components/widgets/Post";
+import PostComponent from "@/components/post/Post";
 import { Post } from "@/models/post";
 import { ListResponse, Pagination } from "@/models/api";
 import { usePostListInfinity } from "@/hooks/post/useGetPostListInfinity";
 import GradientCircularProgress from "@/components/shared/Loader";
 import { useInView } from "react-intersection-observer";
+import { PostContext } from "@/context/post-context";
 
 const posts: any[] = [
   {
@@ -139,13 +140,21 @@ export default function Home() {
         <StoryBar />
 
         {postList
+          .filter((post) => post.is_story === false)
           .sort(
             (a: Post, b: Post) =>
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
           .map((post: Post, index: number) => (
-            <PostComponent key={index} post={post} />
+            <PostContext.Provider
+              key={index}
+              value={{
+                post: post || null,
+              }}
+            >
+              <PostComponent key={index} />
+            </PostContext.Provider>
           ))}
 
         {showLoadMore && (

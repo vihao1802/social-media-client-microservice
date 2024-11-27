@@ -16,12 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={roboto.className}>
-        <AppRouterCacheProvider>
-          <main className="flex flex-row">{children}</main>
-        </AppRouterCacheProvider>
-      </body>
-    </html>
+    <AppRouterCacheProvider>
+      <div className="flex flex-row">{children}</div>
+    </AppRouterCacheProvider>
   );
 }
