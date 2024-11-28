@@ -9,9 +9,7 @@ interface RightContentMessagesProps {
   chatFriendItem: Friends | null;
 }
 
-const RightContentMessages = ({
-  chatFriendItem,
-}: RightContentMessagesProps) => {
+const RightContentMessages = () => {
   return (
     <Box
       sx={{
@@ -19,8 +17,8 @@ const RightContentMessages = ({
         height: "100vh",
       }}
     >
-      <RightHeaderContentMessages chatFriendItem={chatFriendItem} />
-      <RightListContentMessages chatFriendItem={chatFriendItem} />
+      <RightHeaderContentMessages />
+      <RightListContentMessages />
     </Box>
   );
 };

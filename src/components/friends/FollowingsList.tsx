@@ -1,7 +1,17 @@
-import { Box, Button, Divider, Link, Modal, Typography } from "@mui/material";
-import AvatarName from "../shared/AvatarName";
+import {
+  Box,
+  Button,
+  Divider,
+  Link,
+  Modal,
+  Typography,
+  Avatar,
+} from "@mui/material";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useGetRelationshipMeFollowing } from "@/hooks/relationship/useGetRelationshipMeFollowing";
+import { User } from "@/models/user";
+import { RelationshipStatus } from "@/types/enum";
 
 interface Friends {
   id: number;
@@ -108,12 +118,15 @@ const listFriends: Friends[] = [
 
 const FollowingsList = () => {
   const [open, setOpen] = useState(false);
-  const handleOpen = (user: Friends) => {
+  const handleOpen = (user: User) => {
     setOpen(true);
     setFollowingItem(user);
   };
   const handleClose = () => setOpen(false);
-  const [followingItem, setFollowingItem] = useState<Friends | null>(null);
+  const [followingItem, setFollowingItem] = useState<User | null>(null);
+  const { data: relationshipMeFollowing } = useGetRelationshipMeFollowing({});
+
+  if (!relationshipMeFollowing) return null;
 
   return (
     <Box
@@ -149,7 +162,7 @@ const FollowingsList = () => {
             }}
           >
             <img
-              src={"https://material-ui.com/static/images/avatar/1.jpg"}
+              src={followingItem?.profile_img || "/icons/user-3296"}
               alt="Avatar"
               className="w-24 h-24 rounded-full mx-auto"
             />
@@ -159,7 +172,7 @@ const FollowingsList = () => {
               component="h2"
               sx={{ mt: 2, textAlign: "center" }}
             >
-              {followingItem && followingItem.name}
+              {followingItem && followingItem.username}
             </Typography>
             <Typography sx={{ mt: 2, textAlign: "center", fontWeight: 300 }}>
               Are you sure want to unfollow this fellow?
@@ -201,7 +214,7 @@ const FollowingsList = () => {
           </Box>
         </Box>
       </Modal>
-      {listFriends.map((item: Friends, index) => (
+      {relationshipMeFollowing.map((item, index) => (
         <Box
           key={index}
           sx={{
@@ -211,7 +224,10 @@ const FollowingsList = () => {
             gap: "15px",
           }}
         >
-          <AvatarName name={item.name} />
+          <Avatar
+            alt={item.receiver.username}
+            src={item.receiver.profile_img || "/icons/user-3296"}
+          />
           <Box
             sx={{
               display: "flex",
@@ -225,7 +241,11 @@ const FollowingsList = () => {
               },
             }}
           >
-            <Link href="/" underline="none" color="black">
+            <Link
+              href={`profile/${item.receiverId}`}
+              underline="none"
+              color="black"
+            >
               <Typography
                 sx={{
                   overflow: "hidden",
@@ -235,7 +255,7 @@ const FollowingsList = () => {
                   fontSize: "15px",
                 }}
               >
-                {item.name}
+                {item.receiver.username}
               </Typography>
             </Link>
             <Typography
@@ -244,57 +264,73 @@ const FollowingsList = () => {
                 fontSize: "13px",
               }}
             >
-              123 followers
+              {item.receiver.email}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flex: "1",
-              maxWidth: "180px",
-            }}
-          >
+
+          {item.status === RelationshipStatus.Accepted ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flex: "1",
+                maxWidth: "180px",
+              }}
+            >
+              <Button
+                sx={{
+                  textTransform: "none",
+                  height: "35px",
+                  padding: "6px 16px",
+                  color: "#EE525E",
+                  borderRadius: "5px",
+                  ":hover": {
+                    backgroundColor: "white",
+                    color: "red",
+                  },
+                }}
+                onClick={() => handleOpen(item.receiver)}
+              >
+                <Typography sx={{ fontSize: "14px" }}>Unfollow</Typography>
+              </Button>
+              <Link
+                sx={{
+                  textTransform: "none",
+                  height: "35px",
+                  padding: "6px 16px",
+                  color: "black",
+                  borderRadius: "5px",
+                  textDecoration: "none",
+                  gap: "15px",
+                  ":hover": {
+                    backgroundColor: "#DBDBDB",
+                  },
+                }}
+                href={`/messages/${item.id}`}
+              >
+                <Typography sx={{ fontSize: "14px" }}>Message</Typography>
+              </Link>
+            </Box>
+          ) : (
             <Button
+              disabled
               sx={{
                 textTransform: "none",
                 height: "35px",
                 padding: "6px 16px",
-                color: "#EE525E",
+                color: "white",
+                backgroundColor: "gray",
                 borderRadius: "5px",
                 ":hover": {
-                  backgroundColor: "white",
-                  color: "red",
+                  backgroundColor: "var(--buttonColor)",
                 },
               }}
-              onClick={() => handleOpen(item)}
             >
-              <Typography sx={{ fontSize: "14px" }}>Unfollow</Typography>
+              <Typography sx={{ fontSize: "14px" }}>Pending</Typography>
             </Button>
-            <Link
-              sx={{
-                textTransform: "none",
-                height: "35px",
-                padding: "6px 16px",
-                color: "black",
-                borderRadius: "5px",
-                textDecoration: "none",
-                gap: "15px",
-                ":hover": {
-                  backgroundColor: "#DBDBDB",
-                },
-              }}
-              /* onClick={() => {
-                router.push("/messages");
-                router.refresh();
-              }} */
-              href={`/messages/${item.id}`}
-            >
-              <Typography sx={{ fontSize: "14px" }}>Message</Typography>
-            </Link>
-          </Box>
+          )}
         </Box>
       ))}
     </Box>

@@ -38,10 +38,12 @@ export default function OnlineAvatar({
   imgURL,
   height,
   width,
+  isSelected,
 }: {
   imgURL: string;
   height: number;
   width: number;
+  isSelected: boolean;
 }) {
   return (
     <StyledBadge
@@ -52,7 +54,11 @@ export default function OnlineAvatar({
       <Avatar
         alt="Remy Sharp"
         src={imgURL}
-        sx={{ width: width, height: height }}
+        sx={{
+          width: width,
+          height: height,
+          border: isSelected ? "3px solid black" : "none",
+        }}
       />
     </StyledBadge>
   );

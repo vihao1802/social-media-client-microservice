@@ -1,5 +1,12 @@
 "use client";
-import { Box, Button, Drawer, IconButton, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import AvatarName from "@/components/shared/AvatarName";
 import { InfoOutlined, PhoneOutlined } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -7,23 +14,27 @@ import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { tokenProvider } from "@/actions/stream.action";
 import RightDrawerContentMessages from "@/components/messages/RightDrawerContentMessages";
 import { Friends } from "@/types";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useGetUserById } from "@/hooks/user/useGetUserById";
 
-interface RightHeaderContentMessagesProps {
-  chatFriendItem: Friends | null;
-}
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
-const RightHeaderContentMessages = ({
-  chatFriendItem,
-}: RightHeaderContentMessagesProps) => {
+const RightHeaderContentMessages = () => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("u_id");
+
+  if (!id) return null;
+
+  const { data: user } = useGetUserById({ id });
+  const client = useStreamVideoClient();
+
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
-  const router = useRouter();
 
-  const client = useStreamVideoClient();
+  if (!user) return null;
 
   const initiateCall = async () => {
     if (!client) {
@@ -64,18 +75,17 @@ const RightHeaderContentMessages = ({
           alignItems: "center",
         }}
       >
-        {chatFriendItem && <AvatarName name={chatFriendItem.name} />}
-        {chatFriendItem && (
-          <Typography
-            sx={{
-              fontSize: "17px",
-              color: "black",
-              paddingLeft: "10px",
-            }}
-          >
-            {chatFriendItem.name}
-          </Typography>
-        )}
+        <Avatar src={user.profile_img || "/icons/user.png"} />
+
+        <Typography
+          sx={{
+            fontSize: "17px",
+            color: "black",
+            paddingLeft: "10px",
+          }}
+        >
+          {user.username}
+        </Typography>
       </Box>
 
       <Box

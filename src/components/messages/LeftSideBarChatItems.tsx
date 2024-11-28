@@ -1,9 +1,22 @@
 "use client";
-import { Box, List, ListItem, ListItemButton, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import AvatarName from "../shared/AvatarName";
 import { useEffect, useState } from "react";
 import { Friends } from "@/types";
 import { useRouter } from "next/navigation";
+import { useGetRelationshipMeFollowing } from "@/hooks/relationship/useGetRelationshipMeFollowing";
+import { useGetRelationshipMeFollower } from "@/hooks/relationship/useGetRelationshipMeFollower";
+import { User } from "@/models/user";
+import { list } from "postcss";
+import { RelationshipStatus } from "@/types/enum";
 
 const leftBarWidth = "350px";
 
@@ -32,110 +45,43 @@ function timeAgo(itemDate: Date): string {
   }
 }
 
-const listFriends: Friends[] = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    text: "Hey, long time no see!",
-    avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-    title: "Project Manager",
-    subtitle: "Let's catch up soon.",
-    date: new Date("2020-09-20T14:30:00"),
-  },
-  {
-    id: 2,
-    name: "Bob Williams",
-    text: "Don't forget the meeting tomorrow.",
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-    title: "Software Engineer",
-    subtitle: "Meeting at 10:00 AM.",
-    date: new Date("2023-09-21T09:45:00"),
-  },
-  {
-    id: 3,
-    name: "Catherine Lee",
-    text: "Can you review my code?",
-    avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-    title: "Frontend Developer",
-    subtitle: "Need feedback on the UI.",
-    date: new Date("2023-09-19T11:20:00"),
-  },
-  {
-    id: 4,
-    name: "Daniel Kim",
-    text: "Happy Birthday!",
-    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-    title: "Data Analyst",
-    subtitle: "Wishing you a great day!",
-    date: new Date("2023-09-18T08:00:00"),
-  },
-  {
-    id: 5,
-    name: "Ella Parker",
-    text: "Let's go for lunch.",
-    avatar: "https://randomuser.me/api/portraits/women/5.jpg",
-    title: "Product Designer",
-    subtitle: "How about sushi?",
-    date: new Date("2023-09-17T12:15:00"),
-  },
-  {
-    id: 6,
-    name: "Frank Harris",
-    text: "I'll send the report by EOD.",
-    avatar: "https://randomuser.me/api/portraits/men/6.jpg",
-    title: "Marketing Specialist",
-    subtitle: "Almost done with the report.",
-    date: new Date("2023-09-16T15:45:00"),
-  },
-  {
-    id: 7,
-    name: "Grace Adams",
-    text: "Can we reschedule the call?",
-    avatar: "https://randomuser.me/api/portraits/women/7.jpg",
-    title: "Sales Manager",
-    subtitle: "Let me know your availability.",
-    date: new Date("2023-09-15T10:30:00"),
-  },
-  {
-    id: 8,
-    name: "Harry Brown",
-    text: "The project deadline is next week.",
-    avatar: "https://randomuser.me/api/portraits/men/8.jpg",
-    title: "Backend Developer",
-    subtitle: "We need to finalize the API.",
-    date: new Date("2023-09-14T13:00:00"),
-  },
-  {
-    id: 9,
-    name: "Isabella Davis",
-    text: "I'll be on vacation next week.",
-    avatar: "https://randomuser.me/api/portraits/women/9.jpg",
-    title: "HR Manager",
-    subtitle: "Please contact John for any HR-related queries.",
-    date: new Date("2023-09-13T16:00:00"),
-  },
-  {
-    id: 10,
-    name: "Jack Miller",
-    text: "Can you join the team meeting?",
-    avatar: "https://randomuser.me/api/portraits/men/10.jpg",
-    title: "DevOps Engineer",
-    subtitle: "We need to discuss infrastructure updates.",
-    date: new Date("2023-09-12T11:30:00"),
-  },
-];
-
 const LeftSideBarMessages = () => {
   const [selectedChatFriendItem, setSelectedChatFriendItem] =
-    useState<Friends | null>(null);
+    useState<User | null>(null);
   const router = useRouter();
-  const handleSelect = (user: Friends) => {
+  const [loadingData, setLoadingData] = useState(true);
+  const [followLists, setFollowLists] = useState<User[]>([]);
+  const handleSelect = (user: User) => {
     console.log(user);
 
     setSelectedChatFriendItem(user);
     // onChatFriendItemSelect(data);
-    router.push(`/messages/${user.id}`);
+    router.push(`/messages/${user.relationshipId}?u_id=${user.id}`);
   };
+
+  const { data: relationshipMeFollowing } = useGetRelationshipMeFollowing({});
+  const { data: relationshipMeFollower } = useGetRelationshipMeFollower({});
+
+  useEffect(() => {
+    setLoadingData(true);
+    console.log({ followLists });
+
+    if (relationshipMeFollowing && relationshipMeFollower) {
+      let list: User[] = [];
+      relationshipMeFollowing.forEach((item) => {
+        const user = item.receiver;
+        if (item.status === RelationshipStatus.Accepted)
+          list.push({ ...user, relationshipId: item.id });
+      });
+      relationshipMeFollower.forEach((item) => {
+        const user = item.sender;
+        if (item.status === RelationshipStatus.Accepted)
+          list.push({ ...user, relationshipId: item.id });
+      });
+      setFollowLists(list);
+    }
+    setLoadingData(false);
+  }, [relationshipMeFollowing, relationshipMeFollower]);
 
   return (
     <Box
@@ -185,148 +131,159 @@ const LeftSideBarMessages = () => {
           }}
         >
           {/* Chat Items Skeleton */}
-          {/* <Box
-            sx={{
-              display: "flex",
-              paddingLeft: "10px",
-              paddingRight: "20px",
-              paddingTop: "10px",
-              height: "70px",
-            }}
-          >
-            <Skeleton
-              variant="circular"
-              width={40}
-              height={40}
-              sx={{
-                margin: "0 10px",
-              }}
-              animation="wave"
-            />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: "calc(100% - 60px)",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  paddingBottom: "10px",
-                }}
-              >
-                <Skeleton
-                  variant="rounded"
-                  sx={{ fontSize: "1rem", width: "140px" }}
-                  animation="wave"
-                />
-                <Skeleton
-                  variant="rounded"
-                  sx={{ fontSize: "1rem", width: "65px", marginLeft: "auto" }}
-                  animation="wave"
-                />
-              </Box>
-              <Skeleton
-                variant="rounded"
-                sx={{ fontSize: "17px", width: "100%" }}
-                animation="wave"
-              />
-            </Box>
-          </Box> */}
-          {listFriends.map((item: Friends, index: number) => (
-            <Box key={index}>
-              <ListItem disablePadding>
-                <ListItemButton
+          {loadingData
+            ? Array.from(new Array(8)).map((item, index) => (
+                <Box
+                  key={index}
                   sx={{
-                    color: "black",
-                    height: "70px",
-                    padding: "0",
-                    alignItems: "start",
+                    display: "flex",
                     paddingLeft: "10px",
                     paddingRight: "20px",
                     paddingTop: "10px",
-                    backgroundColor:
-                      selectedChatFriendItem &&
-                      item.id === selectedChatFriendItem.id
-                        ? "#DFE0E0"
-                        : "white",
+                    height: "70px",
                   }}
-                  onClick={() => handleSelect(item)}
                 >
-                  <Box
+                  <Skeleton
+                    variant="circular"
+                    width={40}
+                    height={40}
                     sx={{
-                      borderRadius: "50%",
-                      padding: "0 10px",
+                      margin: "0 10px",
                     }}
-                  >
-                    <AvatarName name={item.name} />
-                  </Box>
+                    animation="wave"
+                  />
                   <Box
                     sx={{
-                      width: "calc(100% - 60px)",
                       display: "flex",
                       flexDirection: "column",
+                      width: "calc(100% - 60px)",
                     }}
                   >
                     <Box
                       sx={{
                         display: "flex",
-                        gap: "5px",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        paddingBottom: "10px",
                       }}
                     >
-                      <Typography
+                      <Skeleton
+                        variant="rounded"
+                        sx={{ fontSize: "1rem", width: "140px" }}
+                        animation="wave"
+                      />
+                      <Skeleton
+                        variant="rounded"
                         sx={{
-                          fontSize: "16px",
-                          color: "black",
-                          flex: 1,
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          paddingBottom: "5px",
-                          fontWeight:
-                            selectedChatFriendItem &&
-                            item.id === selectedChatFriendItem.id
-                              ? "600"
-                              : "400",
+                          fontSize: "1rem",
+                          width: "65px",
+                          marginLeft: "auto",
                         }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "12px",
-                          color: "#9595AF",
-                        }}
-                      >
-                        {timeAgo(item.date)}
-                      </Typography>
+                        animation="wave"
+                      />
                     </Box>
-
-                    <Typography
+                    <Skeleton
+                      variant="rounded"
+                      sx={{ fontSize: "17px", width: "100%" }}
+                      animation="wave"
+                    />
+                  </Box>
+                </Box>
+              ))
+            : followLists.map((item: User, index: number) => (
+                <Box key={index}>
+                  <ListItem disablePadding>
+                    <ListItemButton
                       sx={{
-                        fontSize: "15px",
-                        color: "#555555",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        fontWeight:
+                        color: "black",
+                        height: "70px",
+                        padding: "0",
+                        alignItems: "start",
+                        paddingLeft: "10px",
+                        paddingRight: "20px",
+                        paddingTop: "10px",
+                        backgroundColor:
                           selectedChatFriendItem &&
                           item.id === selectedChatFriendItem.id
-                            ? "500"
-                            : "400",
+                            ? "#DFE0E0"
+                            : "white",
                       }}
+                      onClick={() => handleSelect(item)}
                     >
-                      {item.text}
-                    </Typography>
-                  </Box>
-                </ListItemButton>
-              </ListItem>
-            </Box>
-          ))}
+                      <Box
+                        sx={{
+                          borderRadius: "50%",
+                          padding: "0 10px",
+                        }}
+                      >
+                        <Avatar
+                          alt={item.username}
+                          src={item.profile_img || "/icons/user-3296"}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          width: "calc(100% - 60px)",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: "16px",
+                              color: "black",
+                              flex: 1,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              paddingBottom: "5px",
+                              fontWeight:
+                                selectedChatFriendItem &&
+                                item.id === selectedChatFriendItem.id
+                                  ? "600"
+                                  : "400",
+                            }}
+                          >
+                            {item.username}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "12px",
+                              color: "#9595AF",
+                            }}
+                          >
+                            {timeAgo(new Date(item.create_at))}
+                          </Typography>
+                        </Box>
+
+                        <Typography
+                          sx={{
+                            fontSize: "15px",
+                            color: "#555555",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            fontWeight:
+                              selectedChatFriendItem &&
+                              item.id === selectedChatFriendItem.id
+                                ? "500"
+                                : "400",
+                          }}
+                        >
+                          {"Hello world"}
+                        </Typography>
+                      </Box>
+                    </ListItemButton>
+                  </ListItem>
+                </Box>
+              ))}
         </List>
       </Box>
     </Box>

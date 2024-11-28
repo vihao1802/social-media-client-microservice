@@ -12,6 +12,7 @@ import {
   Divider,
   Collapse,
   Fade,
+  Skeleton,
 } from "@mui/material";
 import { Dancing_Script } from "next/font/google";
 import dynamic from "next/dynamic";
@@ -45,7 +46,7 @@ const LeftSideBar = () => {
   const pathname = usePathname();
 
   const { setIsLoadingProgress } = useContext(ProgressBarContext);
-  const { logout } = useAuthenticatedUser();
+  const { logout, user } = useAuthenticatedUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClickMenuMore = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -227,45 +228,62 @@ const LeftSideBar = () => {
             </List>
 
             <List>
-              <Link href="/profile/1">
-                <ListItem>
-                  <ListItemButton
-                    sx={
-                      openleftSideBar
-                        ? {
-                            "&:hover": {
-                              cursor: "pointer",
-                            },
-                            padding: "10px 12px",
-                            borderRadius: "7px",
+              {user && (
+                <Link href={`/profile/${user.id}`}>
+                  <ListItem>
+                    <ListItemButton
+                      sx={
+                        openleftSideBar
+                          ? {
+                              "&:hover": {
+                                cursor: "pointer",
+                              },
+                              padding: "10px 12px",
+                              borderRadius: "7px",
+                            }
+                          : {
+                              "&:hover": {
+                                cursor: "pointer",
+                              },
+                              padding: "10px 12px",
+                              borderRadius: "7px",
+                              height: "52px",
+                            }
+                      }
+                      // selected={selectedIndex === 1}
+                      onClick={() => {
+                        setOpenLeftSideBar(true);
+                        setOpenSearch(false);
+                        setOpenNotification(false);
+                      }}
+                    >
+                      <ListItemIcon>
+                        <OnlineAvatar
+                          imgURL={user.profile_img || "/icons/person.png"}
+                          height={25}
+                          width={25}
+                          isSelected={pathname.includes("/profile/")}
+                        />
+                      </ListItemIcon>
+                      {openleftSideBar && (
+                        <ListItemText
+                          primary={
+                            <Typography
+                              sx={{
+                                fontWeight: pathname.includes("/profile/")
+                                  ? "bold"
+                                  : "normal",
+                              }}
+                            >
+                              {user.username}
+                            </Typography>
                           }
-                        : {
-                            "&:hover": {
-                              cursor: "pointer",
-                            },
-                            padding: "10px 12px",
-                            borderRadius: "7px",
-                            height: "52px",
-                          }
-                    }
-                    // selected={selectedIndex === 1}
-                    onClick={() => {
-                      setOpenLeftSideBar(true);
-                      setOpenSearch(false);
-                      setOpenNotification(false);
-                    }}
-                  >
-                    <ListItemIcon>
-                      <OnlineAvatar
-                        imgURL="https://material-ui.com/static/images/avatar/1.jpg"
-                        height={25}
-                        width={25}
-                      />
-                    </ListItemIcon>
-                    {openleftSideBar && <ListItemText primary="Profile" />}
-                  </ListItemButton>
-                </ListItem>
-              </Link>
+                        />
+                      )}
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              )}
 
               <ListItem>
                 <ListItemButton
