@@ -5,6 +5,7 @@ import StreamVideoProvider from "@/providers/StreamClientProvider";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Box, LinearProgress } from "@mui/material";
 import { createContext, useState } from "react";
+import AuthProvider from "@/providers/AuthProvider";
 
 export const ProgressBarContext = createContext<{
   isLoadingProgress: boolean;
@@ -41,12 +42,14 @@ export default function RootLayout({
         value={{ isLoadingProgress, setIsLoadingProgress }}
       >
         <AppRouterCacheProvider>
-          <StreamVideoProvider>
-            <div className="flex flex-row">
-              <LeftSideBar />
-              {children}
-            </div>
-          </StreamVideoProvider>
+          <AuthProvider>
+            <StreamVideoProvider>
+              <div className="flex flex-row">
+                <LeftSideBar />
+                {children}
+              </div>
+            </StreamVideoProvider>
+          </AuthProvider>
         </AppRouterCacheProvider>
       </ProgressBarContext.Provider>
     </div>
