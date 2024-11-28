@@ -25,21 +25,39 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import GradientCircularProgress from "../shared/Loader";
 import { PostContext } from "@/context/post-context";
-
-// Kích hoạt plugin
-dayjs.extend(relativeTime);
+import { AvatarGroup } from "@mui/material";
+import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
+import { getUserId_Cookie } from "@/utils/handleCookies";
+import { PostViewer } from "@/models/post-viewer";
+import { FavoriteRounded } from "@mui/icons-material";
 
 export default function PostComponent() {
+  const userId = getUserId_Cookie();
+
   const { post } = useContext(PostContext);
   const [openComment, setOpenComment] = useState(false);
 
   if (!post) return null;
 
+  const { data: postViewerData, isLoading: isPostViewerDataLoading } =
+    useGetPostViewerByPostId({ postId: post.id });
+
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: post.id });
 
-  if (isMediaContentDataLoading) return <GradientCircularProgress />;
+  if (
+    isMediaContentDataLoading ||
+    !mediaContentData ||
+    isPostViewerDataLoading ||
+    !postViewerData
+  )
+    return <GradientCircularProgress />;
 
+  dayjs.extend(relativeTime);
+
+  const isLiked = postViewerData.items.some(
+    (item: PostViewer) => item.userId === userId
+  );
   return (
     <>
       <Card variant="outlined" sx={{ minWidth: 300 }}>
@@ -138,7 +156,15 @@ export default function PostComponent() {
         >
           <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
             <IconButton variant="plain" color="neutral" size="sm">
-              <FavoriteBorder />
+              {isLiked ? (
+                <FavoriteRounded
+                  sx={{
+                    color: "red",
+                  }}
+                />
+              ) : (
+                <FavoriteBorder />
+              )}
             </IconButton>
             <IconButton
               variant="plain"
@@ -194,7 +220,7 @@ export default function PostComponent() {
             underline="none"
             sx={{ fontSize: "12px", color: "text.tertiary", my: 0.5 }}
           >
-            {dayjs(post.created_at).fromNow()}
+            {dayjs(post.create_at).fromNow()}
           </Link>
         </CardContent>
         <CardContent orientation="horizontal" sx={{ gap: 1 }}>

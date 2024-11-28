@@ -143,8 +143,7 @@ export default function Home() {
           .filter((post) => post.is_story === false)
           .sort(
             (a: Post, b: Post) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
+              new Date(b.create_at).getTime() - new Date(a.create_at).getTime()
           )
           .map((post: Post, index: number) => (
             <PostContext.Provider

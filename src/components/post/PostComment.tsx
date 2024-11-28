@@ -31,9 +31,12 @@ import { Post } from "@/models/post";
 import { PostContext } from "@/context/post-context";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
+import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
+import GradientCircularProgress from "../shared/Loader";
+import { Comment } from "@/models/comment";
 
 // Kích hoạt plugin
-dayjs.extend(relativeTime);
+
 const postImages = [postImg, postImg1, postImg2, postImg3];
 
 const PostComment = ({
@@ -46,6 +49,11 @@ const PostComment = ({
   handleClose: () => void;
 }) => {
   const { post } = useContext(PostContext);
+  const { data: commentData, isLoading: isCommentDataLoading } =
+    useGetCommentByPostId({ postId: post?.id ?? 0 });
+
+  if (isCommentDataLoading) return <GradientCircularProgress />;
+  dayjs.extend(relativeTime);
 
   return (
     <Modal
@@ -121,342 +129,106 @@ const PostComment = ({
               "::-webkit-scrollbar": { width: 0 },
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
+            {commentData.items.length > 0 ? (
+              commentData.items.map((comment: Comment, index: number) => (
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
+                    alignItems: "start",
                   }}
+                  key={index}
                 >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
+                  <Box width="10%">
+                    <Link href={`/profile/${comment.user.id}`}>
+                      <Avatar
+                        src={comment.user.profile_img}
+                        sx={{ height: "32px", width: "32px" }}
+                      />
+                    </Link>
+                  </Box>
 
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
+                  <Box
+                    sx={{
+                      width: "90%",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Box
                       sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                        backgroundColor: "#f0f2f5",
+                        padding: "10px",
+                        borderRadius: "10px",
                       }}
                     >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
+                      <Link href={`/profile/${comment.user.id}`}>
+                        <Typography
+                          sx={{
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                            ":hover": { color: "#858585" },
+                          }}
+                        >
+                          {comment.user.username}
+                        </Typography>
+                      </Link>
+                      <Typography sx={{ fontSize: "14px" }}>
+                        {comment.content}
+                      </Typography>
+                    </Box>
+                    <Box
                       sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "10px",
+                        alignItems: "center",
+                        marginTop: "5px",
                       }}
                     >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
+                      <Typography sx={{ fontSize: "12px", color: "#858585" }}>
+                        {dayjs(comment.createdAt).fromNow()}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "12px",
+                          color: "#858585",
+                          ":hover": { color: "#000", cursor: "pointer" },
+                        }}
+                      >
+                        Reply
+                      </Typography>
+                      <IconButton
+                        sx={{
+                          height: "20px",
+                          width: "20px",
+                        }}
+                      >
+                        <FavoriteBorderOutlined
+                          sx={{ color: "#858585", fontSize: "13px" }}
+                        />
+                      </IconButton>
+                    </Box>
+                  </Box>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
+              ))
+            ) : (
               <Box
                 sx={{
-                  width: "90%",
                   display: "flex",
-                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  fontSize: "18px",
+                  color: "darkgray",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
+                No comment
               </Box>
-            </Box>
+            )}
           </Box>
 
           {/* Comment Action */}
@@ -492,7 +264,7 @@ const PostComment = ({
                 {post?.postReactions} likes
               </Typography>
               <Typography sx={{ fontSize: "12px", color: "#858585 " }}>
-                {dayjs(post?.created_at).fromNow()}
+                {dayjs(post?.create_at).fromNow()}
               </Typography>
             </Box>
           </Box>

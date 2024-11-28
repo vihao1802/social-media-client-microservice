@@ -3,15 +3,19 @@ import { Box, Avatar, Typography } from "@mui/material";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-interface User {
-  userId: number;
-  name: string;
+interface StoryCircleProps {
+  userId: string;
   nickName: string;
-  followers?: number;
   avatar: string;
+  activeIndex: number;
 }
 
-const StoryCircle = ({ userId, name, nickName, followers, avatar }: User) => {
+const StoryCircle = ({
+  userId,
+  nickName,
+  avatar,
+  activeIndex,
+}: StoryCircleProps) => {
   const router = useRouter();
   return (
     <Box
@@ -23,7 +27,7 @@ const StoryCircle = ({ userId, name, nickName, followers, avatar }: User) => {
         justifyContent: "center",
         position: "relative",
       }}
-      onClick={() => router.push("/stories")}
+      onClick={() => router.push("/stories?active-index=" + activeIndex)}
     >
       <Box
         sx={{
