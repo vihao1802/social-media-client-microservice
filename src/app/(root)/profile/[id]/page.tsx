@@ -1,8 +1,20 @@
+"use client";
 import { Box, Button, Typography } from "@mui/material";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
+import { useGetUserById } from "@/hooks/user/useGetUserById";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { Fragment } from "react";
 
-const Profile = ({ params: { id } }: { params: { id: string } }) => {
+const Profile = () => {
+  const { id } = useParams<{ id: string }>();
+  const { data: user } = useGetUserById({ id });
+  const { user: currentUser } = useAuthenticatedUser();
+  const router = useRouter();
+
+  if (!user) return null;
+
   return (
     <Box
       sx={{
@@ -36,21 +48,21 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
             sx={{
               maxHeight: "150px",
               maxWidth: "150px",
+              flex: "1",
             }}
           >
-            <Box
-              component="img"
-              src="https://demo.foxthemes.net/instello/assets/images/avatars/avatar-6.jpg"
-              sx={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                padding: "3px",
-                objectFit: "cover",
-                background:
-                  "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)",
-              }}
-            />
+            {user && (
+              <Box
+                component="img"
+                src={user.profile_img || "/icons/user.png"}
+                sx={{
+                  width: "150px",
+                  height: "150px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            )}
           </Box>
           <Box
             sx={{
@@ -62,13 +74,39 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
           >
             <Box
               sx={{
-                // padding: "0 30px",
                 "& > * + *": {
                   marginTop: "20px",
                 },
               }}
             >
-              <Typography fontSize="20px">Monroe Parker</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: { xs: "flex-start", md: "center" },
+                  flexDirection: {
+                    xs: "column",
+                    md: "row",
+                  },
+                  gap: "20px",
+                }}
+              >
+                <Typography fontSize="20px" fontWeight="normal">
+                  {user.username}
+                </Typography>
+                <Button
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#e7e7e7",
+                    color: "black",
+                    ":hover": {
+                      backgroundColor: "lightgray",
+                    },
+                  }}
+                  onClick={() => router.push("/profile/edit")}
+                >
+                  Edit Profile
+                </Button>
+              </Box>
               <Box>
                 <Typography
                   sx={{
@@ -76,10 +114,7 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
                     fontSize: "15px",
                   }}
                 >
-                  I love beauty and emotion. 🥰 I’m passionate about photography
-                  and learning. 📚 I explore genres and styles. 🌈 I think
-                  photography is storytelling. 📖 I hope you like and feel my
-                  photos. 😊
+                  {user.bio}
                 </Typography>
               </Box>
               <Box
@@ -110,7 +145,7 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
                       alignItems: "center",
                     }}
                   >
-                    <Typography>Posts</Typography>
+                    <Typography sx={{ color: "GrayText" }}>Posts</Typography>
                     <Typography
                       sx={{
                         fontWeight: "700",
@@ -127,7 +162,9 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
                       alignItems: "center",
                     }}
                   >
-                    <Typography>Following</Typography>
+                    <Typography sx={{ color: "GrayText" }}>
+                      Following
+                    </Typography>
                     <Typography
                       sx={{
                         fontWeight: "700",
@@ -144,7 +181,9 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
                       alignItems: "center",
                     }}
                   >
-                    <Typography>Followers</Typography>
+                    <Typography sx={{ color: "GrayText" }}>
+                      Followers
+                    </Typography>
                     <Typography
                       sx={{
                         fontWeight: "700",
@@ -162,28 +201,32 @@ const Profile = ({ params: { id } }: { params: { id: string } }) => {
                     height: "40px",
                   }}
                 >
-                  <Button
-                    sx={{
-                      textTransform: "none",
-                      ":hover": {
-                        backgroundColor: "lightcyan",
-                      },
-                    }}
-                  >
-                    Unfollow
-                  </Button>
-                  <Button
-                    sx={{
-                      textTransform: "none",
-                      backgroundColor: "var(--buttonColor)",
-                      color: "white",
-                      ":hover": {
-                        backgroundColor: "var(--buttonHoverColor)",
-                      },
-                    }}
-                  >
-                    Message
-                  </Button>
+                  {currentUser && user && currentUser.id !== user.id && (
+                    <Fragment>
+                      <Button
+                        sx={{
+                          textTransform: "none",
+                          ":hover": {
+                            backgroundColor: "lightcyan",
+                          },
+                        }}
+                      >
+                        Unfollow
+                      </Button>
+                      <Button
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "var(--buttonColor)",
+                          color: "white",
+                          ":hover": {
+                            backgroundColor: "var(--buttonHoverColor)",
+                          },
+                        }}
+                      >
+                        Message
+                      </Button>
+                    </Fragment>
+                  )}
                 </Box>
               </Box>
             </Box>

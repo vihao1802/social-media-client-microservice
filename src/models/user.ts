@@ -1,14 +1,17 @@
 export interface UserBase {
-  userName: string;
+  username: string;
   email: string;
   gender: boolean;
-  dayOfBirth: string;
+  date_of_birth: string;
+  id: string;
+  bio: string;
+  profile_img: string;
+  phoneNumber: string;
 }
 
 export interface User extends UserBase {
-  id: string;
+  create_at: string;
+  relationshipId?: number;
 }
 
-export interface UserRequest extends UserBase {
-  password: string;
-}
+export interface UpdateUserRequest extends UserBase {}

@@ -3,7 +3,7 @@
 import { Box, CircularProgress } from "@mui/material";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import React, { useEffect, useState } from "react";
-import { useGetCallById } from "@/hooks/useGetCallById";
+import { useGetCallById } from "@/hooks/stream/useGetCallById";
 import CallVideo from "@/components/call/CallVideo";
 import CallVideoSetup from "@/components/call/CallVideoSetup";
 

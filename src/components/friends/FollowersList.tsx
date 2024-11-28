@@ -1,7 +1,17 @@
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Avatar, Box, Button, Link, Typography } from "@mui/material";
 import AvatarName from "../shared/AvatarName";
+import { useGetRelationshipMeFollower } from "@/hooks/relationship/useGetRelationshipMeFollower";
+import GradientCircularProgress from "../shared/Loader";
+import { RelationshipStatus } from "@/types/enum";
 
 const FollowersList = () => {
+  const { data: relationshipMeFollower, isLoading } =
+    useGetRelationshipMeFollower({});
+
+  // if (!relationshipMeFollower) return null;
+
+  //Array.from(new Array(15)).map((item, index) => (
+
   return (
     <Box
       sx={{
@@ -15,74 +25,95 @@ const FollowersList = () => {
         gap: "15px",
       }}
     >
-      {Array.from(new Array(15)).map((item, index) => (
+      {!relationshipMeFollower ? (
         <Box
-          key={index}
           sx={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: "20px 15px",
-            gap: "15px",
+            justifyContent: "center",
             alignItems: "center",
-            border: "2px solid #e3e3e3",
-            borderRadius: "10px",
           }}
         >
-          <AvatarName name="Nguyen Van A" />
+          <GradientCircularProgress />
+        </Box>
+      ) : (
+        relationshipMeFollower.map((item, index) => (
           <Box
+            key={index}
             sx={{
               display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              marginRight: "auto",
-              width: "100%",
-              maxWidth: {
-                sm: "200px",
-                md: "400px",
-                // lg: "250px",
-                xl: "150px",
-              },
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: "20px 15px",
+              gap: "15px",
+              alignItems: "center",
+              border: "2px solid #e3e3e3",
+              borderRadius: "10px",
             }}
           >
-            <Link href="/" underline="none" color="black">
-              <Typography
-                sx={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  width: "100%",
-                  fontSize: "15px",
-                }}
-              >
-                Nguyen Van A Nguyen Van ANguyen Van A Nguyen Van A
-              </Typography>
-            </Link>
-            <Typography
+            <Avatar
+              alt={item.sender.username}
+              src={item.sender.profile_img || "/icons/user-3296"}
+            />
+            <Box
               sx={{
-                color: "gray",
-                fontSize: "13px",
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+                marginRight: "auto",
+                width: "100%",
+                maxWidth: {
+                  sm: "200px",
+                  md: "400px",
+                  // lg: "250px",
+                  xl: "150px",
+                },
               }}
             >
-              123 followers
-            </Typography>
+              <Link
+                href={`profile/${item.senderId}`}
+                underline="none"
+                color="black"
+              >
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    width: "100%",
+                    fontSize: "15px",
+                  }}
+                >
+                  {item.sender.username}
+                </Typography>
+              </Link>
+              <Typography
+                sx={{
+                  color: "gray",
+                  fontSize: "13px",
+                }}
+              >
+                {item.sender.email}
+              </Typography>
+            </Box>
+            {item.status !== RelationshipStatus.Accepted && (
+              <Button
+                sx={{
+                  backgroundColor: "var(--buttonColor)",
+                  color: "white",
+                  height: "30px",
+                  fontSize: "12px",
+                  textTransform: "none",
+                  ":hover": {
+                    backgroundColor: "var(--buttonHoverColor)",
+                  },
+                }}
+              >
+                Accept
+              </Button>
+            )}
           </Box>
-          <Button
-            sx={{
-              backgroundColor: "var(--buttonColor)",
-              color: "white",
-              height: "30px",
-              fontSize: "12px",
-              textTransform: "none",
-              ":hover": {
-                backgroundColor: "var(--buttonHoverColor)",
-              },
-            }}
-          >
-            Follow
-          </Button>
-        </Box>
-      ))}
+        ))
+      )}
     </Box>
   );
 };

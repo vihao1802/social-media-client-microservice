@@ -1,5 +1,4 @@
-import { Box, Drawer, IconButton, TextField } from "@mui/material";
-import AvatarName from "@/components/shared/AvatarName";
+import { Avatar, Box, IconButton, TextField } from "@mui/material";
 import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import {
@@ -9,138 +8,86 @@ import {
 } from "@mui/icons-material";
 import FlexBetween from "../shared/FlexBetween";
 import { useEffect, useRef, useState } from "react";
-import { Friends } from "@/types";
+import { useParams, useSearchParams } from "next/navigation";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { usePostMessage } from "@/hooks/message/usePostMessage";
+import { Message } from "@/models/message";
+import { messageApi } from "@/api/message";
 
-interface IMessage {
-  id: number;
-  senderName: string;
-  position: "left" | "right"; // Limit the position to 'left' or 'right'
-  sentDate: Date;
-  content: string;
-}
-
-const messageData: IMessage[] = [
-  {
-    id: 1,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:00:00"),
-    content: "Hey, how are you?",
-  },
-  {
-    id: 2,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:01:00"),
-    content: "I'm good! How about you?",
-  },
-  {
-    id: 3,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:02:30"),
-    content: "Doing well, thanks!",
-  },
-  {
-    id: 4,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:03:00"),
-    content: "What's up today?",
-  },
-  {
-    id: 5,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:04:00"),
-    content: "Just working on some stuff.",
-  },
-  {
-    id: 6,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:05:00"),
-    content: "Same here, busy day.",
-  },
-  {
-    id: 7,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:06:00"),
-    content:
-      "Looking forward to the weekend! Looking forward to the weekend! Looking forward to the weekend! Looking forward to the weekend! Looking forward to the weekend!",
-  },
-  {
-    id: 8,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:07:00"),
-    content: "Me too! Any plans?",
-  },
-  {
-    id: 9,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:08:00"),
-    content: "Just relaxing, maybe some hiking.",
-  },
-  {
-    id: 10,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:09:00"),
-    content: "Sounds great! Enjoy!",
-  },
-  {
-    id: 11,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:08:00"),
-    content: "Just relaxing, maybe some hiking.",
-  },
-  {
-    id: 12,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:09:00"),
-    content: "Sounds great! Enjoy!",
-  },
-  {
-    id: 13,
-    senderName: "Alice",
-    position: "left",
-    sentDate: new Date("2023-09-01T10:08:00"),
-    content: "Just relaxing, maybe some hiking.",
-  },
-  {
-    id: 14,
-    senderName: "Bob",
-    position: "right",
-    sentDate: new Date("2023-09-01T10:09:00"),
-    content: "Sounds great! Enjoy!",
-  },
-];
-
-interface RightListContentMessagesProps {
-  chatFriendItem: Friends | null;
-}
-
-const RightListContentMessages = ({
-  chatFriendItem,
-}: RightListContentMessagesProps) => {
+const RightListContentMessages = () => {
+  const { user } = useAuthenticatedUser();
   const [messageTextField, setMessageTextField] = useState("");
   const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
   const [hasImage, setHasImage] = useState(false);
   const [photoSrc, setPhotoSrc] = useState("");
-
+  const [messageList, setMessageList] = useState<Message[]>([]);
   const boxRef = useRef<HTMLDivElement>(null);
+  const webSocket = useRef<WebSocket | null>(null);
+
+  // Get the user ID from the URL
+  const searchParams = useSearchParams();
+  const receivedUserId = searchParams.get("u_id");
+  const { id } = useParams<{ id: string }>();
+
+  if (!id || !receivedUserId || !user) return null;
+
+  const { createMessage } = usePostMessage();
+
+  // Fetch initial messages
+  const fetchMessages = async () => {
+    try {
+      const res = await messageApi.getMessageByRelationshipId(id);
+      setMessageList(res.data);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+    }
+  };
+
+  // web socket
+  useEffect(() => {
+    fetchMessages();
+    // Connect to WebSocket
+    const url = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/messenge`; // WebSocket URL
+    const ws = new WebSocket(url);
+    console.log("connecting to " + url);
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      fetchMessages();
+      const scrollContainer = boxRef.current;
+      if (scrollContainer)
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    if (webSocket) webSocket.current = ws;
+
+    // Clean up WebSocket connection
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const scrollContainer = boxRef.current;
     if (scrollContainer) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
-  }, [chatFriendItem]);
+  }, [messageList]);
+
+  if (!messageList) return null;
 
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -173,6 +120,20 @@ const RightListContentMessages = ({
     setHasImage(false);
   };
 
+  const sendMessage = async () => {
+    if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+      await createMessage({
+        relationshipId: id,
+        content: messageTextField.trim(),
+        replyToId: "",
+      });
+      webSocket.current.send(JSON.stringify("send message"));
+      handleTextFieldChange({
+        target: { value: "" },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -201,7 +162,7 @@ const RightListContentMessages = ({
         }}
         // onScroll={handleOnScroll}
       >
-        {messageData.map((item: IMessage, index: number) => {
+        {messageList.map((item, index: number) => {
           return (
             <Box
               key={index}
@@ -211,24 +172,26 @@ const RightListContentMessages = ({
                 marginTop: "20px",
               }}
             >
-              {item.position === "left" && (
+              {item.senderId !== user.id && (
                 <Box>
-                  <AvatarName name={item.senderName} />
+                  <Avatar src={item.sender.profile_img} />
                 </Box>
               )}
 
               <MessageBox
                 id={index}
-                position={item.position}
+                position={item.senderId === user.id ? "right" : "left"}
                 type={"text"}
                 focus
-                title={""}
+                title={
+                  item.senderId === user.id ? "You" : item.receiver.username
+                }
                 text={item.content}
-                date={item.sentDate}
+                date={new Date(item.sent_at)}
                 titleColor="blue"
                 forwarded={false}
                 status="sent"
-                replyButton={item.position === "left"}
+                replyButton={item.senderId !== user.id}
                 removeButton={false}
                 notch
                 retracted={false}
@@ -289,7 +252,7 @@ const RightListContentMessages = ({
                 return;
               } else if (event.key === "Enter" && messageText !== "") {
                 event.preventDefault(); // Prevent new line
-                // handleSendMessageTF(); // Call your send message function here
+                sendMessage(); // Call your send message function here
               } else if (event.key === "Enter" && messageText === "") {
                 event.preventDefault(); // Prevent new line
               }
@@ -346,7 +309,7 @@ const RightListContentMessages = ({
                 color: "black",
               },
             }}
-            // onClick={handleSendMessageTF}
+            onClick={sendMessage}
           >
             <SendRounded id="send-message-button-icon" />
           </IconButton>
