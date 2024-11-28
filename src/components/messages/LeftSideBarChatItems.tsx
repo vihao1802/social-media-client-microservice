@@ -8,80 +8,31 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import AvatarName from "../shared/AvatarName";
-import { useEffect, useState } from "react";
-import { Friends } from "@/types";
-import { useRouter } from "next/navigation";
-import { useGetRelationshipMeFollowing } from "@/hooks/relationship/useGetRelationshipMeFollowing";
-import { useGetRelationshipMeFollower } from "@/hooks/relationship/useGetRelationshipMeFollower";
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "@/models/user";
-import { list } from "postcss";
-import { RelationshipStatus } from "@/types/enum";
+import { useGetPersonalMessenger } from "@/hooks/relationship/useGetPersonalMessenger";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const leftBarWidth = "350px";
-
-function timeAgo(itemDate: Date): string {
-  const now = new Date();
-  const diffInMs = now.getTime() - itemDate.getTime();
-  const diffInSeconds = Math.floor(diffInMs / 1000);
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
-  const diffInMonths = Math.floor(diffInDays / 30);
-  const diffInYears = Math.floor(diffInDays / 365);
-
-  if (diffInSeconds < 60) {
-    return `${diffInSeconds} second${diffInSeconds === 1 ? "" : "s"} ago`;
-  } else if (diffInMinutes < 60) {
-    return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
-  } else if (diffInHours < 24) {
-    return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
-  } else if (diffInDays < 30) {
-    return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
-  } else if (diffInMonths < 12) {
-    return `${diffInMonths} month${diffInMonths === 1 ? "" : "s"} ago`;
-  } else {
-    return `${diffInYears} year${diffInYears === 1 ? "" : "s"} ago`;
-  }
-}
 
 const LeftSideBarMessages = () => {
   const [selectedChatFriendItem, setSelectedChatFriendItem] =
     useState<User | null>(null);
   const router = useRouter();
-  const [loadingData, setLoadingData] = useState(true);
-  const [followLists, setFollowLists] = useState<User[]>([]);
-  const handleSelect = (user: User) => {
+  const handleSelect = (user: User, relationshipId: string) => {
     console.log(user);
 
     setSelectedChatFriendItem(user);
-    // onChatFriendItemSelect(data);
-    router.push(`/messages/${user.relationshipId}?u_id=${user.id}`);
+    router.push(`/messages/${relationshipId}?u_id=${user.id}`);
   };
+  const searchParams = useSearchParams();
+  const u_id = searchParams.get("u_id");
 
-  const { data: relationshipMeFollowing } = useGetRelationshipMeFollowing({});
-  const { data: relationshipMeFollower } = useGetRelationshipMeFollower({});
-
-  useEffect(() => {
-    setLoadingData(true);
-    console.log({ followLists });
-
-    if (relationshipMeFollowing && relationshipMeFollower) {
-      let list: User[] = [];
-      relationshipMeFollowing.forEach((item) => {
-        const user = item.receiver;
-        if (item.status === RelationshipStatus.Accepted)
-          list.push({ ...user, relationshipId: item.id });
-      });
-      relationshipMeFollower.forEach((item) => {
-        const user = item.sender;
-        if (item.status === RelationshipStatus.Accepted)
-          list.push({ ...user, relationshipId: item.id });
-      });
-      setFollowLists(list);
-    }
-    setLoadingData(false);
-  }, [relationshipMeFollowing, relationshipMeFollower]);
+  const { data: personalMessengers, isLoading } = useGetPersonalMessenger({});
 
   return (
     <Box
@@ -131,7 +82,7 @@ const LeftSideBarMessages = () => {
           }}
         >
           {/* Chat Items Skeleton */}
-          {loadingData
+          {isLoading || !personalMessengers
             ? Array.from(new Array(8)).map((item, index) => (
                 <Box
                   key={index}
@@ -191,7 +142,7 @@ const LeftSideBarMessages = () => {
                   </Box>
                 </Box>
               ))
-            : followLists.map((item: User, index: number) => (
+            : personalMessengers.map((item, index: number) => (
                 <Box key={index}>
                   <ListItem disablePadding>
                     <ListItemButton
@@ -204,12 +155,13 @@ const LeftSideBarMessages = () => {
                         paddingRight: "20px",
                         paddingTop: "10px",
                         backgroundColor:
-                          selectedChatFriendItem &&
-                          item.id === selectedChatFriendItem.id
+                          u_id && item.messenger.id === u_id
                             ? "#DFE0E0"
                             : "white",
                       }}
-                      onClick={() => handleSelect(item)}
+                      onClick={() =>
+                        handleSelect(item.messenger, item.relationshipId)
+                      }
                     >
                       <Box
                         sx={{
@@ -218,8 +170,8 @@ const LeftSideBarMessages = () => {
                         }}
                       >
                         <Avatar
-                          alt={item.username}
-                          src={item.profile_img || "/icons/user-3296"}
+                          alt={item.messenger.username}
+                          src={item.messenger.profile_img || "/icons/user.png"}
                         />
                       </Box>
                       <Box
@@ -244,14 +196,10 @@ const LeftSideBarMessages = () => {
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               paddingBottom: "5px",
-                              fontWeight:
-                                selectedChatFriendItem &&
-                                item.id === selectedChatFriendItem.id
-                                  ? "600"
-                                  : "400",
+                              fontWeight: "400",
                             }}
                           >
-                            {item.username}
+                            {item.messenger.username}
                           </Typography>
                           <Typography
                             sx={{
@@ -259,7 +207,8 @@ const LeftSideBarMessages = () => {
                               color: "#9595AF",
                             }}
                           >
-                            {timeAgo(new Date(item.create_at))}
+                            {item.message_created_at &&
+                              dayjs(item.message_created_at).fromNow()}
                           </Typography>
                         </Box>
 
@@ -270,14 +219,15 @@ const LeftSideBarMessages = () => {
                             whiteSpace: "nowrap",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
-                            fontWeight:
-                              selectedChatFriendItem &&
-                              item.id === selectedChatFriendItem.id
-                                ? "500"
-                                : "400",
+                            fontWeight: "400",
                           }}
                         >
-                          {"Hello world"}
+                          {item.senderId &&
+                            item.senderId !== item.messenger.id &&
+                            "You: "}
+                          {item.latest_message
+                            ? item.latest_message
+                            : "You can chat now"}
                         </Typography>
                       </Box>
                     </ListItemButton>
