@@ -7,34 +7,36 @@ import {
   IconButton,
   InputBase,
   Modal,
-  TextField,
   Typography,
 } from "@mui/material";
 import {
   MoreHorizRounded,
-  FavoriteBorderOutlined,
   FavoriteBorderRounded,
   SendOutlined,
   BookmarkBorderRounded,
-  KeyboardArrowLeftRounded,
-  KeyboardArrowRightRounded,
+  FavoriteRounded,
+  FavoriteBorderOutlined,
 } from "@mui/icons-material";
-import React, { useContext, useRef, useState } from "react";
-import postImg from "@/assets/images/post-img.jpg";
-import postImg1 from "@/assets/images/post-img1.jpg";
-import postImg2 from "@/assets/images/post-img2.jpg";
-import postImg3 from "@/assets/images/post-img3.jpg";
-import Link from "next/link";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ImageSwiper from "../post/ImageSwiper";
 import { MediaContent } from "@/models/media-content";
-import { Post } from "@/models/post";
 import { PostContext } from "@/context/post-context";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
+import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
+import GradientCircularProgress from "../shared/Loader";
+import { Comment, GroupComment } from "@/models/comment";
+import GroupCommentComponent from "./GroupComment";
+import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
+import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
+import { getUserId_Cookie } from "@/utils/handleCookies";
+import { usePostComment } from "@/hooks/comment/usePostComment";
+import toast from "react-hot-toast";
+import { CommentContext } from "@/context/comment-context";
+import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
+import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
 
 // Kích hoạt plugin
-dayjs.extend(relativeTime);
-const postImages = [postImg, postImg1, postImg2, postImg3];
 
 const PostComment = ({
   isOpen,
@@ -45,7 +47,113 @@ const PostComment = ({
   postMedia: MediaContent[];
   handleClose: () => void;
 }) => {
+  const userId = getUserId_Cookie();
   const { post } = useContext(PostContext);
+  const { data: commentData, isLoading: isCommentDataLoading } =
+    useGetCommentByPostId({ postId: post?.id ?? 0 });
+
+  const { data: postViewerData, isLoading: isPostViewerDataLoading } =
+    useGetPostViewerByPostId({ postId: post?.id ?? 0 });
+
+  const [commentContent, setCommentContent] = useState("");
+  const [parentCommentId, setParentCommentId] = useState<number | null>(null);
+  const createComment = usePostComment();
+  const handleClickComment = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (post === null) {
+      toast.error("Post not found!");
+      return;
+    }
+    const commentData = new FormData();
+    commentData.append("content", commentContent);
+    commentData.append("postId", String(post.id));
+    commentData.append("userId", String(userId));
+    if (parentCommentId) {
+      console.log(parentCommentId);
+
+      commentData.append("parentCommentId", String(parentCommentId));
+    }
+    await createComment(commentData);
+    toast.success("Commented successfully!");
+    setCommentContent("");
+    setParentCommentId(null);
+  };
+
+  const [postViewerId, setPostViewerId] = useState(0);
+  const createPostViewer = useCreatePostViewer();
+  const deletePostViewer = useDeletePostViewer();
+
+  useEffect(() => {
+    if (postViewerData) {
+      const postViewer = postViewerData.items.find(
+        (item: PostViewer) => item.userId === userId
+      );
+      if (postViewer) {
+        setPostViewerId(postViewer.id);
+      }
+    }
+  }, [postViewerData]);
+
+  if (
+    isCommentDataLoading ||
+    !commentData ||
+    isPostViewerDataLoading ||
+    !postViewerData
+  )
+    return <GradientCircularProgress />;
+  dayjs.extend(relativeTime);
+
+  const isLiked = postViewerData.items.some(
+    (item: PostViewer) => item.userId === userId
+  );
+
+  const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isLiked) {
+      if (postViewerId !== 0) {
+        await deletePostViewer(postViewerId);
+      } else {
+        toast.error("Post viewer not found!");
+        return null;
+      }
+    } else {
+      if (post === null || userId === null) {
+        toast.error("Post or user not found!");
+        return null;
+      }
+      const postViewerData: PostViewerRequest = {
+        postId: post.id,
+        userId: userId,
+        liked: true,
+      };
+      const postViewerResponse = await createPostViewer(postViewerData);
+      setPostViewerId(postViewerResponse.id);
+    }
+  };
+
+  // Nhóm các comment theo main comment và sub comment
+  const groupedComments = new Map();
+  commentData?.items.forEach((comment: Comment) => {
+    if (comment.parentComment === null) {
+      // Nếu là main comment, thêm vào map
+      groupedComments.set(comment.id, {
+        mainComment: comment,
+        subComments: [],
+      });
+    } else {
+      // Nếu là sub comment, thêm vào danh sách subComments của main comment tương ứng
+      const parentId = comment.parentComment.id;
+      if (!groupedComments.has(parentId)) {
+        groupedComments.set(parentId, { mainComment: null, subComments: [] });
+      }
+      groupedComments.get(parentId).subComments.push(comment);
+    }
+  });
+
+  // Chuyển map thành array và lọc bỏ các nhóm không có main comment
+  const commentList = Array.from(groupedComments.values()).filter(
+    (group) => group.mainComment !== null
+  );
 
   return (
     <Modal
@@ -110,354 +218,48 @@ const PostComment = ({
           </Box>
 
           {/* Show comment */}
-          <Box
-            sx={{
-              height: "calc(100% - 220px)",
-              overflowY: "scroll",
-              padding: "10px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "15px",
-              "::-webkit-scrollbar": { width: 0 },
+          <CommentContext.Provider
+            value={{
+              parentCommentId,
+              commentContent,
+              setParentCommentId,
+              setCommentContent,
             }}
           >
             <Box
               sx={{
+                height: "calc(100% - 220px)",
+                overflowY: "scroll",
+                padding: "10px",
                 display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
+                flexDirection: "column",
+                gap: "15px",
+                "::-webkit-scrollbar": { width: 0 },
               }}
             >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+              {commentList.length > 0 ? (
+                commentList.map((groupComment: GroupComment, index: number) => (
+                  <GroupCommentComponent
+                    key={index}
+                    groupComment={groupComment}
+                  />
+                ))
+              ) : (
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
+                    justifyContent: "center",
                     alignItems: "center",
-                    marginTop: "5px",
+                    height: "100%",
+                    fontSize: "18px",
+                    color: "darkgray",
                   }}
                 >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
+                  No comment
                 </Box>
-              </Box>
+              )}
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "start",
-              }}
-            >
-              <Box width="10%">
-                <Avatar
-                  src={postImg.src}
-                  sx={{ height: "32px", width: "32px" }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  width: "90%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    backgroundColor: "#f0f2f5",
-                    padding: "10px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Link href={""}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "bold",
-                        ":hover": { color: "#858585" },
-                      }}
-                    >
-                      User 1
-                    </Typography>
-                  </Link>
-                  <Typography sx={{ fontSize: "14px" }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Consectetur, at blanditiis? Nobis nam omnis totam,
-                    temporibus nostrum nesciunt corrupti impedit nulla
-                    exercitationem praesentium cumque, voluptates eum est ea,
-                    alias fugiat.
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "10px",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "12px", color: "#858585" }}>
-                    1d
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "12px",
-                      color: "#858585",
-                      ":hover": { color: "#000", cursor: "pointer" },
-                    }}
-                  >
-                    Reply
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      height: "20px",
-                      width: "20px",
-                    }}
-                  >
-                    <FavoriteBorderOutlined
-                      sx={{ color: "#858585", fontSize: "13px" }}
-                    />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
+          </CommentContext.Provider>
 
           {/* Comment Action */}
           <Box
@@ -475,8 +277,16 @@ const PostComment = ({
               }}
             >
               <Box>
-                <IconButton>
-                  <FavoriteBorderRounded />
+                <IconButton onClick={handleClickLike}>
+                  {isLiked ? (
+                    <FavoriteRounded
+                      sx={{
+                        color: "red",
+                      }}
+                    />
+                  ) : (
+                    <FavoriteBorderOutlined />
+                  )}
                 </IconButton>
                 <IconButton>
                   <SendOutlined />
@@ -489,10 +299,15 @@ const PostComment = ({
             </Box>
             <Box sx={{ padding: "0 20px" }}>
               <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                {post?.postReactions} likes
+                {
+                  postViewerData.items.filter(
+                    (postViewer: PostViewer) => postViewer.liked === true
+                  ).length
+                }{" "}
+                Likes
               </Typography>
               <Typography sx={{ fontSize: "12px", color: "#858585 " }}>
-                {dayjs(post?.created_at).fromNow()}
+                {dayjs(post?.create_at).fromNow()}
               </Typography>
             </Box>
           </Box>
@@ -511,6 +326,8 @@ const PostComment = ({
             <InputBase
               placeholder="Add comment..."
               sx={{ color: "black", flexGrow: 1, ml: 1 }}
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
             />
             <Button
               sx={{
@@ -520,6 +337,8 @@ const PostComment = ({
                 textTransform: "capitalize",
                 padding: "5px 10px",
               }}
+              disabled={!commentContent}
+              onClick={handleClickComment}
             >
               Post
             </Button>

@@ -15,44 +15,28 @@ import {
   FavoriteBorder,
   Send,
 } from "@mui/icons-material";
-import Image from "next/image";
+import { CldImage } from "next-cloudinary";
+import { Post } from "@/models/post";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
+import GradientCircularProgress from "../shared/Loader";
 
 interface StoryCardProps {
-  username: string;
-  avatar: string;
-  url: string;
-  time: string;
-  subtitles: string;
-  duration?: number;
+  story: Post;
+  progress: number;
+  paused: boolean;
+  setPaused: (paused: boolean) => void;
 }
 
-const StoryCard = ({
-  username,
-  avatar,
-  url,
-  time,
-  subtitles,
-  duration,
-}: StoryCardProps) => {
-  const [paused, setPaused] = useState(false);
+const StoryCard = ({ story, paused, progress, setPaused }: StoryCardProps) => {
   const [muted, setMuted] = useState(false);
-  const [progress, setProgress] = useState(0); // You can use this to simulate progress
 
-  // Increment progress over time
-  const storyDuration = duration || 0; // Story duration is 5 seconds in milliseconds (5000ms)
-  const updateInterval = 100; // Update every 100ms (0.1 second)
+  const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
+    useGetMediaContentByPostId({ postId: story.id });
 
-  useEffect(() => {
-    if (!paused && progress < 100) {
-      const increment = 100 / (storyDuration / updateInterval); // Calculate progress increment per 100ms
-      const id = setInterval(() => {
-        setProgress((prev) => Math.min(prev + increment, 100)); // Ensure progress doesn't exceed 100
-      }, updateInterval);
-
-      return () => clearInterval(id); // Clean up interval on unmount or when paused
-    }
-  }, [paused, progress]);
-
+  if (isMediaContentDataLoading) return <GradientCircularProgress />;
+  dayjs.extend(relativeTime);
   return (
     <Box
       sx={{
@@ -74,13 +58,17 @@ const StoryCard = ({
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar
-            src={avatar}
+            src={story.creator.profile_img}
             alt="User Avatar"
             sx={{ width: 32, height: 32, mr: 1 }}
           />
           <Box>
-            <Typography variant="subtitle2">{username}</Typography>
-            <Typography variant="caption">{time + "•" + subtitles}</Typography>
+            <Typography variant="subtitle2">
+              {story.creator.username}
+            </Typography>
+            <Typography variant="caption">
+              {dayjs(story.create_at).fromNow()}
+            </Typography>
           </Box>
         </Box>
         <Box>
@@ -119,13 +107,13 @@ const StoryCard = ({
           color: "white",
         }}
       >
-        <Image
-          src={url}
-          alt="Story Image"
+        <CldImage
+          alt={mediaContentData?.items[0].media_type}
           width={370}
           height={630}
           objectFit="cover"
           quality={100}
+          src={mediaContentData?.items[0].media_Url}
         />
       </Box>
 
@@ -143,7 +131,7 @@ const StoryCard = ({
         }}
       >
         <InputBase
-          placeholder="Reply to bhan.hann..."
+          placeholder={`Reply to ${story.creator.username}...`}
           sx={{ color: "white", flexGrow: 1, ml: 1 }}
         />
         <IconButton sx={{ color: "white" }}>

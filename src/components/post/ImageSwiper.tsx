@@ -12,18 +12,20 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { MediaContent } from "@/models/media-content";
+import { FileWithPreview } from "../shared/ImagesUpload";
 
 interface ImageSwiperProps {
-  postMedia: MediaContent[];
+  width?: string;
+  postMedia: (FileWithPreview | MediaContent)[];
 }
 
-const ImageSwiper = ({ postMedia }: ImageSwiperProps) => {
+const ImageSwiper = ({ postMedia, width }: ImageSwiperProps) => {
   const swiperRef = useRef<SwiperType>();
   return (
     <Box
       sx={{
         width: "auto",
-        maxWidth: "600px",
+        maxWidth: width || "600px",
         backgroundColor: "black",
         position: "relative",
       }}
@@ -69,24 +71,28 @@ const ImageSwiper = ({ postMedia }: ImageSwiperProps) => {
           height: "100%",
         }}
       >
-        {postMedia.map((content: MediaContent, index: number) => (
-          <SwiperSlide
-            key={index}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={content.media_Url}
-              alt={content.media_type}
-              loading="lazy"
-              max-width="600px"
-              max-height="800px"
-            />
-          </SwiperSlide>
-        ))}
+        {postMedia.map(
+          (content: FileWithPreview | MediaContent, index: number) => (
+            <SwiperSlide
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src={
+                  "media_Url" in content ? content.media_Url : content.preview
+                }
+                alt={"media_type" in content ? content.media_type : "Image"}
+                loading="lazy"
+                max-width="600px"
+                max-height="800px"
+              />
+            </SwiperSlide>
+          )
+        )}
       </Swiper>
 
       {postMedia.length > 1 && (
