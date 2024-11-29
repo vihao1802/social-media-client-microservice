@@ -6,6 +6,7 @@ import { useGetUserById } from "@/hooks/user/useGetUserById";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { Fragment } from "react";
+import GradientCircularProgress from "@/components/shared/Loader";
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +14,7 @@ const Profile = () => {
   const { user: currentUser } = useAuthenticatedUser();
   const router = useRouter();
 
-  if (!user) return null;
+  if (!user || !currentUser) return <GradientCircularProgress />;
 
   return (
     <Box
@@ -93,19 +94,21 @@ const Profile = () => {
                 <Typography fontSize="20px" fontWeight="normal">
                   {user.username}
                 </Typography>
-                <Button
-                  sx={{
-                    textTransform: "none",
-                    backgroundColor: "#e7e7e7",
-                    color: "black",
-                    ":hover": {
-                      backgroundColor: "lightgray",
-                    },
-                  }}
-                  onClick={() => router.push("/profile/edit")}
-                >
-                  Edit Profile
-                </Button>
+                {user.id === currentUser.id && (
+                  <Button
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#e7e7e7",
+                      color: "black",
+                      ":hover": {
+                        backgroundColor: "lightgray",
+                      },
+                    }}
+                    onClick={() => router.push("/profile/edit")}
+                  >
+                    Edit Profile
+                  </Button>
+                )}
               </Box>
               <Box>
                 <Typography

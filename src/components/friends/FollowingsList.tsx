@@ -215,7 +215,7 @@ const FollowingsList = () => {
                       backgroundColor: "#DBDBDB",
                     },
                   }}
-                  href={`/messages/${item.id}?u_id=${item.receiverId}`}
+                  href={`/messages/r/${item.id}/u/${item.receiverId}`}
                 >
                   <Typography sx={{ fontSize: "14px" }}>Message</Typography>
                 </Link>
@@ -227,11 +227,13 @@ const FollowingsList = () => {
                   textTransform: "none",
                   height: "35px",
                   padding: "6px 16px",
-                  color: "white",
-                  backgroundColor: "gray",
                   borderRadius: "5px",
                   ":hover": {
                     backgroundColor: "var(--buttonColor)",
+                  },
+                  ":disabled": {
+                    backgroundColor: "#e7e7e7",
+                    color: "gray",
                   },
                 }}
               >

@@ -8,23 +8,23 @@ import {
   Typography,
 } from "@mui/material";
 import { InfoOutlined, PhoneOutlined } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { tokenProvider } from "@/actions/stream.action";
-import RightDrawerContentMessages from "@/components/messages/RightDrawerContentMessages";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useGetUserById } from "@/hooks/user/useGetUserById";
+import { useParams, useRouter } from "next/navigation";
+import { useGetGroupChatById } from "@/hooks/chat-group/useGetGroupChatById";
+import RightDrawerContentGroupChat from "./RightDrawerContentGroupChat";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
-const RightHeaderContentMessages = () => {
+const RightHeaderContentGroupChat = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { u_id: id } = useParams<{ u_id: string }>();
+  const { g_id: id } = useParams<{ g_id: string }>();
 
   if (!id) return null;
 
-  const { data: user } = useGetUserById({ id });
+  const { data: groupChat } = useGetGroupChatById({ groupId: id });
   const client = useStreamVideoClient();
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -61,8 +61,8 @@ const RightHeaderContentMessages = () => {
       }}
     >
       <Drawer open={open} anchor="right" onClose={toggleDrawer(false)}>
-        <RightDrawerContentMessages
-          u_id={id}
+        <RightDrawerContentGroupChat
+          g_id={id}
           closeDrawer={toggleDrawer(false)}
         />
       </Drawer>
@@ -73,8 +73,8 @@ const RightHeaderContentMessages = () => {
           alignItems: "center",
         }}
       >
-        {user ? (
-          <Avatar src={user.profile_img || "/icons/user.png"} />
+        {groupChat ? (
+          <Avatar src={groupChat.avatar || "/icons/user.png"} />
         ) : (
           <Skeleton variant="circular" width={40} height={40} />
         )}
@@ -86,7 +86,7 @@ const RightHeaderContentMessages = () => {
             paddingLeft: "10px",
           }}
         >
-          {user ? user.username : <Skeleton variant="text" width={100} />}
+          {groupChat ? groupChat.name : <Skeleton variant="text" width={100} />}
         </Typography>
       </Box>
 
@@ -124,4 +124,4 @@ const RightHeaderContentMessages = () => {
   );
 };
 
-export default RightHeaderContentMessages;
+export default RightHeaderContentGroupChat;

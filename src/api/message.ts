@@ -12,9 +12,25 @@ export const messageApi = {
   },
 
   async createMessage(payload: CreateMessageRequest) {
-    const { relationshipId, content, replyToId } = payload;
+    const { relationshipId, content, replyToId, files } = payload;
+
+    const formData = new FormData();
+
+    formData.append("Content", content);
+    formData.append("ReplyToId", replyToId.toString());
+
+    if (files) {
+      formData.append("files", files);
+    }
+
     const res = await axiosInstance.post(
-      `${prefix}/${relationshipId}?Content=${content}&ReplyToId=${replyToId}`
+      `${prefix}/${relationshipId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data", // Override content type
+        },
+      }
     );
     return res;
   },

@@ -1,3 +1,4 @@
+import { MessageMediaContent } from "./message-media-content";
 import { User } from "./user";
 
 export interface Message {
@@ -6,7 +7,7 @@ export interface Message {
   senderId: string;
   receiverId: string;
   replyToId: string | null;
-  mediaContents: [];
+  mediaContents: MessageMediaContent[];
   receiver: User;
   sender: User;
 }
@@ -15,4 +16,5 @@ export interface CreateMessageRequest {
   relationshipId: string;
   content: string;
   replyToId: string;
+  files: File | null;
 }
