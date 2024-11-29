@@ -1,4 +1,4 @@
-import { Visibility } from "@/types/enums";
+import { Visibility } from "@/types/enum";
 import { User } from "./user";
 
 export interface PostBase {

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
@@ -25,19 +25,30 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import GradientCircularProgress from "../shared/Loader";
 import { PostContext } from "@/context/post-context";
-import { AvatarGroup } from "@mui/material";
+import { AvatarGroup, Skeleton } from "@mui/material";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
 import { getUserId_Cookie } from "@/utils/handleCookies";
-import { PostViewer } from "@/models/post-viewer";
+import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
 import { FavoriteRounded } from "@mui/icons-material";
+import { usePostComment } from "@/hooks/comment/usePostComment";
+import toast from "react-hot-toast";
+import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
+import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
 
 export default function PostComponent() {
   const userId = getUserId_Cookie();
+  if (!userId) {
+    toast.error("Please login to continue!");
+    return null;
+  }
 
   const { post } = useContext(PostContext);
   const [openComment, setOpenComment] = useState(false);
 
-  if (!post) return null;
+  if (!post) {
+    toast.error("Post not found!");
+    return null;
+  }
 
   const { data: postViewerData, isLoading: isPostViewerDataLoading } =
     useGetPostViewerByPostId({ postId: post.id });
@@ -45,19 +56,67 @@ export default function PostComponent() {
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: post.id });
 
+  const [commentContent, setCommentContent] = useState("");
+  const createComment = usePostComment();
+  const handleClickComment = async () => {
+    const commentData = new FormData();
+    commentData.append("content", commentContent);
+    commentData.append("postId", String(post.id));
+    commentData.append("userId", String(userId));
+    await createComment(commentData);
+    toast.success("Commented successfully!");
+    setCommentContent("");
+  };
+
+  const [postViewerId, setPostViewerId] = useState(0);
+  const createPostViewer = useCreatePostViewer();
+  const deletePostViewer = useDeletePostViewer();
+
+  useEffect(() => {
+    if (postViewerData) {
+      const postViewer = postViewerData.items.find(
+        (item: PostViewer) => item.userId === userId
+      );
+      if (postViewer) {
+        setPostViewerId(postViewer.id);
+      }
+    }
+  }, [postViewerData]);
+
   if (
     isMediaContentDataLoading ||
     !mediaContentData ||
     isPostViewerDataLoading ||
     !postViewerData
   )
-    return <GradientCircularProgress />;
+    return <Skeleton />;
 
   dayjs.extend(relativeTime);
 
-  const isLiked = postViewerData.items.some(
+  const isLiked = postViewerData?.items.some(
     (item: PostViewer) => item.userId === userId
   );
+
+  const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isLiked) {
+      if (postViewerId !== 0) {
+        await deletePostViewer(postViewerId);
+      } else {
+        toast.error("Post viewer not found!");
+        return null;
+      }
+    } else {
+      const postViewerData: PostViewerRequest = {
+        postId: post.id,
+        userId: userId,
+        liked: true,
+      };
+      const postViewerResponse = await createPostViewer(postViewerData);
+      setPostViewerId(postViewerResponse.id);
+    }
+  };
+
   return (
     <>
       <Card variant="outlined" sx={{ minWidth: 300 }}>
@@ -121,7 +180,7 @@ export default function PostComponent() {
         <CardOverflow
           sx={
             mediaContentData?.items.length < 2
-              ? {}
+              ? { ":hover": { cursor: "pointer" } }
               : {
                   display: "flex",
                   alignItems: "center",
@@ -155,7 +214,12 @@ export default function PostComponent() {
           }}
         >
           <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
-            <IconButton variant="plain" color="neutral" size="sm">
+            <IconButton
+              variant="plain"
+              color="neutral"
+              size="sm"
+              onClick={handleClickLike}
+            >
               {isLiked ? (
                 <FavoriteRounded
                   sx={{
@@ -194,7 +258,12 @@ export default function PostComponent() {
             textColor="text.primary"
             sx={{ fontSize: "sm", fontWeight: "lg" }}
           >
-            {post.postReactions} Likes
+            {
+              postViewerData.items.filter(
+                (postViewer: PostViewer) => postViewer.liked === true
+              ).length
+            }{" "}
+            Likes
           </Link>
           <Typography sx={{ fontSize: "sm" }}>
             <Link
@@ -207,14 +276,6 @@ export default function PostComponent() {
             </Link>{" "}
             {post.content}
           </Typography>
-          {/* <Link
-            component="button"
-            underline="none"
-            startDecorator="…"
-            sx={{ fontSize: "sm", color: "text.tertiary" }}
-          >
-            more
-          </Link> */}
           <Link
             component="button"
             underline="none"
@@ -229,8 +290,17 @@ export default function PostComponent() {
             size="sm"
             placeholder="Add a comment…"
             sx={{ flex: 1, px: 0, "--Input-focusedThickness": "0px" }}
+            value={commentContent}
+            onChange={(e) => {
+              setCommentContent(e.target.value);
+            }}
           />
-          <Link disabled underline="none" role="button">
+          <Link
+            disabled={!commentContent}
+            underline="none"
+            role="button"
+            onClick={handleClickComment}
+          >
             Post
           </Link>
         </CardContent>
