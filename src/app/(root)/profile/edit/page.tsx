@@ -9,6 +9,7 @@ import {
   Modal,
   Snackbar,
   TextareaAutosize,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -270,16 +271,13 @@ const EditProfilePage = () => {
                 gap: "10px",
               }}
             >
-              <TextareaAutosize
+              <TextField
                 value={newPhoneNumber}
                 style={{
-                  resize: "none",
-                  padding: "10px",
                   borderRadius: "10px",
                   height: "100%",
-                  maxHeight: "40px",
                   border: "1px solid gray",
-                  width: "50%",
+                  width: "20%",
                 }}
                 onChange={(e) => setNewPhoneNumber(e.target.value)}
               />

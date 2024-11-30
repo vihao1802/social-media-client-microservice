@@ -26,7 +26,7 @@ const Messages = () => {
             fontWeight: "500",
           }}
         />
-        <Typography>Select a friend to send messages</Typography>
+        <Typography>Select a friend or group chat to send messages</Typography>
       </Box>
     </Box>
   );

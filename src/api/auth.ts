@@ -6,7 +6,7 @@ import {
   RefreshTokenResponse,
 } from "@/models/auth-login";
 import axiosInstance from "./axios-instance";
-import { User, UserRequest } from "@/models/user";
+import { User } from "@/models/user";
 import toast from "react-hot-toast";
 import cookies from "js-cookie";
 import { RegisterRequest, RegisterResponse } from "@/models/auth-register";
@@ -40,7 +40,7 @@ export const authApi = {
     );
     console.log("3 res: " + res);
 
-    if (res.status === 400 || res.status === 401) {
+    if (res.status === 400 || res.status === 401 || res.status === 404) {
       cookies.remove("token");
       window.location.href = "/sign-in";
       toast.error("Hết phiên đăng nhập");
