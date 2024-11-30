@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Divider,
   Modal,
-  Snackbar,
   TextareaAutosize,
   TextField,
   Typography,
@@ -32,7 +31,6 @@ const EditProfilePage = () => {
 
     setOpenUploadModal(true);
   };
-  const [open, setOpen] = useState(false);
 
   const handleClick = async () => {
     if (!newBio || !newPhoneNumber) {
@@ -49,15 +47,12 @@ const EditProfilePage = () => {
         ...newUser,
         bio: newBio,
         phoneNumber: newPhoneNumber,
+        profile_img: user.profile_img || "",
       });
-      setOpen(true);
+      if (res) toast.success("Save successful");
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleFileChange = async (
@@ -246,7 +241,7 @@ const EditProfilePage = () => {
               <TextareaAutosize
                 value={newBio}
                 maxRows={2}
-                maxLength={150}
+                maxLength={100}
                 style={{
                   resize: "none",
                   padding: "10px",
@@ -301,13 +296,6 @@ const EditProfilePage = () => {
           </Button>
         </Box>
       </Box>
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        open={open}
-        onClose={handleClose}
-        message="Save successful"
-        key={"bottom-left"}
-      />
     </Box>
   );
 };

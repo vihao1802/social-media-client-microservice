@@ -61,7 +61,7 @@ const LeftSideBar = () => {
 
   const handleLogout = () => {
     logout();
-    router.push("/sign-in");
+    window.location.href = "/sign-in";
   };
 
   const [openPostForm, setOpenPostForm] = React.useState(false);

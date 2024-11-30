@@ -90,6 +90,7 @@ const SignUpPage = () => {
               });
 
               if (res && res.status === 200) {
+                toast.success("Sign up successfully");
                 router.push("/sign-in");
               }
             } catch (error) {
@@ -107,7 +108,7 @@ const SignUpPage = () => {
                 name="userName"
                 type="text"
                 fullWidth
-                id="outlined-basic"
+                id="userName"
                 label="Username"
                 variant="outlined"
                 margin="dense"
@@ -121,7 +122,7 @@ const SignUpPage = () => {
                 name="email"
                 type="email"
                 fullWidth
-                id="outlined-basic"
+                id="email"
                 label="Email"
                 variant="outlined"
                 margin="dense"
@@ -135,12 +136,13 @@ const SignUpPage = () => {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 fullWidth
-                id="outlined-basic"
+                id="password"
                 label="Password"
                 variant="outlined"
                 margin="dense"
                 size="small"
                 color="primary"
+                autoComplete="on"
                 error={touched.password && !!errors.password}
                 helperText={<ErrorMessage name="password" />}
                 InputProps={{
@@ -166,12 +168,13 @@ const SignUpPage = () => {
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 fullWidth
-                id="outlined-basic"
+                id="confirmPassword"
                 label="Confirm Password"
                 variant="outlined"
                 margin="dense"
                 size="small"
                 color="primary"
+                autoComplete="on"
                 error={touched.confirmPassword && !!errors.confirmPassword}
                 helperText={<ErrorMessage name="confirmPassword" />}
                 InputProps={{
@@ -202,7 +205,7 @@ const SignUpPage = () => {
                   as={TextField}
                   name="date_of_birth"
                   type="date"
-                  id="outlined-basic"
+                  id="date_of_birth"
                   label="Date of Birth"
                   variant="outlined"
                   margin="dense"

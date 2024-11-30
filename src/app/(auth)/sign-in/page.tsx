@@ -98,7 +98,7 @@ const SignInPage = () => {
                 name="email"
                 type="email"
                 fullWidth
-                id="outlined-basic"
+                id="email"
                 label="Email"
                 variant="outlined"
                 margin="normal"
@@ -112,12 +112,13 @@ const SignInPage = () => {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 fullWidth
-                id="outlined-basic"
+                id="password"
                 label="Password"
                 variant="outlined"
                 margin="normal"
                 size="small"
                 color="primary"
+                autoComplete="on"
                 error={touched.password && !!errors.password}
                 helperText={<ErrorMessage name="password" />}
                 InputProps={{

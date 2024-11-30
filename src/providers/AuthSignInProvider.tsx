@@ -12,9 +12,9 @@ const AuthSignInProvider = ({ children }: { children: React.ReactNode }) => {
     if (!firstLoading && user) {
       router.push("/");
     }
-  }, []);
+  }, [firstLoading, user]);
 
-  if (firstLoading) {
+  if (firstLoading || user) {
     return (
       <Box
         sx={{

@@ -24,7 +24,7 @@ const RightDrawerContentMessages = ({
     relationshipId: relationshipId,
   });
 
-  if (!user)
+  if (!user || !messagesRes)
     return (
       <Box
         sx={{
@@ -35,6 +35,8 @@ const RightDrawerContentMessages = ({
         <GradientCircularProgress />
       </Box>
     );
+
+  console.log(messagesRes);
 
   return (
     <Box sx={{ width: "100%", maxWidth: 400 }} role="presentation">
@@ -71,10 +73,11 @@ const RightDrawerContentMessages = ({
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: "10px",
         }}
       >
         <img
-          src={user.profile_img}
+          src={user.profile_img || "/icons/user.png"}
           alt="Avatar"
           className="w-24 h-24 rounded-full"
         />
@@ -96,9 +99,9 @@ const RightDrawerContentMessages = ({
             borderTop: "2px solid #e7e7e7",
             width: "100%",
             marginTop: "10px",
+            flex: 1,
           }}
         >
-          <p className="text-xl font-semibold text-center my-4">Photos</p>
           <Box
             sx={{
               height: "calc(100vh - 290px)",
@@ -134,21 +137,18 @@ const RightDrawerContentMessages = ({
                   gap: "10px",
                 }}
               >
-                {messagesRes.data.length === 0 && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "375px",
-                      gridColumnStart: 1,
-                      gridColumnEnd: 4,
-                      color: "GrayText",
-                    }}
-                  >
-                    <p className="text-lg">No photos</p>
-                  </Box>
-                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    gridColumnStart: 1,
+                    gridColumnEnd: 4,
+                  }}
+                >
+                  <p className="text-xl font-semibold pt-3">Photos</p>
+                </Box>
                 {messagesRes.data.map((item, index) => {
                   if (item.mediaContents.length === 0) return null;
                   return (
