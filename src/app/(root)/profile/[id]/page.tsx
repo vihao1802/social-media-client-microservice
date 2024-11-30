@@ -1,20 +1,64 @@
 "use client";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
 import { useGetUserById } from "@/hooks/user/useGetUserById";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import GradientCircularProgress from "@/components/shared/Loader";
+import { useGetRelationshipByUserIdFollower } from "@/hooks/relationship/useGetRelationshipByUserIdFollower";
+import { useGetRelationshipByUserIdFollowing } from "@/hooks/relationship/useGetRelationshipByUserIdFollowing";
+import { RelationshipStatus } from "@/types/enum";
+import { useGetFollowerQuantity } from "@/hooks/relationship/useGetFollowerQuantity";
+import { useGetFollowingQuantity } from "@/hooks/relationship/useGetFollowingQuantity";
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: user } = useGetUserById({ id });
   const { user: currentUser } = useAuthenticatedUser();
   const router = useRouter();
+  const { data: followerList } = useGetRelationshipByUserIdFollower({
+    userId: id,
+  });
+  const { data: followingList } = useGetRelationshipByUserIdFollowing({
+    userId: id,
+  });
 
-  if (!user || !currentUser) return <GradientCircularProgress />;
+  const { data: followerQuantity } = useGetFollowerQuantity({ userId: id });
+  const { data: followingQuantity } = useGetFollowingQuantity({ userId: id });
+
+  const handleMessage = () => {
+    if (!followerList || !followingList || !currentUser) return;
+    // merge
+    const filteredFollower = followerList.find(
+      (follower) =>
+        follower.senderId === currentUser.id &&
+        follower.status === RelationshipStatus.Accepted
+    );
+    const filteredFollowing = followingList.find(
+      (following) =>
+        following.receiverId === currentUser.id &&
+        following.status === RelationshipStatus.Accepted
+    );
+    console.log({ filteredFollower, filteredFollowing });
+
+    if (filteredFollower !== undefined)
+      window.location.href = `/messages/r/${filteredFollower.id}/u/${id}`;
+    if (filteredFollowing !== undefined)
+      window.location.href = `/messages/r/${filteredFollowing.id}/u/${id}`;
+  };
+
+  const handleUnFollow = () => {
+    console.log("Unfollowed");
+  };
+
+  const handleEditProfile = () => {
+    router.push("/profile/edit");
+  };
+
+  if (!user || !currentUser || !followerList || !followingList)
+    return <GradientCircularProgress />;
 
   return (
     <Box
@@ -104,7 +148,7 @@ const Profile = () => {
                         backgroundColor: "lightgray",
                       },
                     }}
-                    onClick={() => router.push("/profile/edit")}
+                    onClick={handleEditProfile}
                   >
                     Edit Profile
                   </Button>
@@ -168,14 +212,18 @@ const Profile = () => {
                     <Typography sx={{ color: "GrayText" }}>
                       Following
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontWeight: "700",
-                        fontSize: "20px",
-                      }}
-                    >
-                      2,004
-                    </Typography>
+                    {followingQuantity ? (
+                      <Typography
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: "20px",
+                        }}
+                      >
+                        {followingQuantity.quantity}
+                      </Typography>
+                    ) : (
+                      <Skeleton variant="text" width={50} />
+                    )}
                   </Box>
                   <Box
                     sx={{
@@ -187,14 +235,18 @@ const Profile = () => {
                     <Typography sx={{ color: "GrayText" }}>
                       Followers
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontWeight: "700",
-                        fontSize: "20px",
-                      }}
-                    >
-                      8,452
-                    </Typography>
+                    {followerQuantity ? (
+                      <Typography
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: "20px",
+                        }}
+                      >
+                        {followerQuantity.quantity}
+                      </Typography>
+                    ) : (
+                      <Skeleton variant="text" width={50} />
+                    )}
                   </Box>
                 </Box>
                 <Box
@@ -204,32 +256,46 @@ const Profile = () => {
                     height: "40px",
                   }}
                 >
-                  {currentUser && user && currentUser.id !== user.id && (
-                    <Fragment>
-                      <Button
-                        sx={{
-                          textTransform: "none",
-                          ":hover": {
-                            backgroundColor: "lightcyan",
-                          },
-                        }}
-                      >
-                        Unfollow
-                      </Button>
-                      <Button
-                        sx={{
-                          textTransform: "none",
-                          backgroundColor: "var(--buttonColor)",
-                          color: "white",
-                          ":hover": {
-                            backgroundColor: "var(--buttonHoverColor)",
-                          },
-                        }}
-                      >
-                        Message
-                      </Button>
-                    </Fragment>
-                  )}
+                  {currentUser &&
+                    user &&
+                    currentUser.id !== user.id &&
+                    (followingList.find(
+                      (following) =>
+                        following.receiverId === currentUser.id &&
+                        following.status === RelationshipStatus.Accepted
+                    ) ||
+                      followerList.find(
+                        (follower) =>
+                          follower.senderId === currentUser.id &&
+                          follower.status === RelationshipStatus.Accepted
+                      )) && (
+                      <Fragment>
+                        <Button
+                          sx={{
+                            textTransform: "none",
+                            ":hover": {
+                              backgroundColor: "lightcyan",
+                            },
+                          }}
+                          onClick={handleUnFollow}
+                        >
+                          Unfollow
+                        </Button>
+                        <Button
+                          sx={{
+                            textTransform: "none",
+                            backgroundColor: "var(--buttonColor)",
+                            color: "white",
+                            ":hover": {
+                              backgroundColor: "var(--buttonHoverColor)",
+                            },
+                          }}
+                          onClick={handleMessage}
+                        >
+                          Message
+                        </Button>
+                      </Fragment>
+                    )}
                 </Box>
               </Box>
             </Box>

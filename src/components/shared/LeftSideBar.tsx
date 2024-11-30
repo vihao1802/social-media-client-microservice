@@ -277,7 +277,7 @@ const LeftSideBar = () => {
                           imgURL={user.profile_img || "/icons/person.png"}
                           height={25}
                           width={25}
-                          isSelected={pathname.includes("/profile/")}
+                          isSelected={pathname.includes(`/profile/${user.id}`)}
                         />
                       </ListItemIcon>
                       {openleftSideBar && (
@@ -285,7 +285,7 @@ const LeftSideBar = () => {
                           primary={
                             <Typography
                               sx={{
-                                fontWeight: pathname.includes("/profile/")
+                                fontWeight: pathname.includes(`/profile/${user.id}`)
                                   ? "bold"
                                   : "normal",
                               }}

@@ -47,7 +47,7 @@ const LeftSideBarMessages = () => {
   }>();
 
   const [currentSideBarMessagesType, setCurrentSideBarMessagesType] = useState(
-    u_id ? LeftSideBarMessagesType[0] : LeftSideBarMessagesType[1]
+    g_id ? LeftSideBarMessagesType[1] : LeftSideBarMessagesType[0]
   );
 
   const handleSelect = (user: User, relationshipId: string) => {
