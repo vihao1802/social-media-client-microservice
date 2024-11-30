@@ -13,57 +13,6 @@ import GradientCircularProgress from "@/components/shared/Loader";
 import { useInView } from "react-intersection-observer";
 import { PostContext } from "@/context/post-context";
 
-const posts: any[] = [
-  {
-    id: 1,
-    user: {
-      id: 1,
-      name: "User 1",
-      nickname: "Nickname 1",
-      followers: 423,
-      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-    },
-    image: "https://material-ui.com/static/images/cards/paella.jpg",
-    likes: 123,
-    comments: 12,
-    shares: 3,
-    description:
-      "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.",
-  },
-  {
-    id: 2,
-    user: {
-      id: 1,
-      name: "User 1",
-      nickname: "Nickname 1",
-      followers: 423,
-      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-    },
-    image: "https://material-ui.com/static/images/cards/paella.jpg",
-    likes: 123,
-    comments: 12,
-    shares: 3,
-    description:
-      "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.",
-  },
-  {
-    id: 3,
-    user: {
-      id: 1,
-      name: "User 1",
-      nickname: "Nickname 1",
-      followers: 423,
-      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-    },
-    image: "https://material-ui.com/static/images/cards/paella.jpg",
-    likes: 123,
-    comments: 12,
-    shares: 3,
-    description:
-      "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels, if you like.",
-  },
-];
-
 export default function Home() {
   const filters: Partial<Pagination> = {
     page: 1,
@@ -143,8 +92,7 @@ export default function Home() {
           .filter((post) => post.is_story === false)
           .sort(
             (a: Post, b: Post) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
+              new Date(b.create_at).getTime() - new Date(a.create_at).getTime()
           )
           .map((post: Post, index: number) => (
             <PostContext.Provider

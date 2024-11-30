@@ -32,6 +32,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProgressBarContext } from "@/app/(root)/layout";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import PostForm from "../post/PostForm";
 const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
   ssr: false,
 });
@@ -65,6 +66,16 @@ const LeftSideBar = () => {
   const handleLogout = () => {
     logout();
     router.push("/sign-in");
+  };
+
+  const [openPostForm, setOpenPostForm] = React.useState(false);
+
+  const handleClickOpenPostForm = () => {
+    setOpenPostForm(true);
+  };
+
+  const handleClosePostForm = () => {
+    setOpenPostForm(false);
   };
 
   return (
@@ -155,7 +166,7 @@ const LeftSideBar = () => {
                           },
                           padding: "7px 12px",
                           borderRadius: "7px",
-                          height: "46px",
+                          height: "40px",
                           border:
                             (item.id === 2 && openSearch) ||
                             (item.id === 6 && openNotification)
@@ -200,6 +211,10 @@ const LeftSideBar = () => {
                             setOpenNotification(false);
                           }
                           setIsLoadingProgress(false);
+
+                          if (item.id === 8) {
+                            handleClickOpenPostForm();
+                          }
                         }}
                       >
                         <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>
@@ -341,6 +356,7 @@ const LeftSideBar = () => {
 
       <SearchPanel open={openSearch} />
       <NotificationPanel open={openNotification} />
+      <PostForm open={openPostForm} handleClose={handleClosePostForm} />
     </Box>
   );
 };

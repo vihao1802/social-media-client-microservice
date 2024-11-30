@@ -6,158 +6,59 @@ import { Box, IconButton, Paper } from "@mui/material";
 import React, { useState } from "react";
 import StoryCircle from "../widgets/StoryCircle";
 import { useRouter } from "next/navigation";
-const users = [
-  {
-    id: 1,
-    name: "User 1",
-    nickname: "Nickname 1",
-    followers: 423,
-    avatar: "https://mui.com/static/images/avatar/3.jpg",
-  },
-  {
-    id: 2,
-    name: "User 2",
-    nickname: "Nickname 2",
-    followers: 87,
-    avatar: "https://mui.com/static/images/avatar/7.jpg",
-  },
-  {
-    id: 3,
-    name: "User 3",
-    nickname: "Nickname 3",
-    followers: 921,
-    avatar: "https://mui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 4,
-    name: "User 4",
-    nickname: "Nickname 4",
-    followers: 156,
-    avatar: "https://mui.com/static/images/avatar/5.jpg",
-  },
-  {
-    id: 5,
-    name: "User 5",
-    nickname: "Nickname 5",
-    followers: 302,
-    avatar: "https://mui.com/static/images/avatar/2.jpg",
-  },
-  {
-    id: 6,
-    name: "User 6",
-    nickname: "Nickname 6",
-    followers: 789,
-    avatar: "https://mui.com/static/images/avatar/6.jpg",
-  },
-  {
-    id: 7,
-    name: "User 7",
-    nickname: "Nickname 7",
-    followers: 21,
-    avatar: "https://mui.com/static/images/avatar/4.jpg",
-  },
-  {
-    id: 8,
-    name: "User 8",
-    nickname: "Nickname 8",
-    followers: 543,
-    avatar: "https://mui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 9,
-    name: "User 9",
-    nickname: "Nickname 9",
-    followers: 987,
-    avatar: "https://mui.com/static/images/avatar/7.jpg",
-  },
-  {
-    id: 10,
-    name: "User 10",
-    nickname: "Nickname 10",
-    followers: 654,
-    avatar: "https://mui.com/static/images/avatar/2.jpg",
-  },
-  {
-    id: 11,
-    name: "User 11",
-    nickname: "Nickname 11",
-    followers: 321,
-    avatar: "https://mui.com/static/images/avatar/5.jpg",
-  },
-  {
-    id: 12,
-    name: "User 12",
-    nickname: "Nickname 12",
-    followers: 890,
-    avatar: "https://mui.com/static/images/avatar/3.jpg",
-  },
-  {
-    id: 13,
-    name: "User 13",
-    nickname: "Nickname 13",
-    followers: 123,
-    avatar: "https://mui.com/static/images/avatar/6.jpg",
-  },
-  {
-    id: 14,
-    name: "User 14",
-    nickname: "Nickname 14",
-    followers: 765,
-    avatar: "https://mui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 15,
-    name: "User 15",
-    nickname: "Nickname 15",
-    followers: 432,
-    avatar: "https://mui.com/static/images/avatar/2.jpg",
-  },
-  {
-    id: 16,
-    name: "User 16",
-    nickname: "Nickname 16",
-    followers: 98,
-    avatar: "https://mui.com/static/images/avatar/7.jpg",
-  },
-  {
-    id: 17,
-    name: "User 17",
-    nickname: "Nickname 17",
-    followers: 567,
-    avatar: "https://mui.com/static/images/avatar/4.jpg",
-  },
-  {
-    id: 18,
-    name: "User 18",
-    nickname: "Nickname 18",
-    followers: 345,
-    avatar: "https://mui.com/static/images/avatar/5.jpg",
-  },
-  {
-    id: 19,
-    name: "User 19",
-    nickname: "Nickname 19",
-    followers: 12,
-    avatar: "https://mui.com/static/images/avatar/6.jpg",
-  },
-  {
-    id: 20,
-    name: "User 20",
-    nickname: "Nickname 20",
-    followers: 999,
-    avatar: "https://mui.com/static/images/avatar/1.jpg",
-  },
-];
+import { useGetFriendStories } from "@/hooks/post/useGetFriendStories";
+import { Post } from "@/models/post";
+import GradientCircularProgress from "./Loader";
+import { User } from "@/models/user";
 
 const StoryBar = () => {
   const [number, setNumber] = useState(0);
+  const { data: storyData, isLoading: isStoryDataLoading } =
+    useGetFriendStories({
+      enabled: true,
+    });
+  if (!storyData || isStoryDataLoading) return <GradientCircularProgress />;
+
+  const grouped = storyData.reduce(
+    (groupedMap: Map<string, { creator: User; posts: Post[] }>, post: Post) => {
+      const creatorId = post.creator.id;
+
+      if (!groupedMap.has(creatorId)) {
+        groupedMap.set(creatorId, {
+          creator: post.creator,
+          posts: [],
+        });
+      }
+
+      groupedMap.get(creatorId)!.posts.push(post);
+
+      return groupedMap;
+    },
+    new Map<string, { creator: User; posts: Post[] }>()
+  );
+
+  let globalIndex = 0; // Khởi tạo chỉ số toàn cục
+  const updatedData: Array<{ creator: User; posts: Post[] }> = Array.from(
+    grouped.values()
+  );
+
+  // Chuyển từ Map sang mảng
+  const groupedByCreator = updatedData.map(
+    (creatorItem: { creator: User; posts: Post[] }) => ({
+      ...creatorItem,
+      posts: creatorItem.posts.map((post: Post) => ({
+        ...post,
+        activeIndex: globalIndex++, // Thêm activeIndex và tăng chỉ số
+      })),
+    })
+  );
 
   // Define the width of a single card, including gaps
   const cardWidth = 85; // Assumed: 70px for avatar + 15px gap
   const visibleCards = 8; // Number of cards visible in the view (can be adjusted)
 
   // Calculate total width of the slider content
-  const maxTranslate = -(cardWidth * (users.length - visibleCards));
+  const maxTranslate = -(cardWidth * (groupedByCreator.length - visibleCards));
 
   const handlePrevious = () => {
     setNumber((prev) => Math.min(prev + cardWidth, 0));
@@ -166,6 +67,7 @@ const StoryBar = () => {
   const handleNext = () => {
     setNumber((prev) => Math.max(prev - cardWidth, maxTranslate));
   };
+
   return (
     <Box
       sx={{
@@ -215,16 +117,21 @@ const StoryBar = () => {
           transition: "transform 0.3s ease",
         }}
       >
-        {users.map((user) => (
+        {(
+          groupedByCreator as {
+            creator: User;
+            posts: (Post & { activeIndex: number })[];
+          }[]
+        ).map(({ creator, posts }, index: number) => (
           <StoryCircle
-            key={user.id}
-            userId={user.id}
-            name={user.name}
-            nickName={user.nickname}
-            followers={user.followers}
-            avatar={user.avatar}
+            key={index}
+            userId={creator.id}
+            nickName={creator.username}
+            avatar={creator.profile_img}
+            activeIndex={posts[0].activeIndex}
           />
         ))}
+        t
       </Box>
 
       {number > maxTranslate && (
