@@ -11,8 +11,6 @@ import {
   Menu,
   Divider,
   Collapse,
-  Fade,
-  Skeleton,
 } from "@mui/material";
 import { Dancing_Script } from "next/font/google";
 import dynamic from "next/dynamic";
@@ -23,14 +21,13 @@ import {
 } from "@mui/icons-material";
 import { sideBarItems } from "../../constants/index";
 import OnlineAvatar from "@/components/widgets/OnlineAvatar";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import SearchPanel from "../widgets/SearchPanel";
 import NotificationPanel from "../widgets/NotificationPanel";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ProgressBarContext } from "@/app/(root)/layout";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import PostForm from "../post/PostForm";
 const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
@@ -46,7 +43,6 @@ const LeftSideBar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { setIsLoadingProgress } = useContext(ProgressBarContext);
   const { logout, user } = useAuthenticatedUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -174,7 +170,6 @@ const LeftSideBar = () => {
                               : "",
                         }}
                         onClick={() => {
-                          setIsLoadingProgress(true);
                           if (pathname.includes("messages")) {
                             if (item.id === 2) {
                               setOpenSearch(!openSearch);
@@ -210,7 +205,6 @@ const LeftSideBar = () => {
                             setOpenSearch(false);
                             setOpenNotification(false);
                           }
-                          setIsLoadingProgress(false);
 
                           if (item.id === 8) {
                             handleClickOpenPostForm();
@@ -285,7 +279,9 @@ const LeftSideBar = () => {
                           primary={
                             <Typography
                               sx={{
-                                fontWeight: pathname.includes(`/profile/${user.id}`)
+                                fontWeight: pathname.includes(
+                                  `/profile/${user.id}`
+                                )
                                   ? "bold"
                                   : "normal",
                               }}

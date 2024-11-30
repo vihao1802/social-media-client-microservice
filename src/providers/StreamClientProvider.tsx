@@ -2,7 +2,8 @@
 
 import { tokenProvider } from "@/actions/stream.action";
 import GradientCircularProgress from "@/components/shared/Loader";
-import { Box, CircularProgress } from "@mui/material";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { Box } from "@mui/material";
 import { StreamVideo, StreamVideoClient } from "@stream-io/video-react-sdk";
 import { ReactNode, useEffect, useState } from "react";
 
@@ -10,15 +11,16 @@ const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [videoClient, setVideoClient] = useState<StreamVideoClient>();
+  const { user: authenticatedUser } = useAuthenticatedUser();
 
   useEffect(() => {
     if (!apiKey) throw new Error("Stream API key is missing");
-
+    if (!authenticatedUser) return;
     const client = new StreamVideoClient({
       apiKey,
       user: {
-        id: "Natasi_Daala",
-        name: "Natasi Daala",
+        id: authenticatedUser.id,
+        name: authenticatedUser.username,
       },
       tokenProvider,
     });
