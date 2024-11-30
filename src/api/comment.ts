@@ -4,7 +4,12 @@ const prefix = "/comment";
 
 export const commentApi = {
     async getCommentByPostId(postId: number) {
-        const res = await axiosInstance.get(`${prefix}/post/${postId}`);
+        const res = await axiosInstance.get(`${prefix}/post/${postId}`, {
+            params: {
+                page: 1,
+                pageSize: 100,
+            },
+        });
         return res.data;
     },
 

@@ -1,6 +1,14 @@
+"use client";
+
 import ExploreImage from "@/components/explore/ExploreImage";
+import GradientCircularProgress from "@/components/shared/Loader";
+import { PostContext } from "@/context/post-context";
+import { usePostListInfinity } from "@/hooks/post/useGetPostListInfinity";
+import { ListResponse, Pagination } from "@/models/api";
+import { Post } from "@/models/post";
 import { Favorite, Forum } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
+import { useInView } from "react-intersection-observer";
 interface ImageItem {
   id: number;
   src: string;
@@ -109,6 +117,62 @@ const ImageData: ImageItem[] = [
 ];
 
 const Explore = () => {
+  const filters: Partial<Pagination> = {
+    page: 1,
+    pageSize: 5,
+  };
+
+  const {
+    data: dataResponse,
+    isLoading,
+    isValidating,
+    setSize,
+  } = usePostListInfinity({
+    params: filters,
+  });
+
+  const postResponse = dataResponse
+    ?.map((item) => item.data)
+    .map(
+      (item: {
+        items: Array<Post>;
+        page: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+      }) => {
+        return {
+          data: item?.items,
+          pagination: {
+            page: item.page,
+            pageSize: item.pageSize,
+            totalElements: item.totalItems,
+            totalPages: item.totalPages,
+          },
+        };
+      }
+    );
+
+  const postList: Array<Post> =
+    postResponse?.reduce(
+      (result: Array<Post>, currentPage: ListResponse<Post>) => {
+        result.push(...currentPage.data);
+
+        return result;
+      },
+      []
+    ) || [];
+
+  const totalElements = postResponse?.[0]?.pagination.totalElements || 0;
+  const showLoadMore = totalElements > postList.length;
+  const loadingMore = isValidating && postList.length > 0;
+
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) setSize((x) => x + 1);
+    },
+  });
+
   return (
     <Box
       sx={{
@@ -139,9 +203,34 @@ const Explore = () => {
             gap: "5px",
           }}
         >
-          {ImageData.map((item: ImageItem, index) => (
-            <ExploreImage key={index} imageSrc={item.src} />
-          ))}
+          {postList
+            .filter((post) => post.is_story === false)
+            .sort(
+              (a: Post, b: Post) =>
+                new Date(b.create_at).getTime() -
+                new Date(a.create_at).getTime()
+            )
+            .map((post: Post, index: number) => (
+              <PostContext.Provider
+                key={index}
+                value={{
+                  post: post || null,
+                }}
+              >
+                <ExploreImage key={index} />
+              </PostContext.Provider>
+            ))}
+          {showLoadMore && (
+            <Box
+              ref={ref}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {loadingMore && <GradientCircularProgress />}
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

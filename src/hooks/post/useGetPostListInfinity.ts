@@ -25,7 +25,6 @@ export function usePostListInfinity({ params, options, enabled = true }: UseWork
 
 			// return null in case page > totalPages
 			if (previousPageData) {
-				// const { pageSize, totalPages } = previousPageData.pagination || { pageSize: 5, totalPages: 0 }
 				const pageSize = previousPageData?.data.pageSize || 5
 				const totalPages = previousPageData?.data.totalPages || 0
 				if (pageSize > totalPages) return null

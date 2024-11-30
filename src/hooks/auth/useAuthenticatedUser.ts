@@ -2,7 +2,6 @@ import { authApi } from "@/api/auth";
 import { LoginRequest } from "@/models/auth-login";
 import useSWR, { SWRConfiguration } from "swr";
 import cookies from "js-cookie";
-import { UserRequest } from "@/models/user";
 import { RegisterRequest } from "@/models/auth-register";
 
 export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {

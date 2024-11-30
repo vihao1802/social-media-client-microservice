@@ -5,7 +5,12 @@ const prefix = "/postViewer";
 
 export const postViewerApi = {
     async getPostViewerByPostId(postId: number) {
-        const res = await axiosInstance.get(`${prefix}/${postId}`);
+        const res = await axiosInstance.get(`${prefix}/${postId}`, {
+            params: {
+                page: 1,
+                pageSize: 100,
+            },
+        });
         return res.data;
     },
 
