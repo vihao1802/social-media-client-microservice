@@ -21,6 +21,14 @@ import React, { useState } from "react";
 import ImagesUpload, { FileWithPreview } from "../shared/ImagesUpload";
 import { MediaContent } from "@/models/media-content";
 import ImageSwiper from "./ImageSwiper";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+const schema = yup.object({
+  caption: yup.string().required("Caption is required"),
+  visibility: yup.number().min(0).max(2).required("Visibility is required"),
+  isStory: yup.boolean().required("Story is required"),
+});
 
 interface PostFormProps {
   open: boolean;
@@ -54,6 +62,19 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
   const handleChangeChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
   };
+
+  const postForm = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      caption: "",
+      visibility: 0,
+      isStory: false,
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
   return (
     <Dialog
