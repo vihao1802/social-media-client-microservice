@@ -17,7 +17,7 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
           cookies.get("token") === null ||
           cookies.get("token") === undefined
         ) {
-          return null;
+          window.location.href = "/sign-in";
         }
         return await authApi.getAuthenticatedUser();
       } catch (error) {

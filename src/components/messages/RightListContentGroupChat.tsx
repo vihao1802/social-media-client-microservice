@@ -8,44 +8,41 @@ import {
 } from "@mui/icons-material";
 import FlexBetween from "../shared/FlexBetween";
 import { useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { usePostMessage } from "@/hooks/message/usePostMessage";
-import { Message } from "@/models/message";
-import { messageApi } from "@/api/message";
 import MessageImageBox from "./MessageImageBox";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { chatGroupMessageApi } from "@/api/chat-group-message";
+import { ChatGroupMessage } from "@/models/chat-group-message";
+import { usePostGroupChatMessage } from "@/hooks/chat-group-message/usePostGroupChatMessage";
 
 dayjs.extend(relativeTime);
 
-const RightListContentMessages = () => {
+const RightListContentGroupChat = () => {
   const { user } = useAuthenticatedUser();
   const [messageTextField, setMessageTextField] = useState("");
   const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
   const [hasImage, setHasImage] = useState(false);
   const [photoSrc, setPhotoSrc] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [messageList, setMessageList] = useState<Message[]>([]);
+  const [messageList, setMessageList] = useState<ChatGroupMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const webSocket = useRef<WebSocket | null>(null);
 
   // Get the user ID from the URL
-  const { r_id: id, u_id: receivedUserId } = useParams<{
-    r_id: string;
-    u_id: string;
-  }>();
+  const { g_id: id } = useParams<{ g_id: string }>();
 
-  if (!id || !receivedUserId || !user) return null;
+  if (!id || !user) return null;
 
-  const { createMessage } = usePostMessage();
+  const { createMessage } = usePostGroupChatMessage();
 
   // Fetch initial messages
   const fetchMessages = async () => {
     try {
-      const res = await messageApi.getMessageByRelationshipId(id);
-      setMessageList(res.data);
+      const res = await chatGroupMessageApi.getMessagesByGroupId(id);
+      setMessageList(res.items);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     }
@@ -136,10 +133,12 @@ const RightListContentMessages = () => {
       if (messageTextField.trim() === "" && imageFile === null) return;
       setIsSending(true);
       await createMessage({
-        relationshipId: id,
-        content: messageTextField.trim(),
-        replyToId: "",
-        files: imageFile ? imageFile : null,
+        GroupId: id,
+        Content: messageTextField.trim(),
+        ReplyToId: "",
+        MediaContent: "",
+        SenderId: user.id,
+        MediaFile: imageFile ? imageFile : null,
       });
       webSocket.current.send(JSON.stringify("send message"));
       handleTextFieldChange({
@@ -177,7 +176,7 @@ const RightListContentMessages = () => {
         }}
         // onScroll={handleOnScroll}
       >
-        {messageList.map((item: Message, index: number) => {
+        {messageList.map((item, index: number) => {
           return (
             <Box
               key={index}
@@ -187,37 +186,37 @@ const RightListContentMessages = () => {
                 marginTop: "20px",
               }}
             >
-              {item.senderId !== user.id && (
+              {item.sender.id !== user.id && (
                 <Box>
                   <Avatar src={item.sender.profile_img} />
                 </Box>
               )}
 
-              {item.mediaContents.length > 0 ? (
+              {item.media_content.length > 0 ? (
                 <MessageImageBox
-                  position={item.senderId === user.id ? "right" : "left"}
+                  position={item.sender.id === user.id ? "right" : "left"}
                   title={
-                    item.senderId === user.id ? "You" : item.sender.username
+                    item.sender.id === user.id ? "You" : item.sender.username
                   }
                   text={item.content}
-                  imageUrl={item.mediaContents[0].media_url}
+                  imageUrl={item.media_content}
                   sentAt={dayjs(item.sent_at).fromNow()}
                 />
               ) : (
                 <MessageBox
                   id={index}
-                  position={item.senderId === user.id ? "right" : "left"}
+                  position={item.sender.id === user.id ? "right" : "left"}
                   type={"text"}
                   focus
                   title={
-                    item.senderId === user.id ? "You" : item.sender.username
+                    item.sender.id === user.id ? "You" : item.sender.username
                   }
                   text={item.content}
                   date={new Date(item.sent_at)}
                   titleColor="var(--buttonColor)"
                   forwarded={false}
                   status="sent"
-                  replyButton={item.senderId !== user.id}
+                  replyButton={item.sender.id !== user.id}
                   removeButton={false}
                   notch
                   retracted={false}
@@ -381,4 +380,4 @@ const RightListContentMessages = () => {
   );
 };
 
-export default RightListContentMessages;
+export default RightListContentGroupChat;

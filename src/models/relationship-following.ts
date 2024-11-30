@@ -2,7 +2,7 @@ import { RelationshipStatus, RelationshipType } from "@/types/enum";
 import { User } from "./user";
 
 export interface RelationshipFollowingBase {
-  receiverId: number;
+  receiverId: string;
   relationship_type: RelationshipType;
 }
 
@@ -15,3 +15,7 @@ export interface RelationshipFollowing extends RelationshipFollowingBase {
 
 export interface RelationshipFollowingRequest
   extends RelationshipFollowingBase {}
+
+export interface FollowingQuantity {
+  quantity: number;
+}

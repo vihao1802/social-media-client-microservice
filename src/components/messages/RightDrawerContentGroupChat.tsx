@@ -1,30 +1,33 @@
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, Divider, IconButton } from "@mui/material";
 import { LogoutRounded } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RightModalImageContentMessages from "./RightModalImageContentMessages";
-import { useGetUserById } from "@/hooks/user/useGetUserById";
 import GradientCircularProgress from "../shared/Loader";
-import { useParams, useRouter } from "next/navigation";
-import { useGetMessageByRelationshipId } from "@/hooks/message/useGetMessageByRelationshipId";
+import { useRouter } from "next/navigation";
+import { useGetGroupChatById } from "@/hooks/chat-group/useGetGroupChatById";
+import { useGetMessagesByGroupId } from "@/hooks/chat-group-message/useGetMessagesByGroupId";
+import { chatGroupMemberApi } from "@/api/chat-group-member";
+import useSWR from "swr";
 
-const RightDrawerContentMessages = ({
+const RightDrawerContentGroupChat = ({
   closeDrawer,
-  u_id,
+  g_id,
 }: {
   closeDrawer: () => void;
-  u_id: string;
+  g_id: string;
 }) => {
   const router = useRouter();
   const [imgSrc, setImgSrc] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const toggleModal = () => setOpenModal(!openModal);
-  const { r_id: relationshipId } = useParams<{ r_id: string }>();
-  const { data: user } = useGetUserById({ id: u_id });
-  const { data: messagesRes } = useGetMessageByRelationshipId({
-    relationshipId: relationshipId,
-  });
+  const { data: groupChat } = useGetGroupChatById({ groupId: g_id });
+  const { data: messagesRes } = useGetMessagesByGroupId({ groupId: g_id });
+  const { data: membersRes } = useSWR(
+    "get_members_by_group_id",
+    async () => await chatGroupMemberApi.getMembersByGroupId(g_id)
+  );
 
-  if (!user)
+  if (!groupChat)
     return (
       <Box
         sx={{
@@ -69,39 +72,26 @@ const RightDrawerContentMessages = ({
           padding: "15px 0 0",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
           alignItems: "center",
+          gap: "10px",
         }}
       >
         <img
-          src={user.profile_img}
+          src={groupChat.avatar}
           alt="Avatar"
           className="w-24 h-24 rounded-full"
         />
-        <p className="text-xl font-bold">{user.username}</p>
-        <Button
-          sx={{
-            backgroundColor: "#e7e7e7",
-            color: "black",
-            width: "150px",
-            borderRadius: "10px",
-          }}
-          onClick={() => router.push(`/profile/${u_id}`)}
-        >
-          View profile
-        </Button>
-
+        <p className="text-xl font-bold">{groupChat.name}</p>
         <Box
           sx={{
-            borderTop: "2px solid #e7e7e7",
+            borderTop: "1px solid #e0e0e0",
             width: "100%",
-            marginTop: "10px",
+            flex: 1,
           }}
         >
-          <p className="text-xl font-semibold text-center my-4">Photos</p>
           <Box
             sx={{
-              height: "calc(100vh - 290px)",
+              // height: "calc(100vh - 290px)",
               overflowY: "auto",
               "::-webkit-scrollbar": { width: "10px" },
               "::-webkit-scrollbar-track": {
@@ -115,6 +105,65 @@ const RightDrawerContentMessages = ({
               },
             }}
           >
+            <p className="text-xl font-semibold text-center my-4">Members</p>
+
+            {!membersRes || membersRes === undefined ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <GradientCircularProgress />
+              </Box>
+            ) : (
+              <Box sx={{}}>
+                {membersRes.items.map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "0 25px 15px",
+                    }}
+                  >
+                    <img
+                      alt="Avatar"
+                      src={item.user.profile_img}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <Box
+                      sx={{
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                        marginLeft: "10px",
+                        textAlign: "left",
+                      }}
+                    >
+                      <p className="font-semibold">{item.user.username}</p>
+                      <p className="font-thin text-sm text-gray-400">
+                        {item.user.email}
+                      </p>
+                    </Box>
+                    <Button
+                      onClick={() => router.push(`/profile/${item.user.id}`)}
+                      variant="outlined"
+                      color="primary"
+                    >
+                      View
+                    </Button>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            <p className="text-xl font-semibold text-center my-4">Photos</p>
+
             {!messagesRes || messagesRes === undefined ? (
               <Box
                 sx={{
@@ -134,7 +183,7 @@ const RightDrawerContentMessages = ({
                   gap: "10px",
                 }}
               >
-                {messagesRes.data.length === 0 && (
+                {messagesRes.items.length === 0 && (
                   <Box
                     sx={{
                       display: "flex",
@@ -149,19 +198,19 @@ const RightDrawerContentMessages = ({
                     <p className="text-lg">No photos</p>
                   </Box>
                 )}
-                {messagesRes.data.map((item, index) => {
-                  if (item.mediaContents.length === 0) return null;
+                {messagesRes.items.map((item, index) => {
+                  if (item.media_content.length === 0) return null;
                   return (
                     <Box
                       key={index}
                       onClick={() => {
                         toggleModal();
-                        setImgSrc(item.mediaContents[0].media_url);
+                        setImgSrc(item.media_content);
                       }}
                     >
                       <img
                         alt="image"
-                        src={item.mediaContents[0].media_url}
+                        src={item.media_content}
                         className="object-cover w-[125px] h-[125px] cursor-pointer hover:opacity-85"
                       />
                     </Box>
@@ -176,4 +225,4 @@ const RightDrawerContentMessages = ({
   );
 };
 
-export default RightDrawerContentMessages;
+export default RightDrawerContentGroupChat;
