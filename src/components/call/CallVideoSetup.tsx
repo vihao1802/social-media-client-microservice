@@ -53,7 +53,7 @@ const CallVideoSetup = ({
           className="rounded-md text-blue-500 px-4 py-2.5"
           onClick={async () => {
             await call.leave();
-            router.push("/messages");
+            router.back();
           }}
         >
           Exit setup

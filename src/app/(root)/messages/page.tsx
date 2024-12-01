@@ -2,7 +2,7 @@
 import LeftSideBarMessages from "@/components/messages/LeftSideBarChatItems";
 import { Friends } from "@/types";
 import { AccountCircle, AccountCircleOutlined } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 
 const Messages = () => {
   return (
@@ -20,11 +20,13 @@ const Messages = () => {
           textAlign: "center",
         }}
       >
-        <AccountCircle
+        <Avatar
           sx={{
-            fontSize: "100px",
-            fontWeight: "500",
+            width: "80px",
+            height: "80px",
+            margin: "0 auto 10px",
           }}
+          src=""
         />
         <Typography>Select a friend or group chat to send messages</Typography>
       </Box>

@@ -21,8 +21,9 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       user: {
         id: authenticatedUser.id,
         name: authenticatedUser.username,
+        image: authenticatedUser.profile_img,
       },
-      tokenProvider,
+      tokenProvider: () => tokenProvider(authenticatedUser.id),
     });
 
     setVideoClient(client);
