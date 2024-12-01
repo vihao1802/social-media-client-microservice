@@ -9,7 +9,7 @@ import {
   Link,
 } from "@mui/material";
 import { BiErrorCircle } from "react-icons/bi";
-import { RecoveryContext } from "@/app/(auth)/password-recovery/page";
+import { RecoveryContext } from "@/context/recovery-context";
 import toast from "react-hot-toast";
 
 const InputContainer = styled(Box)(({ theme }) => ({

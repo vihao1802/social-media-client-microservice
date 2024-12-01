@@ -11,6 +11,6 @@ export const userApi = {
 
   async updateUser(payload: UpdateUserRequest) {
     const res = await axiosInstance.put(`${prefix}`, payload);
-    return res.data;
+    return res;
   },
 };

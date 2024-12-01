@@ -188,7 +188,7 @@ const RightListContentGroupChat = () => {
             >
               {item.sender.id !== user.id && (
                 <Box>
-                  <Avatar src={item.sender.profile_img} />
+                  <Avatar src={item.sender.profile_img || "/icons/user.png"} />
                 </Box>
               )}
 

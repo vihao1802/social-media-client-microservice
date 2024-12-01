@@ -94,7 +94,7 @@ const RightListContentMessages = () => {
     if (scrollContainer) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
-  }, [messageList]);
+  }, [messageList, boxRef]);
 
   if (!messageList) return null;
 
@@ -189,7 +189,7 @@ const RightListContentMessages = () => {
             >
               {item.senderId !== user.id && (
                 <Box>
-                  <Avatar src={item.sender.profile_img} />
+                  <Avatar src={item.sender.profile_img || "/icons/user.png"} />
                 </Box>
               )}
 

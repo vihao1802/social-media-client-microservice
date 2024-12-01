@@ -29,7 +29,7 @@ const EndCallButton = ({ text }: { text: string }) => {
     call?.camera.disable();
     call?.microphone.disable();
     await call.endCall();
-    router.push("/messages");
+    router.back();
   };
 
   return (

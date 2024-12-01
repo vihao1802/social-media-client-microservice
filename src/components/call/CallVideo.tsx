@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   CallControls,
   CallParticipantsList,
@@ -10,16 +10,14 @@ import {
   useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Button } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { Box } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
-import EndCallButton from "./EndCallButton";
+import GradientCircularProgress from "../shared/Loader";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
 const CallVideo = () => {
-  const searchParams = useSearchParams();
-  const isPersonalRoom = !!searchParams.get("personal");
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
@@ -33,7 +31,8 @@ const CallVideo = () => {
   }
   const callingState = useCallCallingState();
 
-  if (callingState === CallingState.LEFT)
+  if (callingState === CallingState.LEFT) {
+    router.back();
     return (
       <Box
         sx={{
@@ -41,17 +40,26 @@ const CallVideo = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%,-50%)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "10px",
         }}
       >
+        <GradientCircularProgress />
+
         <Box
           sx={{
             color: "white",
+            textAlign: "center",
           }}
         >
           Ending...
         </Box>
       </Box>
     );
+  }
 
   if (callingState === CallingState.JOINING)
     return (
@@ -61,11 +69,18 @@ const CallVideo = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%,-50%)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "10px",
         }}
       >
+        <GradientCircularProgress />
         <Box
           sx={{
             color: "white",
+            textAlign: "center",
           }}
         >
           Joining...
@@ -102,8 +117,9 @@ const CallVideo = () => {
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 flex-wrap">
         <CallControls
           onLeave={() => {
-            call.endCall;
-            router.push("/messages");
+            call.endCall();
+            call.camera.disable();
+            call.microphone.disable();
           }}
         />
 
@@ -119,7 +135,6 @@ const CallVideo = () => {
             />
           </div>
         </button>
-        {/* {!isPersonalRoom && <EndCallButton text="End call" />} */}
       </div>
     </section>
   );

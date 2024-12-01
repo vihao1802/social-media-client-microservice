@@ -9,12 +9,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!firstLoading && !user) {
-      router.push("/sign-in");
-    }
-  }, []);
+    if (!firstLoading && !user) router.push("/sign-in");
+  }, [user, firstLoading]);
 
-  if (firstLoading) {
+  if (firstLoading || !user) {
     return (
       <Box
         sx={{
