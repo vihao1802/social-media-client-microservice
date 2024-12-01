@@ -12,7 +12,7 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useState } from "react";
 import { useGetCommentReaction } from "@/hooks/comment-reaction/useGetCommentReaction";
-import { getUserId_Cookie } from "@/utils/handleCookies";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import {
   CommentReaction,
   CommentReactionRequest,
@@ -23,7 +23,8 @@ import { useDeleteCommentReaction } from "@/hooks/comment-reaction/useDeleteComm
 import toast from "react-hot-toast";
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
-  const userId = getUserId_Cookie();
+  const { user: currentUser } = useAuthenticatedUser();
+  if (!currentUser) return null;
 
   const { setParentCommentId, setCommentContent } = useContext(CommentContext);
 
@@ -37,7 +38,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   useEffect(() => {
     if (commentReactionData) {
       const commentReaction = commentReactionData.items.find(
-        (item: CommentReaction) => item.userId === userId
+        (item: CommentReaction) => item.userId === currentUser.id
       );
       if (commentReaction) {
         setCommentReactionId(commentReaction.id);
@@ -48,7 +49,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   if (isCommentReactionDataLoading || !commentReactionData) return null;
 
   const isLiked = commentReactionData.items.some(
-    (item: CommentReaction) => item.userId === userId
+    (item: CommentReaction) => item.userId === currentUser.id
   );
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -61,12 +62,8 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
         return null;
       }
     } else {
-      if (userId === null) {
-        toast.error("User not found!");
-        return null;
-      }
       const commentReactionData: CommentReactionRequest = {
-        userId: userId,
+        userId: currentUser.id,
         commentId: comment.id,
       };
       const commentReactionResponse = await createCommentReaction(
@@ -174,7 +171,9 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
               ":hover": { color: "#000", cursor: "pointer" },
             }}
             onClick={() => {
-              setParentCommentId(comment.parentComment.id);
+              if (comment.parentComment) {
+                setParentCommentId(comment.parentComment.id);
+              } else setParentCommentId(comment.id);
               setCommentContent("@" + comment.user.username + " ");
             }}
           >

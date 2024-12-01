@@ -16,6 +16,7 @@ import {
   BookmarkBorderRounded,
   FavoriteRounded,
   FavoriteBorderOutlined,
+  CloseRounded,
 } from "@mui/icons-material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ImageSwiper from "../post/ImageSwiper";
@@ -29,12 +30,12 @@ import { Comment, GroupComment } from "@/models/comment";
 import GroupCommentComponent from "./GroupComment";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
 import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
-import { getUserId_Cookie } from "@/utils/handleCookies";
 import { usePostComment } from "@/hooks/comment/usePostComment";
 import toast from "react-hot-toast";
 import { CommentContext } from "@/context/comment-context";
 import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
 import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 // Kích hoạt plugin
 
@@ -47,7 +48,9 @@ const PostComment = ({
   postMedia: MediaContent[];
   handleClose: () => void;
 }) => {
-  const userId = getUserId_Cookie();
+  const { user: currentUser } = useAuthenticatedUser();
+  if (!currentUser) return null;
+
   const { post } = useContext(PostContext);
   const { data: commentData, isLoading: isCommentDataLoading } =
     useGetCommentByPostId({ postId: post?.id ?? 0 });
@@ -67,10 +70,8 @@ const PostComment = ({
     const commentData = new FormData();
     commentData.append("content", commentContent);
     commentData.append("postId", String(post.id));
-    commentData.append("userId", String(userId));
-    if (parentCommentId) {
-      console.log(parentCommentId);
-
+    commentData.append("userId", String(currentUser.id));
+    if (parentCommentId && commentContent.includes("@")) {
       commentData.append("parentCommentId", String(parentCommentId));
     }
     await createComment(commentData);
@@ -86,7 +87,7 @@ const PostComment = ({
   useEffect(() => {
     if (postViewerData) {
       const postViewer = postViewerData.items.find(
-        (item: PostViewer) => item.userId === userId
+        (item: PostViewer) => item.userId === currentUser.id
       );
       if (postViewer) {
         setPostViewerId(postViewer.id);
@@ -104,7 +105,7 @@ const PostComment = ({
   dayjs.extend(relativeTime);
 
   const isLiked = postViewerData.items.some(
-    (item: PostViewer) => item.userId === userId
+    (item: PostViewer) => item.userId === currentUser.id && item.liked === true
   );
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,13 +118,13 @@ const PostComment = ({
         return null;
       }
     } else {
-      if (post === null || userId === null) {
+      if (post === null) {
         toast.error("Post or user not found!");
         return null;
       }
       const postViewerData: PostViewerRequest = {
         postId: post.id,
-        userId: userId,
+        userId: currentUser.id,
         liked: true,
       };
       const postViewerResponse = await createPostViewer(postViewerData);
@@ -238,12 +239,18 @@ const PostComment = ({
               }}
             >
               {commentList.length > 0 ? (
-                commentList.map((groupComment: GroupComment, index: number) => (
-                  <GroupCommentComponent
-                    key={index}
-                    groupComment={groupComment}
-                  />
-                ))
+                commentList
+                  .sort(
+                    (a: GroupComment, b: GroupComment) =>
+                      new Date(b.mainComment.createdAt).getTime() -
+                      new Date(a.mainComment.createdAt).getTime()
+                  )
+                  .map((groupComment: GroupComment, index: number) => (
+                    <GroupCommentComponent
+                      key={index}
+                      groupComment={groupComment}
+                    />
+                  ))
               ) : (
                 <Box
                   sx={{

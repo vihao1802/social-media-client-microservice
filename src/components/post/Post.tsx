@@ -27,20 +27,17 @@ import GradientCircularProgress from "../shared/Loader";
 import { PostContext } from "@/context/post-context";
 import { AvatarGroup, Skeleton } from "@mui/material";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import { getUserId_Cookie } from "@/utils/handleCookies";
 import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
 import { FavoriteRounded } from "@mui/icons-material";
 import { usePostComment } from "@/hooks/comment/usePostComment";
 import toast from "react-hot-toast";
 import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
 import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 export default function PostComponent() {
-  const userId = getUserId_Cookie();
-  if (!userId) {
-    toast.error("Please login to continue!");
-    return null;
-  }
+  const { user: currentUser } = useAuthenticatedUser();
+  if (!currentUser) return null;
 
   const { post } = useContext(PostContext);
   const [openComment, setOpenComment] = useState(false);
@@ -62,7 +59,7 @@ export default function PostComponent() {
     const commentData = new FormData();
     commentData.append("content", commentContent);
     commentData.append("postId", String(post.id));
-    commentData.append("userId", String(userId));
+    commentData.append("userId", String(currentUser.id));
     await createComment(commentData);
     toast.success("Commented successfully!");
     setCommentContent("");
@@ -75,7 +72,7 @@ export default function PostComponent() {
   useEffect(() => {
     if (postViewerData) {
       const postViewer = postViewerData.items.find(
-        (item: PostViewer) => item.userId === userId
+        (item: PostViewer) => item.userId === currentUser.id
       );
       if (postViewer) {
         setPostViewerId(postViewer.id);
@@ -94,7 +91,7 @@ export default function PostComponent() {
   dayjs.extend(relativeTime);
 
   const isLiked = postViewerData?.items.some(
-    (item: PostViewer) => item.userId === userId
+    (item: PostViewer) => item.userId === currentUser.id && item.liked === true
   );
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -109,7 +106,7 @@ export default function PostComponent() {
     } else {
       const postViewerData: PostViewerRequest = {
         postId: post.id,
-        userId: userId,
+        userId: currentUser.id,
         liked: true,
       };
       const postViewerResponse = await createPostViewer(postViewerData);
