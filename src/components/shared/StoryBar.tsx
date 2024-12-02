@@ -131,7 +131,6 @@ const StoryBar = () => {
             activeIndex={posts[0].activeIndex}
           />
         ))}
-        t
       </Box>
 
       {number > maxTranslate && (

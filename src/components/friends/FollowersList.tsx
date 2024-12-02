@@ -107,6 +107,25 @@ const FollowersList = () => {
                   Accept
                 </Button>
               )}
+              {item.status === RelationshipStatus.Accepted && (
+                <Link
+                  sx={{
+                    textTransform: "none",
+                    height: "35px",
+                    padding: "6px 10px",
+                    color: "black",
+                    borderRadius: "5px",
+                    textDecoration: "none",
+                    gap: "15px",
+                    ":hover": {
+                      backgroundColor: "#DBDBDB",
+                    },
+                  }}
+                  href={`/messages/r/${item.id}/u/${item.senderId}`}
+                >
+                  <Typography sx={{ fontSize: "14px" }}>Message</Typography>
+                </Link>
+              )}
             </Box>
           ))}
         </Box>

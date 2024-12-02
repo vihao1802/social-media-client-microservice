@@ -24,6 +24,8 @@ const RightDrawerContentMessages = ({
     relationshipId: relationshipId,
   });
 
+  let countMediaContent = 0;
+
   if (!user || !messagesRes)
     return (
       <Box
@@ -149,8 +151,27 @@ const RightDrawerContentMessages = ({
                 >
                   <p className="text-xl font-semibold pt-3">Photos</p>
                 </Box>
+                {countMediaContent === messagesRes.data.length && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "375px",
+                      gridColumnStart: 1,
+                      gridColumnEnd: 4,
+                      color: "GrayText",
+                    }}
+                  >
+                    <p className="text-lg">No photos</p>
+                  </Box>
+                )}
                 {messagesRes.data.map((item, index) => {
-                  if (item.mediaContents.length === 0) return null;
+                  if (item.mediaContents.length === 0) {
+                    countMediaContent++;
+                    return null;
+                  }
+
                   return (
                     <Box
                       key={index}
