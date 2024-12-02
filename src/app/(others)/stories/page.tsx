@@ -11,11 +11,6 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
-import avatar from "@/assets/images/logo.png";
-import postImg from "@/assets/images/post-img.jpg";
-import postImg1 from "@/assets/images/post-img1.jpg";
-import postImg2 from "@/assets/images/post-img2.jpg";
-import postImg3 from "@/assets/images/post-img3.jpg";
 import {
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
@@ -43,44 +38,6 @@ interface Story {
   duration?: number;
 }
 
-const stories: Story[] = [
-  {
-    id: "1",
-    username: "bhan.hann",
-    avatar: avatar.src,
-    url: postImg.src,
-    time: "14h",
-    subtitles: "See translation",
-    duration: 5000,
-  },
-  {
-    id: "2",
-    username: "bhan.hann",
-    avatar: avatar.src,
-    url: postImg1.src,
-    time: "14h",
-    subtitles: "See translation",
-    duration: 4000,
-  },
-  {
-    id: "3",
-    username: "bhan.hann",
-    avatar: avatar.src,
-    url: postImg2.src,
-    time: "14h",
-    subtitles: "See translation",
-    duration: 3000,
-  },
-  {
-    id: "4",
-    username: "bhan.hann",
-    avatar: avatar.src,
-    url: postImg3.src,
-    time: "14h",
-    subtitles: "See translation",
-    duration: 2000,
-  },
-];
 const StoriesPage = () => {
   const router = useRouter();
   const swiperRef = useRef<SwiperType>();

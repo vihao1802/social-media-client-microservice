@@ -52,6 +52,8 @@ const PostComment = ({
   if (!currentUser) return null;
 
   const { post } = useContext(PostContext);
+  if (!post) return null;
+
   const { data: commentData, isLoading: isCommentDataLoading } =
     useGetCommentByPostId({ postId: post?.id ?? 0 });
 
@@ -166,6 +168,7 @@ const PostComment = ({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        zIndex: 9999,
       }}
     >
       <Box

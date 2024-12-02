@@ -1,7 +1,12 @@
 "use client";
 
 import { PostContext } from "@/context/post-context";
-import { Favorite, Forum } from "@mui/icons-material";
+import {
+  Favorite,
+  Forum,
+  CollectionsRounded,
+  SmartDisplayRounded,
+} from "@mui/icons-material";
 import { Box, Skeleton, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import PostComment from "../post/PostComment";
@@ -56,7 +61,11 @@ const ExploreImage = () => {
       >
         {/* Image */}
         <Box
-          component="img"
+          component={
+            mediaContentData?.items[0].media_type?.includes("video")
+              ? "video"
+              : "img"
+          }
           sx={{
             width: "100%",
             height: "100%",
@@ -65,6 +74,26 @@ const ExploreImage = () => {
           src={mediaContentData?.items[0].media_Url}
         />
 
+        {/* Icon that appears on the bottom right corner of the image */}
+        {mediaContentData?.items[0].media_type?.includes("video") ? (
+          <SmartDisplayRounded
+            sx={{
+              position: "absolute",
+              top: "15px",
+              right: "10px",
+              color: "white",
+            }}
+          />
+        ) : (
+          <CollectionsRounded
+            sx={{
+              position: "absolute",
+              top: "15px",
+              right: "10px",
+              color: "white",
+            }}
+          />
+        )}
         {/* Dark overlay that appears on hover */}
         <Box
           className="overlay"
@@ -79,7 +108,6 @@ const ExploreImage = () => {
             transition: "opacity 0.3s ease-in-out",
           }}
         />
-
         {/* Icons positioned on top of the image, initially hidden */}
         <Box
           className="icons"
@@ -105,7 +133,6 @@ const ExploreImage = () => {
             }
           </Typography>
         </Box>
-
         <Box
           className="icons"
           sx={{
