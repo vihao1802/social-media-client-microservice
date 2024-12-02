@@ -17,51 +17,21 @@ export default function Home() {
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 5,
+    sort: "-id",
   };
 
-  const {
-    data: dataResponse,
-    isLoading,
-    isValidating,
-    setSize,
-  } = usePostListInfinity({
+  const { data, isLoading, isValidating, setSize } = usePostListInfinity({
     params: filters,
   });
 
-  const postResponse = dataResponse
-    ?.map((item) => item.data)
-    .map(
-      (item: {
-        items: Array<Post>;
-        page: number;
-        pageSize: number;
-        totalItems: number;
-        totalPages: number;
-      }) => {
-        return {
-          data: item?.items,
-          pagination: {
-            page: item.page,
-            pageSize: item.pageSize,
-            totalElements: item.totalItems,
-            totalPages: item.totalPages,
-          },
-        };
-      }
-    );
-
   const postList: Array<Post> =
-    postResponse?.reduce(
-      (result: Array<Post>, currentPage: ListResponse<Post>) => {
-        result.push(...currentPage.data);
+    data?.reduce((result: Array<Post>, currentPage: ListResponse<Post>) => {
+      result.push(...currentPage.items);
 
-        return result;
-      },
-      []
-    ) || [];
+      return result;
+    }, []) || [];
 
-  const totalElements = postResponse?.[0]?.pagination.totalElements || 0;
-  const showLoadMore = totalElements > postList.length;
+  const showLoadMore = (data?.[0]?.totalItems ?? 0) > postList.length;
   const loadingMore = isValidating && postList.length > 0;
 
   const { ref } = useInView({
@@ -90,10 +60,6 @@ export default function Home() {
 
         {postList
           .filter((post) => post.is_story === false)
-          .sort(
-            (a: Post, b: Post) =>
-              new Date(b.create_at).getTime() - new Date(a.create_at).getTime()
-          )
           .map((post: Post, index: number) => (
             <PostContext.Provider
               key={index}

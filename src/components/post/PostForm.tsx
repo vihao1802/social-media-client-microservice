@@ -17,12 +17,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
+import React, { useState, MouseEvent, use, useEffect } from "react";
 import ImagesUpload, { FileWithPreview } from "../shared/ImagesUpload";
 import { MediaContent } from "@/models/media-content";
 import ImageSwiper from "./ImageSwiper";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useCreatePost } from "@/hooks/post/useCreatePost";
+import { Post, PostRequest } from "@/models/post";
+import toast from "react-hot-toast";
+import { usePostMediaContent } from "@/hooks/media-content/usePostMediaContent";
+import { Arguments, useSWRConfig } from "swr";
+import { QueryKeys } from "@/constants/query-keys";
+import { usePatchPost } from "@/hooks/post/usePatchPost";
 
 const schema = yup.object({
   caption: yup.string().required("Caption is required"),
@@ -31,13 +40,18 @@ const schema = yup.object({
 });
 
 interface PostFormProps {
+  post?: Post;
+  postMedia?: MediaContent[];
   open: boolean;
   handleClose: () => void;
 }
 
 const steps = ["Select media", "Media details"];
 
-const PostForm = ({ open, handleClose }: PostFormProps) => {
+const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
+  const { user: currentUser } = useAuthenticatedUser();
+  if (!currentUser) return null;
+
   const [activeStep, setActiveStep] = useState(0);
   const [mediaContentList, setMediaContentList] = useState<
     (FileWithPreview | MediaContent)[]
@@ -51,17 +65,11 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const [visibility, setVisibility] = React.useState("");
-
-  const handleChangeVisibility = (event: SelectChangeEvent) => {
-    setVisibility(event.target.value as string);
-  };
-
-  const [checked, setChecked] = React.useState(false);
-
-  const handleChangeChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate } = useSWRConfig();
+  const createPost = useCreatePost();
+  const updatePost = usePatchPost();
+  const createMediaContent = usePostMediaContent();
 
   const postForm = useFormik({
     enableReinitialize: true,
@@ -71,10 +79,73 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
       isStory: false,
     },
     validationSchema: schema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      try {
+        if (!post) {
+          const postRequest: PostRequest = {
+            content: values.caption,
+            visibility: values.visibility,
+            is_story: values.isStory,
+            creatorId: currentUser.id,
+          };
+          const postResponse = await createPost(postRequest);
+          if (postResponse) {
+            mediaContentList.forEach(async (mediaContent) => {
+              const mediaContentData = new FormData();
+              if (mediaContent instanceof File) {
+                mediaContentData.append("mediaFile", mediaContent);
+                if (mediaContent.type.startsWith("image/"))
+                  mediaContentData.append("media_type", "image");
+                else mediaContentData.append("media_type", "video");
+                mediaContentData.append("postId", postResponse.id.toString());
+                await createMediaContent(mediaContentData);
+              } else {
+                toast.error("Media content is not a file");
+                return;
+              }
+            });
+            mutate(
+              (key: Arguments) =>
+                Array.isArray(key) && key.includes(QueryKeys.GET_POST_LIST),
+              undefined,
+              { revalidate: true }
+            );
+            toast.success("Post created successfully");
+          }
+        } else {
+          const postRequest: Partial<PostRequest> = {
+            content: values.caption,
+            visibility: values.visibility,
+            is_story: values.isStory,
+          };
+          await updatePost(post.id, postRequest);
+
+          toast.success("Post updated successfully");
+        }
+      } catch (error: any) {
+        toast.error("Failed to create post");
+      } finally {
+        setIsSubmitting(false);
+        postForm.resetForm();
+        setMediaContentList([]);
+        setActiveStep(0);
+        handleClose();
+      }
     },
   });
+
+  useEffect(() => {
+    if (post && postMedia) {
+      postForm.setValues({
+        caption: post.content,
+        visibility: post.visibility,
+        isStory: post.is_story,
+      });
+      setMediaContentList(postMedia);
+      setActiveStep(1);
+    }
+  }, [post, postMedia]);
 
   return (
     <Dialog
@@ -87,22 +158,24 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
         },
       }}
     >
-      <DialogTitle>Create media</DialogTitle>
+      <DialogTitle>{!post ? "Create Post" : "Edit Post"}</DialogTitle>
       <DialogContent>
-        <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
+        {!post && (
+          <Stepper activeStep={activeStep}>
+            {steps.map((label, index) => {
+              const stepProps: { completed?: boolean } = {};
 
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        )}
 
         <React.Fragment>
-          {activeStep === 0 ? (
+          {activeStep === 0 && !post ? (
             <Box pt="20px">
               <ImagesUpload
                 value={mediaContentList}
@@ -120,37 +193,7 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
                 gap: 2,
               }}
             >
-              {mediaContentList[0] instanceof File &&
-              mediaContentList[0].type.startsWith("video") ? (
-                <Box
-                  component="video"
-                  controls
-                  src={mediaContentList[0].preview}
-                  height="400px"
-                  width="300px"
-                  sx={{
-                    objectFit: "cover",
-                    borderRadius: "5px",
-                    backgroundColor: "#000",
-                  }}
-                />
-              ) : "media_type" in mediaContentList[0] &&
-                mediaContentList[0].media_type === "video" ? (
-                <Box
-                  component="video"
-                  controls
-                  src={mediaContentList[0].media_Url}
-                  height="400px"
-                  width="300px"
-                  sx={{
-                    objectFit: "cover",
-                    borderRadius: "5px",
-                    backgroundColor: "#000",
-                  }}
-                />
-              ) : (
-                <ImageSwiper width="450px" postMedia={mediaContentList} />
-              )}
+              <ImageSwiper width="450px" postMedia={mediaContentList} />
 
               <Box
                 sx={{
@@ -179,9 +222,16 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
                       gap: "15px",
                     }}
                   >
-                    <Avatar sx={{ height: "32px", width: "32px" }}>Q</Avatar>
+                    {currentUser.profile_img ? (
+                      <Avatar src={currentUser.profile_img} />
+                    ) : (
+                      <Avatar sx={{ height: "32px", width: "32px" }}>
+                        {currentUser.username.charAt(0).toUpperCase()}
+                      </Avatar>
+                    )}
+
                     <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                      Hu chuynh
+                      {currentUser.username}
                     </Typography>
                   </Box>
                 </Box>
@@ -205,14 +255,24 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
                       required
                       placeholder="Write a caption..."
                       margin="dense"
-                      id="courtDescription"
-                      name="courtDescription"
+                      id="caption"
+                      name="caption"
                       type="text"
                       rows={8}
                       multiline
                       fullWidth
                       variant="outlined"
                       size="small"
+                      value={postForm.values.caption}
+                      onChange={postForm.handleChange}
+                      helperText={
+                        postForm.touched.caption &&
+                        (postForm.errors.caption as string)
+                      }
+                      error={
+                        postForm.touched.caption &&
+                        Boolean(postForm.errors.caption)
+                      }
                     />
                   </Box>
 
@@ -221,10 +281,11 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
                       Who can see this?
                     </Typography>
                     <Select
-                      value={visibility}
-                      placeholder="Who can see this?"
+                      value={postForm.values.visibility}
                       size="small"
-                      onChange={handleChangeVisibility}
+                      name="visibility"
+                      id="visibility"
+                      onChange={postForm.handleChange}
                       fullWidth
                     >
                       <MenuItem value={0}>Public</MenuItem>
@@ -236,8 +297,10 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
                     <FormControlLabel
                       control={
                         <Switch
-                          checked={checked}
-                          onChange={handleChangeChecked}
+                          checked={postForm.values.isStory}
+                          onChange={postForm.handleChange}
+                          name="isStory"
+                          id="isStory"
                         />
                       }
                       label="Post to your story"
@@ -248,7 +311,7 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
             </Box>
           )}
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            {activeStep !== 0 && (
+            {activeStep !== 0 && !post && (
               <Button color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
                 Back
               </Button>
@@ -257,7 +320,13 @@ const PostForm = ({ open, handleClose }: PostFormProps) => {
             <Box sx={{ flex: "1 1 auto" }} />
 
             {activeStep === steps.length - 1 ? (
-              <Button>Share</Button>
+              <LoadingButton
+                loading={isSubmitting}
+                variant="text"
+                onClick={postForm.submitForm}
+              >
+                {post ? "Done" : "Post"}
+              </LoadingButton>
             ) : (
               <Button
                 onClick={handleNext}
