@@ -14,3 +14,10 @@ export interface MediaContentRequest extends MediaContentBase {
     mediaFile: File;
 }
 
+export interface MediaContentPagination {
+  items: MediaContent[];
+  totalItems: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

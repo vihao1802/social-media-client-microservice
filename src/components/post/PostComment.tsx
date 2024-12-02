@@ -36,6 +36,7 @@ import { CommentContext } from "@/context/comment-context";
 import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
 import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { Post } from "@/models/post";
 
 // Kích hoạt plugin
 
@@ -43,16 +44,18 @@ const PostComment = ({
   isOpen,
   postMedia,
   handleClose,
+  post: propPost = null,
 }: {
   isOpen: boolean;
   postMedia: MediaContent[];
   handleClose: () => void;
+  post?: Post | null;
 }) => {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
 
-  const { post } = useContext(PostContext);
-  if (!post) return null;
+  const { post: contextPost } = useContext(PostContext);
+  const post = propPost || contextPost;
 
   const { data: commentData, isLoading: isCommentDataLoading } =
     useGetCommentByPostId({ postId: post?.id ?? 0 });

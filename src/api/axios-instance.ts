@@ -14,8 +14,6 @@ const axiosInstance = axios.create({
 });
 let isRefreshing = false;
 
-
-
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = cookies.get("token");
@@ -53,9 +51,11 @@ axiosInstance.interceptors.response.use(
       console.log("1. API Error:", error.request);
 
       if (error.response.status === 400) {
+        toast.error("Bad request, please try again");
         toast.error(error.response.data.message);
       } else if (error.response.status === 404) {
         console.error("Resource not found");
+        toast.error("Resource not found");
         toast.error(error.response.data.message);
       } else if (error.response.status >= 500) {
         console.error("Server error, please try again later");

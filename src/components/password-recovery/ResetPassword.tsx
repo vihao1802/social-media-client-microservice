@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
-import { RecoveryContext } from "@/app/(auth)/password-recovery/page";
+import { RecoveryContext } from "@/context/recovery-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Visibility, VisibilityOffOutlined } from "@mui/icons-material";

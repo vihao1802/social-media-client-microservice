@@ -14,6 +14,15 @@ export interface Post extends PostBase {
     postReactions: number;
 }
 
+export interface PostPagination {
+  items: Post[];
+  totalItems: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+
 export interface PostRequest extends PostBase {
     creatorId: string;
 }

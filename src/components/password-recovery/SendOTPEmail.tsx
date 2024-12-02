@@ -2,7 +2,7 @@
 import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useContext } from "react";
-import { RecoveryContext } from "@/app/(auth)/password-recovery/page";
+import { RecoveryContext } from "@/context/recovery-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";

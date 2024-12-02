@@ -77,7 +77,7 @@ const RightDrawerContentGroupChat = ({
         }}
       >
         <img
-          src={groupChat.avatar}
+          src={groupChat.avatar || "/icons/user.png"}
           alt="Avatar"
           className="w-24 h-24 rounded-full"
         />
@@ -119,7 +119,7 @@ const RightDrawerContentGroupChat = ({
                 <GradientCircularProgress />
               </Box>
             ) : (
-              <Box sx={{}}>
+              <Box>
                 {membersRes.items.map((item, index) => (
                   <Box
                     key={index}
