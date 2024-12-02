@@ -12,6 +12,8 @@ import { useGetRelationshipByUserIdFollowing } from "@/hooks/relationship/useGet
 import { RelationshipStatus } from "@/types/enum";
 import { useGetFollowerQuantity } from "@/hooks/relationship/useGetFollowerQuantity";
 import { useGetFollowingQuantity } from "@/hooks/relationship/useGetFollowingQuantity";
+import ProfileBottomContent from "@/components/profile/ProfileBottomContent";
+import { usePostsByUserId } from "@/hooks/post/usePostsByUserId";
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +29,12 @@ const Profile = () => {
 
   const { data: followerQuantity } = useGetFollowerQuantity({ userId: id });
   const { data: followingQuantity } = useGetFollowingQuantity({ userId: id });
+
+  const { data: postResponse } = usePostsByUserId({
+    userId: id,
+  });
+
+  console.log({ postResponse });
 
   const handleMessage = () => {
     if (!followerList || !followingList || !currentUser) return;
@@ -193,33 +201,14 @@ const Profile = () => {
                     }}
                   >
                     <Typography sx={{ color: "GrayText" }}>Posts</Typography>
-                    <Typography
-                      sx={{
-                        fontWeight: "700",
-                        fontSize: "20px",
-                      }}
-                    >
-                      162
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography sx={{ color: "GrayText" }}>
-                      Following
-                    </Typography>
-                    {followingQuantity ? (
+                    {postResponse ? (
                       <Typography
                         sx={{
                           fontWeight: "700",
                           fontSize: "20px",
                         }}
                       >
-                        {followingQuantity.quantity}
+                        {postResponse.items.length}
                       </Typography>
                     ) : (
                       <Skeleton variant="text" width={50} />
@@ -243,6 +232,29 @@ const Profile = () => {
                         }}
                       >
                         {followerQuantity.quantity}
+                      </Typography>
+                    ) : (
+                      <Skeleton variant="text" width={50} />
+                    )}
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography sx={{ color: "GrayText" }}>
+                      Following
+                    </Typography>
+                    {followingQuantity ? (
+                      <Typography
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: "20px",
+                        }}
+                      >
+                        {followingQuantity.quantity}
                       </Typography>
                     ) : (
                       <Skeleton variant="text" width={50} />
@@ -301,130 +313,19 @@ const Profile = () => {
             </Box>
           </Box>
         </Box>
-        <Box
-          sx={{
-            marginTop: "50px",
-            borderTop: "2px solid #e7e7e7",
-          }}
-        >
+        {postResponse ? (
+          <ProfileBottomContent posts={postResponse.items} />
+        ) : (
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
               justifyContent: "center",
-              gap: "10px",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-                padding: "10px 16px",
-                borderTop: "2px solid black",
-                cursor: "pointer",
-              }}
-            >
-              <CameraAltOutlinedIcon />
-              <Typography>Posts</Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-                padding: "10px 16px",
-                borderTop: "2px solid #e7e7e7",
-                cursor: "pointer",
-              }}
-            >
-              <PlayCircleOutlinedIcon />
-              <Typography>Reels</Typography>
-            </Box>
-          </Box>
-          <Box
-            sx={{
               width: "100%",
-              display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
-              gridAutoRows: "1fr",
-              gap: "5px",
             }}
           >
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: "300px",
-                height: "auto", // Height adjusts automatically
-                aspectRatio: "1",
-              }}
-            >
-              <Box
-                component="img"
-                src="https://scontent.xx.fbcdn.net/v/t1.15752-9/462552043_955696469937422_2446026620966834216_n.jpg?stp=dst-jpg_p160x160&_nc_cat=101&ccb=1-7&_nc_sid=0024fc&_nc_ohc=uFtTeKVLrDkQ7kNvgFoaNDx&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&_nc_gid=AGvvsv5BCF4DVVqtkltq2Rp&oh=03_Q7cD1QFDGg5NpEjdyyaKVWWntg2KYp5mKRtn9h52Y_pIrHsALA&oe=6735F57D"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover", // Ensures the image covers the container
-                }}
-              />
-            </Box>
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: "300px", // Maximum width is 300px
-                height: "auto", // Height adjusts automatically
-                aspectRatio: "1",
-              }}
-            >
-              <Box
-                component="img"
-                src="https://scontent.xx.fbcdn.net/v/t1.15752-9/461055324_3338717029758083_2640910248794611067_n.jpg?stp=dst-jpg_s280x280&_nc_cat=105&ccb=1-7&_nc_sid=0024fc&_nc_ohc=L1p4P0W_hlgQ7kNvgHq2lbP&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&_nc_gid=AGvvsv5BCF4DVVqtkltq2Rp&oh=03_Q7cD1QGUkRPtyfDszKag4SfurRPkt3Chgjf4JvW-ZPgT6lSwAw&oe=6735DD0B"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: "300px",
-                height: "auto", // Height adjusts automatically
-                aspectRatio: "1",
-              }}
-            >
-              <Box
-                component="img"
-                src="https://scontent.xx.fbcdn.net/v/t1.15752-9/462381148_514380041485859_6509112155811549624_n.png?stp=dst-png_p206x206&_nc_cat=105&ccb=1-7&_nc_sid=0024fc&_nc_ohc=N3RlY3Ypn8QQ7kNvgHZ2j5J&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&_nc_gid=AGvvsv5BCF4DVVqtkltq2Rp&oh=03_Q7cD1QEfNuBkKpfOcjMHPxAh3A9eLrIskI6VDynVqMNGrSH-cg&oe=6735F3E5"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                width: "100%",
-                maxWidth: "300px",
-                height: "auto", // Height adjusts automatically
-                aspectRatio: "1",
-              }}
-            >
-              <Box
-                component="img"
-                src="https://scontent.xx.fbcdn.net/v/t1.15752-9/462550578_1221708805700680_5964128019846678715_n.png?stp=dst-png_p206x206&_nc_cat=100&ccb=1-7&_nc_sid=0024fc&_nc_ohc=dG57DGfX2bkQ7kNvgGryfPb&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.xx&_nc_gid=AGvvsv5BCF4DVVqtkltq2Rp&oh=03_Q7cD1QFNu9hmG-C9Ky7mnG6WL0_c7aVeZiqSpShbSP1vLx-XLQ&oe=6735EAE2"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </Box>
+            <GradientCircularProgress />
           </Box>
-        </Box>
+        )}
       </Box>
     </Box>
   );
