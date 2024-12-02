@@ -1,10 +1,9 @@
 "use client";
-import { Box, Button, Skeleton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
 import { Post } from "@/models/post";
 import ProfileCardImage from "./ProfileCardImage";
-import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
 import { useState } from "react";
 
 interface ProfileBottomContentProps {
@@ -13,12 +12,6 @@ interface ProfileBottomContentProps {
 
 const ProfileBottomContent = ({ posts }: ProfileBottomContentProps) => {
   const [isPostTab, setIsPostTab] = useState(true);
-
-  const { data: mediaContentData } = useGetMediaContentByPostId({
-    postId: posts.length > 0 ? posts[0].id : 0,
-    enabled: posts.length > 0,
-  });
-
   return (
     <Box
       sx={{
