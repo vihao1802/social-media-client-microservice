@@ -1,18 +1,50 @@
 "use client";
+import GradientCircularProgress from "@/components/shared/Loader";
 import ReelCard from "@/components/widgets/ReelCard";
-import { Box } from "@mui/material";
+import { useGetMediaContentInfinity } from "@/hooks/media-content/useGetMediaContentInfinity";
+import { ListResponse, Pagination } from "@/models/api";
+import { MediaContent } from "@/models/media-content";
+import { Post } from "@/models/post";
+import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 const page = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handleScroll = (event: { deltaY: number }) => {
-    if (event.deltaY > 0 && currentIndex < 10 - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else if (event.deltaY < 0 && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
+  const filters: Partial<Pagination> = {
+    page: 1,
+    pageSize: 5,
+    sort: "-id",
+    includes: "Post.Creator",
+    media_type: "eq:video",
   };
+
+  const { data, isLoading, isValidating, size, setSize } =
+    useGetMediaContentInfinity({
+      params: filters,
+    });
+
+  const mediaContentList: Array<MediaContent> =
+    data?.reduce(
+      (
+        result: Array<MediaContent>,
+        currentPage: ListResponse<MediaContent>
+      ) => {
+        result.push(...currentPage.items);
+
+        return result;
+      },
+      []
+    ) || [];
+
+  const showLoadMore = (data?.[0]?.totalItems ?? 0) > mediaContentList.length;
+  const loadingMore = isValidating && mediaContentList.length > 0;
+
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) setSize((x) => x + 1);
+    },
+  });
+
   return (
     <Box
       sx={{
@@ -20,7 +52,6 @@ const page = () => {
         height: "100vh",
         marginLeft: "auto",
       }}
-      onWheel={handleScroll}
     >
       <Box
         sx={{
@@ -28,13 +59,24 @@ const page = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          paddingTop: "32px",
+          padding: "32px",
           gap: 2,
         }}
       >
-        {Array.from({ length: 10 }).map((_, index) => (
-          <ReelCard key={index} />
+        {mediaContentList.map((mediaContent: MediaContent, index: number) => (
+          <ReelCard mediaContent={mediaContent} key={index} />
         ))}
+        {showLoadMore && (
+          <Box
+            ref={ref}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {loadingMore && <GradientCircularProgress />}
+          </Box>
+        )}
       </Box>
     </Box>
   );

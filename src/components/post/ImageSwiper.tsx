@@ -58,7 +58,7 @@ const ImageSwiper = ({ postMedia, width }: ImageSwiperProps) => {
       <Swiper
         slidesPerView={1}
         spaceBetween={30}
-        loop={true}
+        loop={postMedia.length > 1}
         pagination={{
           clickable: true,
         }}
@@ -72,26 +72,50 @@ const ImageSwiper = ({ postMedia, width }: ImageSwiperProps) => {
         }}
       >
         {postMedia.map(
-          (content: FileWithPreview | MediaContent, index: number) => (
-            <SwiperSlide
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <img
-                src={
-                  "media_Url" in content ? content.media_Url : content.preview
-                }
-                alt={"media_type" in content ? content.media_type : "Image"}
-                loading="lazy"
-                max-width="600px"
-                max-height="800px"
-              />
-            </SwiperSlide>
-          )
+          (content: FileWithPreview | MediaContent, index: number) => {
+            return (
+              <SwiperSlide
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {content instanceof File ? (
+                  <Box
+                    component={content.type.includes("video") ? "video" : "img"}
+                    controls
+                    src={content.preview}
+                    height="100%"
+                    width="100%"
+                    maxHeight="600px"
+                    maxWidth="600px"
+                    sx={{
+                      objectFit: "cover",
+                      // borderRadius: "5px",
+                      backgroundColor: "#000",
+                    }}
+                  />
+                ) : (
+                  <Box
+                    component={content.media_type === "video" ? "video" : "img"}
+                    controls
+                    src={content.media_Url}
+                    height="100%"
+                    width="100%"
+                    maxHeight="600px"
+                    maxWidth="600px"
+                    sx={{
+                      objectFit: "cover",
+                      // borderRadius: "5px",
+                      backgroundColor: "#000",
+                    }}
+                  />
+                )}
+              </SwiperSlide>
+            );
+          }
         )}
       </Swiper>
 

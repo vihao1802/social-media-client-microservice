@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState, MouseEvent } from "react";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
+import CardCover from "@mui/joy/CardCover";
 import CardOverflow from "@mui/joy/CardOverflow";
 import Link from "@mui/joy/Link";
 import IconButton from "@mui/joy/IconButton";
@@ -13,19 +14,14 @@ import Typography from "@mui/joy/Typography";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
-import SendOutlined from "@mui/icons-material/SendOutlined";
-import Face from "@mui/icons-material/Face";
-import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
+import { GroupRounded, PublicRounded, LockRounded } from "@mui/icons-material";
 import PostComment from "@/components/post/PostComment";
-import postImage from "@/assets/images/post-img2.jpg";
-import { Post } from "@/models/post";
 import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
 import ImageSwiper from "./ImageSwiper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import GradientCircularProgress from "../shared/Loader";
 import { PostContext } from "@/context/post-context";
-import { AvatarGroup, Skeleton } from "@mui/material";
+import { Divider, Menu, MenuItem, Skeleton } from "@mui/material";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
 import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
 import { FavoriteRounded } from "@mui/icons-material";
@@ -34,6 +30,7 @@ import toast from "react-hot-toast";
 import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
 import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import PostForm from "./PostForm";
 
 export default function PostComponent() {
   const { user: currentUser } = useAuthenticatedUser();
@@ -79,6 +76,25 @@ export default function PostComponent() {
       }
     }
   }, [postViewerData]);
+
+  const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorElMenu);
+  const handleClickMenu = (event: MouseEvent<HTMLElement>) => {
+    setAnchorElMenu(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorElMenu(null);
+  };
+
+  const [openPostForm, setOpenPostForm] = useState(false);
+
+  const handleClickOpenPostForm = () => {
+    setOpenPostForm(true);
+  };
+
+  const handleClosePostForm = () => {
+    setOpenPostForm(false);
+  };
 
   if (
     isMediaContentDataLoading ||
@@ -145,7 +161,7 @@ export default function PostComponent() {
             >
               <Avatar
                 size="sm"
-                src={post.creator.profile_img}
+                src={post.creator.profile_img || "/icons/person.png"}
                 sx={{
                   width: "30px",
                   height: "30px",
@@ -165,40 +181,60 @@ export default function PostComponent() {
             </Typography>
           </Link>
 
+          <Typography fontSize="10px">●</Typography>
+
+          {post.visibility === 0 ? (
+            <PublicRounded sx={{ fontSize: "16px" }} />
+          ) : post.visibility === 1 ? (
+            <GroupRounded sx={{ fontSize: "16px" }} />
+          ) : (
+            <LockRounded sx={{ fontSize: "16px" }} />
+          )}
+
           <IconButton
             variant="plain"
             color="neutral"
             size="sm"
             sx={{ ml: "auto" }}
+            onClick={handleClickMenu}
           >
             <MoreHoriz />
           </IconButton>
         </CardContent>
         <CardOverflow
           sx={
-            mediaContentData?.items.length < 2
-              ? { ":hover": { cursor: "pointer" } }
-              : {
+            mediaContentData?.items.length > 1
+              ? {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }
+              : undefined
           }
         >
-          {mediaContentData?.items.length < 2 ? (
-            <AspectRatio ratio="16/9">
-              <Box
-                component="img"
-                src={mediaContentData?.items[0].media_Url}
-                alt={mediaContentData?.items[0].media_type}
-                sx={{
-                  width: "100%", // Đầy đủ chiều rộng
-                  maxHeight: "500px", // Giữ tỷ lệ ảnh
-                }}
-              />
-            </AspectRatio>
-          ) : (
+          {mediaContentData?.items.length > 1 ? (
             <ImageSwiper postMedia={mediaContentData?.items || []} />
+          ) : (
+            <AspectRatio ratio="3/2">
+              {mediaContentData?.items[0].media_type === "image" ? (
+                <Box
+                  component="img"
+                  src={mediaContentData?.items[0].media_Url}
+                  alt={mediaContentData?.items[0].media_type}
+                  sx={{
+                    width: "100%", // Đầy đủ chiều rộng
+                    maxHeight: "500px", // Giữ tỷ lệ ảnh
+                  }}
+                />
+              ) : (
+                <video autoPlay loop muted>
+                  <source
+                    src={mediaContentData?.items[0].media_Url}
+                    type="video/mp4"
+                  />
+                </video>
+              )}
+            </AspectRatio>
           )}
         </CardOverflow>
         <CardContent
@@ -236,15 +272,6 @@ export default function PostComponent() {
               }}
             >
               <ModeCommentOutlined />
-            </IconButton>
-            <IconButton variant="plain" color="neutral" size="sm">
-              <SendOutlined />
-            </IconButton>
-          </Box>
-
-          <Box sx={{ width: 0, display: "flex", flexDirection: "row-reverse" }}>
-            <IconButton variant="plain" color="neutral" size="sm">
-              <BookmarkBorderRoundedIcon />
             </IconButton>
           </Box>
         </CardContent>
@@ -302,11 +329,98 @@ export default function PostComponent() {
           </Link>
         </CardContent>
       </Card>
-      <PostComment
-        postMedia={mediaContentData?.items || []}
-        isOpen={openComment}
-        handleClose={() => setOpenComment(false)}
-      />
+
+      {/* Menu widgets */}
+      {openMenu && (
+        <Menu
+          anchorEl={anchorElMenu}
+          id="account-menu"
+          open={openMenu}
+          onClose={handleCloseMenu}
+          onClick={handleCloseMenu}
+          slotProps={{
+            paper: {
+              elevation: 0,
+              sx: {
+                overflow: "visible",
+                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                mt: 1.5,
+                width: 200,
+
+                "& .MuiAvatar-root": {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                "&::before": {
+                  content: '""',
+                  display: "block",
+                  position: "absolute",
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: "background.paper",
+                  transform: "translateY(-50%) rotate(45deg)",
+                  zIndex: 0,
+                },
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          {currentUser.id === post.creator.id ? (
+            <Box>
+              <MenuItem onClick={handleCloseMenu}>
+                <Typography sx={{ color: "red", fontWeight: "bold" }}>
+                  Delete
+                </Typography>
+              </MenuItem>
+              <Divider />
+              <MenuItem
+                onClick={() => {
+                  handleClickOpenPostForm();
+                  handleCloseMenu();
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Box>
+          ) : (
+            <Box>
+              <MenuItem onClick={handleCloseMenu}>
+                <Typography sx={{ color: "red", fontWeight: "bold" }}>
+                  Unfollow
+                </Typography>
+              </MenuItem>
+            </Box>
+          )}
+
+          <Divider />
+          <MenuItem onClick={handleCloseMenu}>Cancel</MenuItem>
+        </Menu>
+      )}
+
+      {/* Comment Modal */}
+      {openComment && (
+        <PostComment
+          postMedia={mediaContentData?.items || []}
+          isOpen={openComment}
+          handleClose={() => setOpenComment(false)}
+        />
+      )}
+
+      {/* Post Form */}
+      {openPostForm && (
+        <PostForm
+          post={post}
+          postMedia={mediaContentData?.items || []}
+          open={openPostForm}
+          handleClose={handleClosePostForm}
+        />
+      )}
     </>
   );
 }

@@ -171,6 +171,7 @@ const PostComment = ({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        zIndex: 9999,
       }}
     >
       <Box
