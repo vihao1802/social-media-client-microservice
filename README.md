@@ -1,4 +1,4 @@
-<h1 align="center">Court Booking Website</h1>
+<h1 align="center">Social Media Website</h1>
 <p align="center">
   <a href="https://github.com/vihao1802/Social-Media-Client/blob/main/LICENSE">
     <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow.svg" target="_blank" />
