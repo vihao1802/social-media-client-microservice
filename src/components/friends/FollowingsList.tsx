@@ -12,6 +12,9 @@ import { useGetRelationshipMeFollowing } from "@/hooks/relationship/useGetRelati
 import { User } from "@/models/user";
 import { RelationshipStatus } from "@/types/enum";
 import GradientCircularProgress from "../shared/Loader";
+import { relationshipApi } from "@/api/relationship";
+import toast from "react-hot-toast";
+import { mutate } from "swr";
 
 const FollowingsList = () => {
   const [open, setOpen] = useState(false);
@@ -22,6 +25,24 @@ const FollowingsList = () => {
   const handleClose = () => setOpen(false);
   const [followingItem, setFollowingItem] = useState<User | null>(null);
   const { data: relationshipMeFollowing } = useGetRelationshipMeFollowing({});
+
+  const handleUnFollow = async (user_id: string) => {
+    if (!user_id) return;
+    try {
+      const res = await relationshipApi.unfollowUser(user_id);
+      if (res) {
+        toast.success("Unfollowed");
+        mutate("get_me_following");
+        mutate("get_me_follower");
+        mutate("get_message_by_relationship_id");
+        mutate("get_follower_quantity");
+        mutate("get_following_quantity");
+        handleClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Box
@@ -83,6 +104,7 @@ const FollowingsList = () => {
                 backgroundColor: "#f7f5f5",
               },
             }}
+            onClick={() => handleUnFollow(followingItem?.id || "")}
           >
             <Typography
               sx={{ fontSize: "16px", fontWeight: "700", color: "#EE525E" }}

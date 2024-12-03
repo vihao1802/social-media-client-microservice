@@ -1,3 +1,4 @@
+import { create } from "domain";
 import axiosInstance from "./axios-instance";
 import { ChatGroup, ChatGroupPagination } from "@/models/chat-group";
 
@@ -18,5 +19,18 @@ export const chatGroupApi = {
     );
 
     return res.data;
+  },
+  async createGroupChat(payload: FormData) {
+    const res = await axiosInstance.post<ChatGroup>(
+      `${prefix}/Create`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return res;
   },
 };

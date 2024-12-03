@@ -85,4 +85,12 @@ export const authApi = {
 
     return res;
   },
+  async signInGoogle() {
+    const res = await axiosInstance.get(`${prefix}/external-login/Google`);
+    return res.data;
+  },
+  async signInFacebook() {
+    const res = await axiosInstance.get(`${prefix}/external-login/Facebook`);
+    return res.data;
+  },
 };

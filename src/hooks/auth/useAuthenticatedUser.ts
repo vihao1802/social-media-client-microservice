@@ -51,6 +51,16 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     return res;
   }
 
+  async function signInGoogle() {
+    const res = await authApi.signInGoogle();
+    return res;
+  }
+
+  async function signInFacebook() {
+    const res = await authApi.signInFacebook();
+    return res;
+  }
+
   return {
     user,
     firstLoading,
@@ -59,5 +69,7 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     login,
     logout,
     register,
+    signInGoogle,
+    signInFacebook,
   };
 }
