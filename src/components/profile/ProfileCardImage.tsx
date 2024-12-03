@@ -1,7 +1,12 @@
 "use client";
 import { Box, Typography } from "@mui/material";
 import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
-import { Favorite, Forum } from "@mui/icons-material";
+import {
+  CollectionsRounded,
+  Favorite,
+  Forum,
+  SmartDisplayRounded,
+} from "@mui/icons-material";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
 import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
 import { PostViewer } from "@/models/post-viewer";
@@ -63,6 +68,27 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
               transition: "opacity 0.3s ease-in-out",
             }}
           />
+
+          {/* Icon that appears on the bottom right corner of the image */}
+          {mediaContentData?.items[0].media_type?.includes("video") ? (
+            <SmartDisplayRounded
+              sx={{
+                position: "absolute",
+                top: "15px",
+                right: "10px",
+                color: "white",
+              }}
+            />
+          ) : (
+            <CollectionsRounded
+              sx={{
+                position: "absolute",
+                top: "15px",
+                right: "10px",
+                color: "white",
+              }}
+            />
+          )}
 
           {/* Icons positioned on top of the image, initially hidden */}
           <Box

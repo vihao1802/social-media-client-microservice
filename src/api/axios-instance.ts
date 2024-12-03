@@ -21,9 +21,9 @@ axiosInstance.interceptors.request.use(
       const tokenPayload = JSON.parse(atob(token.split(".")[1]));
       const currentTime = Math.floor(Date.now() / 1000);
       const remainingTime = tokenPayload.exp - currentTime;
-        // console.log("config.url:", config.url);
-        // console.log("Remaining time:", remainingTime);
-        // console.log("token in config:", token);
+      // console.log("config.url:", config.url);
+      // console.log("Remaining time:", remainingTime);
+      // console.log("token in config:", token);
 
       if (remainingTime <= 20 && !isRefreshing) {
         isRefreshing = true;
@@ -52,14 +52,11 @@ axiosInstance.interceptors.response.use(
 
       if (error.response.status === 400) {
         toast.error("Bad request, please try again");
-        toast.error(error.response.data.message);
       } else if (error.response.status === 404) {
         console.error("Resource not found");
         toast.error("Resource not found");
-        toast.error(error.response.data.message);
       } else if (error.response.status >= 500) {
-        console.error("Server error, please try again later");
-        toast.error("Không thể kết nối đến server");
+        toast.error("Server error, please try again later");
       }
     } else if (error.request) {
       console.error("No response received from server:", error.request);

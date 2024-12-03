@@ -58,4 +58,12 @@ export const relationshipApi = {
     const res = await axiosInstance.post(`${prefix}/follow/${user_id}`);
     return res;
   },
+  async acceptFollower(user_id: string) {
+    const res = await axiosInstance.post(`${prefix}/follow/${user_id}/accept`);
+    return res;
+  },
+  async unfollowUser(user_id: string) {
+    const res = await axiosInstance.post(`${prefix}/${user_id}/unfollow`);
+    return res;
+  },
 };

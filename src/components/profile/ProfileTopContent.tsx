@@ -13,6 +13,8 @@ import { useGetFollowingQuantity } from "@/hooks/relationship/useGetFollowingQua
 import { Post } from "@/models/post";
 import { usePostFollowUser } from "@/hooks/relationship/usePostFollowUser";
 import toast from "react-hot-toast";
+import { relationshipApi } from "@/api/relationship";
+import { mutate } from "swr";
 
 interface ProfileBottomContentProps {
   posts: Array<Post>;
@@ -56,8 +58,23 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
       window.location.href = `/messages/r/${filteredFollowing.id}/u/${id}`;
   };
 
-  const handleUnFollow = () => {
-    console.log("Unfollowed");
+  const handleUnFollow = async (user_id: string) => {
+    if (!user_id) return;
+    try {
+      const res = await relationshipApi.unfollowUser(user_id);
+      if (res) {
+        toast.success("Unfollowed");
+        mutate("get_me_following");
+        mutate("get_me_follower");
+        mutate("get_message_by_relationship_id");
+        mutate("get_follower_quantity");
+        mutate("get_following_quantity");
+        mutate("get_by_user_id_follower");
+        mutate("get_by_user_id_following");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleEditProfile = () => {
@@ -279,7 +296,7 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                           backgroundColor: "lightcyan",
                         },
                       }}
-                      onClick={handleUnFollow}
+                      onClick={() => handleUnFollow(user.id)}
                     >
                       Unfollow
                     </Button>

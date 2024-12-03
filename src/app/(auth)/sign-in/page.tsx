@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   IconButton,
+  Divider,
 } from "@mui/material";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { useState } from "react";
@@ -22,7 +23,7 @@ const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const router = useRouter();
-  const { login } = useAuthenticatedUser({
+  const { login, signInGoogle, signInFacebook } = useAuthenticatedUser({
     revalidateOnMount: false,
   });
 
@@ -191,7 +192,58 @@ const SignInPage = () => {
           </Link>
         </Typography>
       </Box>
-
+      <Divider>or</Divider>
+      <Box
+        sx={{
+          padding: "10px",
+          marginTop: "10px",
+        }}
+      >
+        <Button
+          size="large"
+          sx={{
+            width: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.02)",
+            color: "black",
+            ":hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            },
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+          }}
+          startIcon={
+            <img
+              src="/icons/google-logo.svg"
+              alt="Google logo"
+              style={{ width: 25, height: 25 }}
+            />
+          }
+          onClick={signInGoogle}
+        >
+          Sign In with Google
+        </Button>
+        <Button
+          size="large"
+          sx={{
+            width: "100%",
+            backgroundColor: "#2374F2",
+            color: "white",
+            ":hover": {
+              backgroundColor: "#0a66c2",
+            },
+            marginTop: "10px",
+          }}
+          startIcon={
+            <img
+              src="/icons/Facebook_Logo_Secondary.png"
+              alt="Google logo"
+              style={{ width: 20, height: 20 }}
+            />
+          }
+          onClick={signInFacebook}
+        >
+          Sign In with Facebook
+        </Button>
+      </Box>
       <Box>
         <Typography>
           No account?{" "}
