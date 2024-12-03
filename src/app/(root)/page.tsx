@@ -39,6 +39,7 @@ export default function Home() {
       if (inView) setSize((x) => x + 1);
     },
   });
+  if (!data) return null;
 
   return (
     <Box

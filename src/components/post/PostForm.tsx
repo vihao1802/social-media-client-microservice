@@ -40,7 +40,7 @@ const schema = yup.object({
 });
 
 interface PostFormProps {
-  post?: Post;
+  post?: Post | null;
   postMedia?: MediaContent[];
   open: boolean;
   handleClose: () => void;

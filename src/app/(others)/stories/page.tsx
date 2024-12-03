@@ -12,6 +12,7 @@ import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
 import {
+  CloseRounded,
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
 } from "@mui/icons-material";
@@ -21,6 +22,7 @@ import { useGetFriendStories } from "@/hooks/post/useGetFriendStories";
 import GradientCircularProgress from "@/components/shared/Loader";
 import { User } from "@stream-io/video-react-sdk";
 import { Post } from "@/models/post";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 const dacingScript = Dancing_Script({
   subsets: ["latin"],
@@ -39,6 +41,8 @@ interface Story {
 }
 
 const StoriesPage = () => {
+  const { user: currentUser } = useAuthenticatedUser();
+
   const router = useRouter();
   const swiperRef = useRef<SwiperType>();
 
@@ -49,7 +53,7 @@ const StoriesPage = () => {
   const [progress, setProgress] = useState(0); // You can use this to simulate progress
 
   // Increment progress over time
-  const storyDuration = 5000; // Story duration is 5 seconds in milliseconds (5000ms)
+  const [storyDuration, setStoryDuration] = useState(5000); // Story duration is 5 seconds in milliseconds (5000ms)
   const updateInterval = 100; // Update every 100ms (0.1 second)
 
   const { data: storyData, isLoading: isStoryDataLoading } =
@@ -78,6 +82,7 @@ const StoriesPage = () => {
   }, [progress, router]);
 
   if (isStoryDataLoading) return <GradientCircularProgress />;
+  if (!currentUser) return null;
 
   const handleSlideChange = () => {
     router.push(`/stories?active-index=${swiperRef.current?.activeIndex}`);
@@ -116,6 +121,18 @@ const StoriesPage = () => {
       >
         Ninstagram
       </Typography>
+
+      <IconButton
+        sx={{
+          position: "absolute",
+          top: "10px",
+          right: "20px",
+          zIndex: 10,
+        }}
+        onClick={() => router.push("/")}
+      >
+        <CloseRounded sx={{ color: "white", fontSize: "32px" }} />
+      </IconButton>
 
       <Box
         sx={{
@@ -187,6 +204,7 @@ const StoriesPage = () => {
               lazy
             >
               <StoryCard
+                currentUser={currentUser}
                 story={story}
                 progress={progress}
                 paused={paused}

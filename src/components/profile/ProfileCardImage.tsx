@@ -44,16 +44,42 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
           }}
           onClick={() => setOpenComment(true)}
         >
+          {/* Image */}
           <Box
-            component="img"
-            src={mediaContentData.items[0].media_Url}
-            alt={mediaContentData.items[0].media_type}
+            component={
+              mediaContentData?.items[0].media_type?.includes("video")
+                ? "video"
+                : "img"
+            }
             sx={{
               width: "100%",
               height: "100%",
               objectFit: "cover",
             }}
+            src={mediaContentData?.items[0].media_Url}
           />
+
+          {/* Icon that appears on the bottom right corner of the image */}
+          {mediaContentData?.items[0].media_type?.includes("video") ? (
+            <SmartDisplayRounded
+              sx={{
+                position: "absolute",
+                top: "15px",
+                right: "10px",
+                color: "white",
+              }}
+            />
+          ) : (
+            <CollectionsRounded
+              sx={{
+                position: "absolute",
+                top: "15px",
+                right: "10px",
+                color: "white",
+              }}
+            />
+          )}
+
           {/* Dark overlay that appears on hover */}
           <Box
             className="overlay"
