@@ -33,7 +33,10 @@ const Profile = () => {
         }}
       >
         <ProfileTopContent posts={postResponse.items} />
-        <ProfileBottomContent posts={postResponse.items} />
+        <ProfileBottomContent
+          posts={postResponse.items.filter((item) => !item.is_story)}
+          stories={postResponse.items.filter((item) => item.is_story)}
+        />
       </Box>
     </Box>
   );
