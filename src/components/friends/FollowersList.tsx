@@ -2,9 +2,28 @@ import { Avatar, Box, Button, Link, Typography } from "@mui/material";
 import { useGetRelationshipMeFollower } from "@/hooks/relationship/useGetRelationshipMeFollower";
 import GradientCircularProgress from "../shared/Loader";
 import { RelationshipStatus } from "@/types/enum";
+import { relationshipApi } from "@/api/relationship";
+import toast from "react-hot-toast";
+import { mutate } from "swr";
 
 const FollowersList = () => {
   const { data: relationshipMeFollower } = useGetRelationshipMeFollower({});
+
+  const handleAccept = async (senderId: string) => {
+    try {
+      const res = await relationshipApi.acceptFollower(senderId);
+      if (res) {
+        toast.success("Accepted");
+        mutate("get_me_following");
+        mutate("get_me_follower");
+        mutate("get_message_by_relationship_id");
+        mutate("get_follower_quantity");
+        mutate("get_following_quantity");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Box>
@@ -24,8 +43,6 @@ const FollowersList = () => {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              // sm: "repeat(1, 1fr)", // small
-              // md: "repeat(1, 1fr)", // medium
               lg: "repeat(1, 1fr)", // large
               xl: "repeat(2, 1fr)",
             },
@@ -60,7 +77,6 @@ const FollowersList = () => {
                   maxWidth: {
                     sm: "200px",
                     md: "400px",
-                    // lg: "250px",
                     xl: "150px",
                   },
                 }}
@@ -103,6 +119,7 @@ const FollowersList = () => {
                       backgroundColor: "var(--buttonHoverColor)",
                     },
                   }}
+                  onClick={() => handleAccept(item.senderId)}
                 >
                   Accept
                 </Button>
