@@ -217,7 +217,7 @@ const SignInPage = () => {
               style={{ width: 25, height: 25 }}
             />
           }
-          onClick={signInGoogle}
+          href="http://localhost:5277/api/auth/external-login/Google"
         >
           Sign In with Google
         </Button>
@@ -239,7 +239,7 @@ const SignInPage = () => {
               style={{ width: 20, height: 20 }}
             />
           }
-          onClick={signInFacebook}
+          href="http://localhost:5277/api/auth/external-login/Facebook"
         >
           Sign In with Facebook
         </Button>
