@@ -72,17 +72,19 @@ const PostComment = ({
       toast.error("Post not found!");
       return;
     }
-    const commentData = new FormData();
-    commentData.append("content", commentContent);
-    commentData.append("postId", String(post.id));
-    commentData.append("userId", String(currentUser.id));
+    const commentFormData = new FormData();
+    commentFormData.append("content", commentContent);
+    commentFormData.append("postId", String(post.id));
+    commentFormData.append("userId", String(currentUser.id));
     if (parentCommentId && commentContent.includes("@")) {
-      commentData.append("parentCommentId", String(parentCommentId));
+      commentFormData.append("parentCommentId", String(parentCommentId));
     }
-    await createComment(commentData);
-    toast.success("Commented successfully!");
-    setCommentContent("");
-    setParentCommentId(null);
+    const res = await createComment(commentFormData);
+    if (res) {
+      toast.success("Commented successfully!");
+      setCommentContent("");
+      setParentCommentId(null);
+    }
   };
 
   const [postViewerId, setPostViewerId] = useState(0);
