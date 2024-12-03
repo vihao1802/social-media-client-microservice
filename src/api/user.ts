@@ -20,4 +20,8 @@ export const userApi = {
     });
     return res;
   },
+  async getAllUsers() {
+    const res = await axiosInstance.get<User[]>(prefix);
+    return res.data;
+  },
 };
