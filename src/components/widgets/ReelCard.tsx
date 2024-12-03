@@ -381,6 +381,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
       {/* Comment Modal */}
       {openComment && (
         <PostComment
+          post={mediaContent.post}
           postMedia={[mediaContent]}
           isOpen={openComment}
           handleClose={handleCloseComment}

@@ -14,17 +14,21 @@ export function useDeletePostViewer() {
 
 	async function DeletePostViewer(postViewerId: number) {
 		try {
-			const deletePostViewer = await postViewerApi.deletePostViewer(postViewerId);
 
 			// mutate work list if add successfully
 			mutate(
 				(key: Arguments) =>
-				Array.isArray(key) && key.includes(QueryKeys.GET_POST_VIEWER),
-				undefined,
-				{ revalidate: true }
+					Array.isArray(key) && key.includes(QueryKeys.GET_POST_VIEWER),
+				(currentData: any) => ({
+					...currentData,
+					items: currentData.items.filter((item: any) => item.id !== postViewerId),
+				}),
+				{ revalidate: false, optimisticData: true }
 			);
-
-			return deletePostViewer
+			
+			await postViewerApi.deletePostViewer(postViewerId);
+			mutate(QueryKeys.GET_POST_VIEWER)
+			
 		} catch (error: AxiosError | any) {
 			console.log('Failed to post court:', error);
 		}

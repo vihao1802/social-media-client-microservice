@@ -14,14 +14,20 @@ import Typography from "@mui/joy/Typography";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
-import { GroupRounded, PublicRounded, LockRounded } from "@mui/icons-material";
+import {
+  GroupRounded,
+  PublicRounded,
+  LockRounded,
+  VolumeUp,
+  VolumeOff,
+} from "@mui/icons-material";
 import PostComment from "@/components/post/PostComment";
 import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
 import ImageSwiper from "./ImageSwiper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { PostContext } from "@/context/post-context";
-import { Divider, Menu, MenuItem, Skeleton } from "@mui/material";
+import { Button, Divider, Menu, MenuItem, Skeleton } from "@mui/material";
 import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
 import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
 import { FavoriteRounded } from "@mui/icons-material";
@@ -95,6 +101,8 @@ export default function PostComponent() {
   const handleClosePostForm = () => {
     setOpenPostForm(false);
   };
+
+  // const [muted, setMuted] = useState(true);
 
   if (
     isMediaContentDataLoading ||
@@ -227,13 +235,43 @@ export default function PostComponent() {
                   }}
                 />
               ) : (
-                <video autoPlay loop muted>
-                  <source
-                    src={mediaContentData?.items[0].media_Url}
-                    type="video/mp4"
-                  />
-                </video>
+                <Box
+                  component="video"
+                  controls
+                  autoPlay
+                  src={mediaContentData?.items[0].media_Url}
+                  height="100%"
+                  width="100%"
+                  sx={{
+                    objectFit: "cover",
+                    // borderRadius: "5px",
+                    backgroundColor: "#000",
+                  }}
+                />
+                // <video autoPlay loop muted={muted}>
+                //   <source
+                //     src={mediaContentData?.items[0].media_Url}
+                //     type="video/mp4"
+                //   />
+                // </video>
               )}
+              {/* {mediaContentData?.items[0].media_type === "video" && (
+                <Typography
+                  sx={{
+                    position: "absolute",
+                    bottom: 15,
+                    right: 15,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setMuted(!muted)}
+                >
+                  {muted ? (
+                    <VolumeOff sx={{ color: "white" }} />
+                  ) : (
+                    <VolumeUp sx={{ color: "white" }} />
+                  )}
+                </Typography>
+              )} */}
             </AspectRatio>
           )}
         </CardOverflow>
@@ -276,37 +314,22 @@ export default function PostComponent() {
           </Box>
         </CardContent>
         <CardContent>
-          <Link
-            component="button"
-            underline="none"
-            textColor="text.primary"
-            sx={{ fontSize: "sm", fontWeight: "lg" }}
-          >
+          <Typography>
             {
               postViewerData.items.filter(
                 (postViewer: PostViewer) => postViewer.liked === true
               ).length
             }{" "}
             Likes
-          </Link>
-          <Typography sx={{ fontSize: "sm" }}>
-            <Link
-              component="button"
-              color="neutral"
-              textColor="text.primary"
-              sx={{ fontWeight: "lg" }}
-            >
-              {post.creator.username}
-            </Link>{" "}
-            {post.content}
           </Typography>
-          <Link
-            component="button"
-            underline="none"
+          <Typography sx={{ fontSize: "sm" }}>
+            <Typography>{post.creator.username}</Typography> {post.content}
+          </Typography>
+          <Typography
             sx={{ fontSize: "12px", color: "text.tertiary", my: 0.5 }}
           >
             {dayjs(post.create_at).fromNow()}
-          </Link>
+          </Typography>
         </CardContent>
         <CardContent orientation="horizontal" sx={{ gap: 1 }}>
           <Input
@@ -319,14 +342,9 @@ export default function PostComponent() {
               setCommentContent(e.target.value);
             }}
           />
-          <Link
-            disabled={!commentContent}
-            underline="none"
-            role="button"
-            onClick={handleClickComment}
-          >
+          <Button disabled={!commentContent} onClick={handleClickComment}>
             Post
-          </Link>
+          </Button>
         </CardContent>
       </Card>
 

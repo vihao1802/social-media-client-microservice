@@ -122,15 +122,17 @@ const StoryBar = () => {
             creator: User;
             posts: (Post & { activeIndex: number })[];
           }[]
-        ).map(({ creator, posts }, index: number) => (
-          <StoryCircle
-            key={index}
-            userId={creator.id}
-            nickName={creator.username}
-            avatar={creator.profile_img}
-            activeIndex={posts[0].activeIndex}
-          />
-        ))}
+        )
+          .sort((a, b) => a.posts[0].id - b.posts[0].id)
+          .map(({ creator, posts }, index: number) => (
+            <StoryCircle
+              key={index}
+              userId={creator.id}
+              nickName={creator.username}
+              avatar={creator.profile_img}
+              activeIndex={posts[0].activeIndex}
+            />
+          ))}
       </Box>
 
       {number > maxTranslate && (

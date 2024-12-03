@@ -15,19 +15,26 @@ export function useCreatePostViewer() {
 
 	async function CreatePostViewer(request: PostViewerRequest) {
 		try {
-			const newPostViewer = await postViewerApi.createPostViewer(request);
+			const optimisticPostViewer = {
+				id: 0, // Tạm thời tạo ID giả
+				...request,
+			  };
 
 			// mutate work list if add successfully
 			mutate(
 				(key: Arguments) =>
 				Array.isArray(key) && key.includes(QueryKeys.GET_POST_VIEWER),
-				undefined,
-				{ revalidate: true }
+				(currentData: any) => ({
+					...currentData,
+					items: [...currentData.items, optimisticPostViewer],
+				  }),
+				{ revalidate: false, optimisticData: true }
 			);
-
+			const newPostViewer = await postViewerApi.createPostViewer(request);
+			mutate(QueryKeys.GET_POST_VIEWER)
 			return newPostViewer
 		} catch (error: AxiosError | any) {
-			console.log('Failed to post court:', error);
+			console.log('Failed to post viewer:', error);
 		}
 	}
 

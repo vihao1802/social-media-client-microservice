@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Avatar,
@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Typography,
   InputBase,
+  Skeleton,
 } from "@mui/material";
 import {
   MoreVert,
@@ -14,28 +15,114 @@ import {
   PlayArrow,
   FavoriteBorder,
   Send,
+  VolumeUp,
+  Forum,
+  FavoriteRounded,
 } from "@mui/icons-material";
-import { CldImage } from "next-cloudinary";
+import { CldImage, CldVideoPlayer } from "next-cloudinary";
 import { Post } from "@/models/post";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
 import GradientCircularProgress from "../shared/Loader";
+import { useSearchParams } from "next/navigation";
+import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
+import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
+import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { User } from "@/models/user";
+import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
+import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
+import toast from "react-hot-toast";
+import PostForm from "../post/PostForm";
+import PostComment from "../post/PostComment";
 
 interface StoryCardProps {
+  currentUser: User;
   story: Post;
   progress: number;
   paused: boolean;
   setPaused: (paused: boolean) => void;
 }
 
-const StoryCard = ({ story, paused, progress, setPaused }: StoryCardProps) => {
-  const [muted, setMuted] = useState(false);
+const StoryCard = ({
+  currentUser,
+  story,
+  paused,
+  progress,
+  setPaused,
+}: StoryCardProps) => {
+  const [muted, setMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const [openComment, setOpenComment] = useState(false);
 
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: story.id });
 
-  if (isMediaContentDataLoading) return <GradientCircularProgress />;
+  const { data: postViewerData, isLoading: isPostViewerDataLoading } =
+    useGetPostViewerByPostId({ postId: story.id });
+
+  const { data: commentData, isLoading: isCommentDataLoading } =
+    useGetCommentByPostId({ postId: story.id });
+
+  useEffect(() => {
+    // Nếu progress đạt 100%, dừng video
+    if (progress >= 100 && videoRef.current) {
+      // Dừng video khi progress đạt 100%
+      videoRef.current.pause();
+    }
+  }, [progress]);
+
+  const [postViewerId, setPostViewerId] = useState(0);
+  const createPostViewer = useCreatePostViewer();
+  const deletePostViewer = useDeletePostViewer();
+
+  useEffect(() => {
+    if (postViewerData) {
+      const postViewer = postViewerData.items.find(
+        (item: PostViewer) => item.userId === currentUser.id
+      );
+      if (postViewer) {
+        setPostViewerId(postViewer.id);
+      }
+    }
+  }, [postViewerData]);
+
+  if (
+    isMediaContentDataLoading ||
+    !mediaContentData ||
+    isPostViewerDataLoading ||
+    !postViewerData ||
+    isCommentDataLoading ||
+    !commentData
+  )
+    return <Skeleton />;
+
+  const isLiked = postViewerData?.items.some(
+    (item: PostViewer) => item.userId === currentUser.id && item.liked === true
+  );
+
+  const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isLiked) {
+      if (postViewerId !== 0) {
+        await deletePostViewer(postViewerId);
+      } else {
+        toast.error("Post viewer not found!");
+        return null;
+      }
+    } else {
+      const postViewerData: PostViewerRequest = {
+        postId: story.id,
+        userId: currentUser.id,
+        liked: true,
+      };
+      const postViewerResponse = await createPostViewer(postViewerData);
+      setPostViewerId(postViewerResponse.id);
+    }
+  };
+
   dayjs.extend(relativeTime);
   return (
     <Box
@@ -73,11 +160,20 @@ const StoryCard = ({ story, paused, progress, setPaused }: StoryCardProps) => {
         </Box>
         <Box>
           <IconButton onClick={() => setMuted(!muted)} sx={{ color: "white" }}>
-            {muted ? <VolumeOff /> : <VolumeOff />}
+            {muted ? <VolumeOff /> : <VolumeUp />}
             {/* You can toggle sound here */}
           </IconButton>
           <IconButton
-            onClick={() => setPaused(!paused)}
+            onClick={() => {
+              setPaused(!paused);
+              if (videoRef.current) {
+                if (paused) {
+                  videoRef.current.play();
+                } else {
+                  videoRef.current.pause();
+                }
+              }
+            }}
             sx={{ color: "white" }}
           >
             {paused ? <PlayArrow /> : <Pause />} {/* Toggle pause/play */}
@@ -107,14 +203,30 @@ const StoryCard = ({ story, paused, progress, setPaused }: StoryCardProps) => {
           color: "white",
         }}
       >
-        <CldImage
-          alt={mediaContentData?.items[0].media_type}
-          width={370}
-          height={630}
-          objectFit="cover"
-          quality={100}
-          src={mediaContentData?.items[0].media_Url}
-        />
+        {mediaContentData?.items[0].media_type === "video" ? (
+          <video
+            autoPlay
+            loop
+            playsInline
+            muted={muted}
+            ref={videoRef}
+            src={mediaContentData?.items[0].media_Url}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        ) : (
+          <CldImage
+            alt={mediaContentData?.items[0].media_type}
+            width={370}
+            height={630}
+            objectFit="cover"
+            quality={100}
+            src={mediaContentData?.items[0].media_Url}
+          />
+        )}
       </Box>
 
       {/* Reply Section */}
@@ -130,17 +242,52 @@ const StoryCard = ({ story, paused, progress, setPaused }: StoryCardProps) => {
           bgcolor: "rgba(0, 0, 0, 0.5)",
         }}
       >
-        <InputBase
-          placeholder={`Reply to ${story.creator.username}...`}
-          sx={{ color: "white", flexGrow: 1, ml: 1 }}
-        />
-        <IconButton sx={{ color: "white" }}>
-          <FavoriteBorder /> {/* Like button */}
-        </IconButton>
-        <IconButton sx={{ color: "white" }}>
-          <Send /> {/* Send reply button */}
-        </IconButton>
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
+          <IconButton
+            sx={{ color: "white" }}
+            onClick={() => {
+              setOpenComment(true);
+              setPaused(true);
+            }}
+          >
+            <Forum />
+          </IconButton>
+          <Typography color="white" p="10px 0">
+            {commentData.items.length}
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
+          <IconButton sx={{ color: "white" }} onClick={handleClickLike}>
+            {isLiked ? (
+              <FavoriteRounded
+                sx={{
+                  color: "red",
+                }}
+              />
+            ) : (
+              <FavoriteBorder />
+            )}
+          </IconButton>
+          <Typography color="white" p="10px 0">
+            {
+              postViewerData.items.filter(
+                (postViewer: PostViewer) => postViewer.liked === true
+              ).length
+            }
+          </Typography>
+        </Box>
       </Box>
+
+      {/* Comment Modal */}
+      {openComment && (
+        <PostComment
+          post={story}
+          postMedia={mediaContentData?.items || []}
+          isOpen={openComment}
+          handleClose={() => setOpenComment(false)}
+        />
+      )}
     </Box>
   );
 };
