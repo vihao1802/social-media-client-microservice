@@ -1,5 +1,5 @@
-import { Box, Button, Divider, IconButton } from "@mui/material";
-import { LogoutRounded } from "@mui/icons-material";
+import { Avatar, Box, Button, Divider, IconButton } from "@mui/material";
+import { Add, LogoutRounded } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import RightModalImageContentMessages from "./RightModalImageContentMessages";
 import GradientCircularProgress from "../shared/Loader";
@@ -8,6 +8,8 @@ import { useGetGroupChatById } from "@/hooks/chat-group/useGetGroupChatById";
 import { useGetMessagesByGroupId } from "@/hooks/chat-group-message/useGetMessagesByGroupId";
 import { chatGroupMemberApi } from "@/api/chat-group-member";
 import useSWR from "swr";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import RightModalAddMembers from "./RightModalAddMembers";
 
 const RightDrawerContentGroupChat = ({
   closeDrawer,
@@ -19,9 +21,12 @@ const RightDrawerContentGroupChat = ({
   const router = useRouter();
   const [imgSrc, setImgSrc] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [openModalAddMember, setOpenModalAddMember] = useState(false);
   const toggleModal = () => setOpenModal(!openModal);
+  const toggleModalAddMember = () => setOpenModalAddMember(!openModalAddMember);
   const { data: groupChat } = useGetGroupChatById({ groupId: g_id });
   const { data: messagesRes } = useGetMessagesByGroupId({ groupId: g_id });
+  const { user: authUser } = useAuthenticatedUser();
   const { data: membersRes } = useSWR(
     "get_members_by_group_id",
     async () => await chatGroupMemberApi.getMembersByGroupId(g_id)
@@ -66,6 +71,12 @@ const RightDrawerContentGroupChat = ({
         openModal={openModal}
         toggleModal={toggleModal}
       />
+      <RightModalAddMembers
+        groupChatId={g_id}
+        openModal={openModalAddMember}
+        toggleModal={toggleModalAddMember}
+      />
+
       <Box
         sx={{
           height: "100vh",
@@ -76,10 +87,13 @@ const RightDrawerContentGroupChat = ({
           gap: "10px",
         }}
       >
-        <img
+        <Avatar
           src={groupChat.avatar || "/icons/user.png"}
-          alt="Avatar"
-          className="w-24 h-24 rounded-full"
+          sx={{
+            width: "100px",
+            height: "100px",
+            border: "4px solid #e0e0e0",
+          }}
         />
         <p className="text-xl font-bold">{groupChat.name}</p>
         <Box
@@ -105,8 +119,30 @@ const RightDrawerContentGroupChat = ({
               },
             }}
           >
-            <p className="text-xl font-semibold text-center my-4">Members</p>
-
+            <p className="text-xl font-semibold text-left my-4 mx-[25px]">
+              Members
+            </p>
+            {authUser && groupChat.adminId === authUser.id && (
+              <Button
+                onClick={toggleModalAddMember}
+                sx={{
+                  marginLeft: "20px",
+                  marginBottom: "10px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "black",
+                  width: "calc(100% - 40px)",
+                  backgroundColor: "#e7e7e7",
+                  ":hover": {
+                    backgroundColor: "#d7d7d7",
+                  },
+                  textTransform: "none",
+                }}
+                startIcon={<Add />}
+              >
+                Add
+              </Button>
+            )}
             {!membersRes || membersRes === undefined ? (
               <Box
                 sx={{
@@ -145,15 +181,22 @@ const RightDrawerContentGroupChat = ({
                         textAlign: "left",
                       }}
                     >
-                      <p className="font-semibold">{item.user.username}</p>
+                      <p className="font-semibold">
+                        {item.user.username}{" "}
+                        {groupChat.adminId === item.user.id && "(Admin)"}
+                      </p>
                       <p className="font-thin text-sm text-gray-400">
                         {item.user.email}
                       </p>
                     </Box>
                     <Button
                       onClick={() => router.push(`/profile/${item.user.id}`)}
-                      variant="outlined"
-                      color="primary"
+                      sx={{
+                        textTransform: "none",
+                        ":hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
                     >
                       View
                     </Button>
@@ -162,7 +205,9 @@ const RightDrawerContentGroupChat = ({
               </Box>
             )}
 
-            <p className="text-xl font-semibold text-center my-4">Photos</p>
+            <p className="text-xl font-semibold text-center my-4 pt-2 border-t-2 border-[#e0e0e0]">
+              Photos
+            </p>
 
             {!messagesRes || messagesRes === undefined ? (
               <Box
@@ -170,7 +215,9 @@ const RightDrawerContentGroupChat = ({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "100%",
+                  width: "375px",
+                  gridColumnStart: 1,
+                  gridColumnEnd: 4,
                 }}
               >
                 <GradientCircularProgress />
@@ -181,6 +228,7 @@ const RightDrawerContentGroupChat = ({
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
                   gap: "10px",
+                  paddingBottom: "20px",
                 }}
               >
                 {messagesRes.items.length === 0 && (

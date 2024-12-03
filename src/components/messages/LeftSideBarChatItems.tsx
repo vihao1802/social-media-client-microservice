@@ -14,11 +14,12 @@ import { User } from "@/models/user";
 import { useGetPersonalMessenger } from "@/hooks/relationship/useGetPersonalMessenger";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ArrowRightSharp } from "@mui/icons-material";
+import { ArrowRightSharp, GroupAdd } from "@mui/icons-material";
 import { useGetGroupChatByMe } from "@/hooks/chat-group/useGetGroupChatByUserId";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { ChatGroup } from "@/models/chat-group";
 import LeftSideBarChatItemSkeleton from "../shared/LeftSideBarChatItemSkeleton";
+import ModalAddGroup from "./ModalAddGroup";
 
 dayjs.extend(relativeTime);
 
@@ -41,6 +42,8 @@ const LeftSideBarMessagesType = [
 
 const LeftSideBarMessages = () => {
   const router = useRouter();
+  const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
+  const toggleModalAddGroup = () => setOpenModalAddGroup(!openModalAddGroup);
   const { g_id, u_id } = useParams<{
     g_id: string;
     u_id: string;
@@ -315,10 +318,9 @@ const LeftSideBarMessages = () => {
           {currentSideBarMessagesType.the_other_title} <ArrowRightSharp />
         </Button>
       </Box>
-
       <Box
         sx={{
-          height: "calc(100vh - 70px)",
+          height: "calc(100vh - 126px)",
         }}
       >
         <List
@@ -342,6 +344,31 @@ const LeftSideBarMessages = () => {
           {renderChatGroups()}
         </List>
       </Box>
+      {authenticatedUser && (
+        <ModalAddGroup
+          adminId={authenticatedUser.id}
+          openModal={openModalAddGroup}
+          toggleModal={toggleModalAddGroup}
+        />
+      )}
+      {currentSideBarMessagesType.id === "2" && (
+        <Box
+          sx={{
+            padding: "10px 20px",
+          }}
+        >
+          <Button
+            sx={{
+              backgroundColor: "var(--buttonColor)",
+              color: "white",
+              width: "100%",
+            }}
+            onClick={toggleModalAddGroup}
+          >
+            <GroupAdd />
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -12,6 +12,7 @@ export interface UserBase {
 export interface User extends UserBase {
   create_at: string;
   relationshipId?: number;
+  externalUser: boolean;
 }
 
 export interface UpdateUserRequest extends UserBase {}

@@ -54,4 +54,8 @@ export const relationshipApi = {
     );
     return res.data;
   },
+  async followUser(user_id: string) {
+    const res = await axiosInstance.post(`${prefix}/follow/${user_id}`);
+    return res;
+  },
 };

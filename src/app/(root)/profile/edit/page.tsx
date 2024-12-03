@@ -1,6 +1,7 @@
 "use client";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { useUpdateUser } from "@/hooks/user/useUpdateUser";
+import { useUpdateUserAvatar } from "@/hooks/user/useUpdateUserAvatar";
 import {
   Box,
   Button,
@@ -18,6 +19,7 @@ import toast from "react-hot-toast";
 const EditProfilePage = () => {
   const { user } = useAuthenticatedUser();
   const { updateUser } = useUpdateUser();
+  const { updateUserAvatar } = useUpdateUserAvatar();
   const router = useRouter();
 
   if (!user) return null;
@@ -60,6 +62,20 @@ const EditProfilePage = () => {
   ) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
+      setIsLoadingPhoto(true);
+      setOpenUploadModal(false);
+      const formData = new FormData();
+      formData.append("newAvatarFile", file);
+      try {
+        const res = await updateUserAvatar(formData);
+        if (res) {
+          toast.success("Photo uploaded successfully");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoadingPhoto(false);
+      }
     }
   };
   return (
