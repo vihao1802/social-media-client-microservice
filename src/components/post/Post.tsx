@@ -199,15 +199,17 @@ export default function PostComponent() {
             <LockRounded sx={{ fontSize: "16px" }} />
           )}
 
-          <IconButton
-            variant="plain"
-            color="neutral"
-            size="sm"
-            sx={{ ml: "auto" }}
-            onClick={handleClickMenu}
-          >
-            <MoreHoriz />
-          </IconButton>
+          {post.creator.id === currentUser.id && (
+            <IconButton
+              variant="plain"
+              color="neutral"
+              size="sm"
+              sx={{ ml: "auto" }}
+              onClick={handleClickMenu}
+            >
+              <MoreHoriz />
+            </IconButton>
+          )}
         </CardContent>
         <CardOverflow
           sx={
@@ -389,32 +391,20 @@ export default function PostComponent() {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          {currentUser.id === post.creator.id ? (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Delete
-                </Typography>
-              </MenuItem>
-              <Divider />
-              <MenuItem
-                onClick={() => {
-                  handleClickOpenPostForm();
-                  handleCloseMenu();
-                }}
-              >
-                Edit
-              </MenuItem>
-            </Box>
-          ) : (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Unfollow
-                </Typography>
-              </MenuItem>
-            </Box>
-          )}
+          <MenuItem onClick={handleCloseMenu}>
+            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+              Delete
+            </Typography>
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              handleClickOpenPostForm();
+              handleCloseMenu();
+            }}
+          >
+            Edit
+          </MenuItem>
 
           <Divider />
           <MenuItem onClick={handleCloseMenu}>Cancel</MenuItem>

@@ -28,7 +28,7 @@ export function usePostListInfinity({ params, options, enabled = true }: UsePost
 				const totalPages = previousPageData?.totalPages || 0
 				if (page > totalPages) return null
 			}
-	
+			
 			return `/post?${qs.stringify(query)}`
 		},
 		async(url: string) => {

@@ -1,3 +1,5 @@
+import { Pagination } from "./api";
+
 export interface UserBase {
   username: string;
   email: string;

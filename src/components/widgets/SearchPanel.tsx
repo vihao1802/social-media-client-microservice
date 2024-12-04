@@ -1,8 +1,14 @@
+import { useGetSearchUser } from "@/hooks/user/useGetSearchUser";
+import { Pagination } from "@/models/api";
+import { User } from "@/models/user";
+import { SearchRounded } from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  Button,
   Collapse,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
@@ -11,39 +17,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { Fragment } from "react";
-
-const users: any[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    nickname: "Ali Connors",
-    followers: 100,
-    avatar: "https://material-ui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    nickname: "Ali Connors",
-    followers: 100,
-    avatar: "https://material-ui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    nickname: "Ali Connors",
-    avatar: "https://material-ui.com/static/images/avatar/1.jpg",
-  },
-  {
-    id: 4,
-    name: "Jane Smith",
-    nickname: "Ali Connors",
-    followers: 100,
-    avatar: "https://material-ui.com/static/images/avatar/1.jpg",
-  },
-];
+import { useRouter } from "next/navigation";
+import React, { Fragment, use, useRef, useState } from "react";
 
 const SearchPanel = ({ open }: { open: boolean }) => {
+  const router = useRouter();
+
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useGetSearchUser({
+    query: search,
+  });
+
+  if (isLoading || !data) return null;
+
   return (
     <Collapse orientation="horizontal" in={open}>
       <Box
@@ -67,44 +55,73 @@ const SearchPanel = ({ open }: { open: boolean }) => {
         >
           Search
         </Typography>
-        <TextField
-          label="Search"
-          variant="outlined"
-          size="small"
-          color="primary"
+        <Box
           sx={{
-            width: "90%",
-            height: "40px",
-            margin: "0 auto",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "#E0E3E7",
-              },
-              "&:hover fieldset": {
-                borderColor: "#B2BAC2",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#6F7E8C",
-              },
-            },
-            "& label.Mui-focused": {
-              color: "#A0AAB4",
-            },
-            "& .MuiInput-underline:after": {
-              borderBottomColor: "#B2BAC2",
-            },
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            gap: "10px",
+            padding: "0 10px",
           }}
-        />
-        {users.length > 0 && (
-          <List>
-            {users.map((user, index) => (
+        >
+          <TextField
+            inputRef={searchRef}
+            label="Search"
+            variant="outlined"
+            size="small"
+            color="primary"
+            sx={{
+              width: "90%",
+              height: "40px",
+              margin: "0 auto",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#E0E3E7",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#B2BAC2",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#6F7E8C",
+                },
+              },
+              "& label.Mui-focused": {
+                color: "#A0AAB4",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#B2BAC2",
+              },
+            }}
+          />
+          <IconButton
+            onClick={() => {
+              setSearch(searchRef.current?.value || "");
+            }}
+          >
+            <SearchRounded />
+          </IconButton>
+        </Box>
+
+        {data.items.length > 0 && (
+          <List
+            sx={{
+              width: "100%",
+              height: "100%",
+              overflowY: "auto",
+            }}
+          >
+            {data.items.map((user: User, index: number) => (
               <ListItem alignItems="flex-start" disablePadding key={index}>
-                <ListItemButton>
+                <ListItemButton
+                  onClick={() => router.push(`/profile/${user.id}`)}
+                >
                   <ListItemAvatar>
-                    <Avatar alt="Remy Sharp" src={user.avatar} />
+                    <Avatar alt="Remy Sharp" src={user.profile_img} />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={user.name}
+                    primary={user.username}
                     secondary={
                       <Fragment>
                         <Typography
@@ -112,7 +129,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
                           variant="body2"
                           sx={{ color: "text.primary", display: "inline" }}
                         >
-                          Ali Connors • {user.followers} followers
+                          {user.email}
                         </Typography>
                       </Fragment>
                     }
@@ -123,7 +140,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
           </List>
         )}
 
-        {users.length === 0 && (
+        {data.items.length === 0 && (
           <Box
             sx={{
               width: "100%",

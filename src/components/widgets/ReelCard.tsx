@@ -13,6 +13,7 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Link,
 } from "@mui/material";
 
 import {
@@ -36,6 +37,7 @@ import toast from "react-hot-toast";
 import PostComment from "../post/PostComment";
 import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
 import PostForm from "../post/PostForm";
+import { useRouter } from "next/navigation";
 
 interface VideoCardProps {
   mediaContent: MediaContent;
@@ -43,6 +45,7 @@ interface VideoCardProps {
 
 const VideoCard = ({ mediaContent }: VideoCardProps) => {
   if (!mediaContent) return null;
+  const router = useRouter();
 
   const [muted, setMuted] = useState(true); // Handle mute/unmute
   const [openComment, setOpenComment] = useState(false);
@@ -116,7 +119,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId);
+        await deletePostViewer(postViewerId, mediaContent.post.id);
       } else {
         toast.error("Post viewer not found!");
         return null;
@@ -196,7 +199,11 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
                 alignItems: "center",
                 flexDirection: "row",
                 marginBottom: 1,
+                cursor: "pointer",
               }}
+              onClick={() =>
+                router.push(`/profile/${mediaContent.post.creator.id}`)
+              }
             >
               <Avatar
                 src={
@@ -208,21 +215,8 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
               <Typography variant="caption">
                 {mediaContent.post.creator.username}
               </Typography>
-              <Typography>•</Typography>
-              <Button
-                variant="outlined"
-                sx={{
-                  height: "32px",
-                  width: "52px",
-                  border: "1px solid rgba(255, 255, 255, 0.5)",
-                  color: "white",
-                  fontSize: "12px",
-                  borderRadius: "10px",
-                }}
-              >
-                Follow
-              </Button>
             </Box>
+
             <Typography variant="caption" sx={{ fontSize: "12px" }}>
               {mediaContent.post.content}
             </Typography>
@@ -280,18 +274,20 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
               {commentData.items.length}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <IconButton onClick={handleClickMenu}>
-              <MoreHorizRounded />
-            </IconButton>
-          </Box>
+          {currentUser.id === mediaContent.post.creator.id && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IconButton onClick={handleClickMenu}>
+                <MoreHorizRounded />
+              </IconButton>
+            </Box>
+          )}
         </Box>
       </Box>
 
@@ -336,33 +332,20 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          {currentUser.id === mediaContent.post.creator.id ? (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Delete
-                </Typography>
-              </MenuItem>
-              <Divider />
-              <MenuItem
-                onClick={() => {
-                  handleClickOpenPostForm();
-                  handleCloseMenu();
-                }}
-              >
-                Edit
-              </MenuItem>
-            </Box>
-          ) : (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Unfollow
-                </Typography>
-              </MenuItem>
-            </Box>
-          )}
-
+          <MenuItem onClick={handleCloseMenu}>
+            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+              Delete
+            </Typography>
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              handleClickOpenPostForm();
+              handleCloseMenu();
+            }}
+          >
+            Edit
+          </MenuItem>
           <Divider />
           <MenuItem onClick={handleCloseMenu}>Cancel</MenuItem>
         </Menu>

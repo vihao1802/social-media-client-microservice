@@ -44,6 +44,7 @@ import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { Post } from "@/models/post";
 import PostForm from "./PostForm";
+import { useRouter } from "next/navigation";
 
 // Kích hoạt plugin
 
@@ -60,6 +61,8 @@ const PostComment = ({
 }) => {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
+
+  const router = useRouter();
 
   const { post: contextPost } = useContext(PostContext);
   const post = propPost || contextPost;
@@ -240,7 +243,9 @@ const PostComment = ({
                   flexDirection: "row",
                   alignItems: "center",
                   gap: "15px",
+                  cursor: "pointer",
                 }}
+                onClick={() => router.push(`/profile/${post?.creator.id}`)}
               >
                 <Avatar
                   src={post?.creator.profile_img}
@@ -261,9 +266,11 @@ const PostComment = ({
                 )}
               </Box>
 
-              <IconButton onClick={handleClickMenu}>
-                <MoreHorizRounded sx={{ color: "black" }} />
-              </IconButton>
+              {currentUser.id === post?.creator.id && (
+                <IconButton onClick={handleClickMenu}>
+                  <MoreHorizRounded sx={{ color: "black" }} />
+                </IconButton>
+              )}
             </Box>
 
             {/* Show comment */}
@@ -342,9 +349,6 @@ const PostComment = ({
                     ) : (
                       <FavoriteBorderOutlined />
                     )}
-                  </IconButton>
-                  <IconButton>
-                    <SendOutlined />
                   </IconButton>
                 </Box>
               </Box>
@@ -438,32 +442,20 @@ const PostComment = ({
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          {post && currentUser.id === post.creator.id ? (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Delete
-                </Typography>
-              </MenuItem>
-              <Divider />
-              <MenuItem
-                onClick={() => {
-                  handleClickOpenPostForm();
-                  handleCloseMenu();
-                }}
-              >
-                Edit
-              </MenuItem>
-            </Box>
-          ) : (
-            <Box>
-              <MenuItem onClick={handleCloseMenu}>
-                <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                  Unfollow
-                </Typography>
-              </MenuItem>
-            </Box>
-          )}
+          <MenuItem onClick={handleCloseMenu}>
+            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+              Delete
+            </Typography>
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+              handleClickOpenPostForm();
+              handleCloseMenu();
+            }}
+          >
+            Edit
+          </MenuItem>
 
           <Divider />
           <MenuItem onClick={handleCloseMenu}>Cancel</MenuItem>

@@ -10,6 +10,11 @@ import React, { useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 const page = () => {
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) setSize((x) => x + 1);
+    },
+  });
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 5,
@@ -22,6 +27,8 @@ const page = () => {
     useGetMediaContentInfinity({
       params: filters,
     });
+
+  if (!data || isLoading) return null;
 
   const mediaContentList: Array<MediaContent> =
     data?.reduce(
@@ -38,12 +45,6 @@ const page = () => {
 
   const showLoadMore = (data?.[0]?.totalItems ?? 0) > mediaContentList.length;
   const loadingMore = isValidating && mediaContentList.length > 0;
-
-  const { ref } = useInView({
-    onChange(inView) {
-      if (inView) setSize((x) => x + 1);
-    },
-  });
 
   return (
     <Box
