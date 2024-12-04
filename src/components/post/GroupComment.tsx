@@ -56,7 +56,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
     e.preventDefault();
     if (isLiked) {
       if (commentReactionId !== 0) {
-        await deleteCommentReaction(commentReactionId);
+        await deleteCommentReaction(commentReactionId, comment.id);
       } else {
         toast.error("Comment Reaction not found!");
         return null;

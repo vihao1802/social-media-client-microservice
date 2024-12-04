@@ -109,7 +109,7 @@ const StoryCard = ({
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId);
+        await deletePostViewer(postViewerId, story.id);
       } else {
         toast.error("Post viewer not found!");
         return null;
@@ -145,7 +145,7 @@ const StoryCard = ({
           color: "white",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", zIndex: 999 }}>
           <Avatar
             src={story.creator.profile_img}
             alt="User Avatar"
@@ -243,7 +243,7 @@ const StoryCard = ({
           position: "absolute",
           bottom: 0,
           width: "100%",
-          bgcolor: "rgba(0, 0, 0, 0.5)",
+          bgcolor: "rgba(0, 0, 0, 0.3)",
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "row" }}>

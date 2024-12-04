@@ -122,7 +122,7 @@ export default function PostComponent() {
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId);
+        await deletePostViewer(postViewerId, post.id);
       } else {
         toast.error("Post viewer not found!");
         return null;

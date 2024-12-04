@@ -147,7 +147,7 @@ const PostComment = ({
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId);
+        await deletePostViewer(postViewerId, post?.id ?? 0);
       } else {
         toast.error("Post viewer not found!");
         return null;
