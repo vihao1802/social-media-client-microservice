@@ -15,6 +15,12 @@ interface ImageItem {
 }
 
 const Explore = () => {
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) setSize((x) => x + 1);
+    },
+  });
+
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 10,
@@ -24,6 +30,7 @@ const Explore = () => {
   const { data, isLoading, isValidating, setSize } = usePostListInfinity({
     params: filters,
   });
+  if (!data || isLoading) return null;
 
   const postList: Array<Post> =
     data?.reduce((result: Array<Post>, currentPage: ListResponse<Post>) => {
@@ -34,12 +41,6 @@ const Explore = () => {
 
   const showLoadMore = (data?.[0]?.totalItems ?? 0) > postList.length;
   const loadingMore = isValidating && postList.length > 0;
-
-  const { ref } = useInView({
-    onChange(inView) {
-      if (inView) setSize((x) => x + 1);
-    },
-  });
 
   return (
     <Box

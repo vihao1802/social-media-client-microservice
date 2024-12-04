@@ -14,6 +14,11 @@ import { useInView } from "react-intersection-observer";
 import { PostContext } from "@/context/post-context";
 
 export default function Home() {
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) setSize((x) => x + 1);
+    },
+  });
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 5,
@@ -24,6 +29,8 @@ export default function Home() {
     params: filters,
   });
 
+  if (!data || isLoading) return null;
+
   const postList: Array<Post> =
     data?.reduce((result: Array<Post>, currentPage: ListResponse<Post>) => {
       result.push(...currentPage.items);
@@ -33,13 +40,6 @@ export default function Home() {
 
   const showLoadMore = (data?.[0]?.totalItems ?? 0) > postList.length;
   const loadingMore = isValidating && postList.length > 0;
-
-  const { ref } = useInView({
-    onChange(inView) {
-      if (inView) setSize((x) => x + 1);
-    },
-  });
-  if (!data) return null;
 
   return (
     <Box

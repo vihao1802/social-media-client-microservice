@@ -180,9 +180,6 @@ const StoryCard = ({
           >
             {paused ? <PlayArrow /> : <Pause />} {/* Toggle pause/play */}
           </IconButton>
-          <IconButton sx={{ color: "white" }}>
-            <MoreVert /> {/* More options button */}
-          </IconButton>
         </Box>
       </Box>
 

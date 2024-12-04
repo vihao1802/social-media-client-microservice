@@ -24,4 +24,9 @@ export const userApi = {
     const res = await axiosInstance.get<User[]>(prefix);
     return res.data;
   },
+
+  async getSearchUser(query: string) {    
+    const res= await axiosInstance.get(`${prefix}/search?username=like:${query}&email=like:${query}`);
+    return res.data;
+  },
 };
