@@ -60,6 +60,8 @@ const StoryCard = ({
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: story.id });
 
+  console.log({ mediaContentData });
+
   const { data: postViewerData, isLoading: isPostViewerDataLoading } =
     useGetPostViewerByPostId({ postId: story.id });
 
@@ -218,13 +220,15 @@ const StoryCard = ({
             }}
           />
         ) : (
-          <CldImage
+          <Box
+            component="img"
             alt={mediaContentData?.items[0].media_type}
-            width={370}
-            height={630}
-            objectFit="cover"
-            quality={100}
             src={mediaContentData?.items[0].media_Url}
+            sx={{
+              width: 370,
+              height: 630,
+              objectFit: "cover",
+            }}
           />
         )}
       </Box>
