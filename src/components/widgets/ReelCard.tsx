@@ -116,7 +116,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId);
+        await deletePostViewer(postViewerId, mediaContent.post.id);
       } else {
         toast.error("Post viewer not found!");
         return null;
