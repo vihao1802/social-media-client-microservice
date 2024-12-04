@@ -13,6 +13,8 @@ export function usePostFollowUser() {
     const res = await relationshipApi.followUser(payload.user_id);
     // Re-fetch the data for "get_user_by_id" after the message is created
     await mutate("get_user_by_id");
+    await mutate("get_me_following");
+    await mutate("get_me_follower");
     return res;
   }
 
