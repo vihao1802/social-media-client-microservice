@@ -11,7 +11,7 @@ export interface UseGetCommentReactionProps {
 
 export function useGetCommentReaction({commentId, options, enabled = true}: UseGetCommentReactionProps) {
     const swrResponse = useSWR(
-        enabled ? [QueryKeys.GET_COMMENT_LIST, commentId] : null,
+        enabled ? [QueryKeys.GET_COMMENT_REACTION, commentId] : null,
         () => commentReactionApi.getCommentReaction(commentId),
         {
 			dedupingInterval: 30 * 1000, // 30s
