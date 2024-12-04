@@ -15,6 +15,7 @@ export function usePostFollowUser() {
     await mutate("get_user_by_id");
     await mutate("get_me_following");
     await mutate("get_me_follower");
+    await mutate("get_recommendation");
     return res;
   }
 

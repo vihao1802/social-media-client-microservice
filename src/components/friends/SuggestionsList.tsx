@@ -14,7 +14,6 @@ const SuggestionsList = () => {
       const res = await followUser({ user_id });
       if (res) {
         toast.success("Followed successfully");
-        await mutate("get_recommendation");
       }
     } catch (error) {
       console.error(error);
@@ -59,7 +58,7 @@ const SuggestionsList = () => {
             }}
           >
             <Avatar
-              src={item.profile_img}
+              src={item.profile_img || "/icons/user.png"}
               alt={item.userName}
               sx={{ width: "100px", height: "100px" }}
             />
