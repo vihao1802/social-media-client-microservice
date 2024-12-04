@@ -59,9 +59,10 @@ const LeftSideBar = () => {
   const [openSearch, setOpenSearch] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = "/sign-in";
+  const handleLogout = async () => {
+    await logout();
+    router.push("/sign-in");
+    // window.location.href = "/sign-in";
   };
 
   const [openPostForm, setOpenPostForm] = React.useState(false);
@@ -295,7 +296,7 @@ const LeftSideBar = () => {
                   </ListItem>
                 </Link>
               )}
-
+              {/* Log out button */}
               <ListItem>
                 <ListItemButton
                   sx={
@@ -316,36 +317,15 @@ const LeftSideBar = () => {
                           height: "46px",
                         }
                   }
-                  onClick={handleClickMenuMore}
+                  onClick={handleLogout}
                 >
                   <ListItemIcon>
-                    <MenuOutlined />
+                    <ExitToAppOutlined />
                   </ListItemIcon>
-                  {openleftSideBar && <ListItemText primary="More" />}
+                  {openleftSideBar && <ListItemText primary="Log out" />}
                 </ListItemButton>
               </ListItem>
             </List>
-            <Menu anchorEl={anchorEl} open={open} onClose={handleCloseMenuMore}>
-              <List disablePadding>
-                <ListItem>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <SettingsOutlined />
-                    </ListItemIcon>
-                    <ListItemText primary="Settings" />
-                  </ListItemButton>
-                </ListItem>
-                <Divider />
-                <ListItem>
-                  <ListItemButton onClick={handleCloseMenuMore}>
-                    <ListItemIcon>
-                      <ExitToAppOutlined />
-                    </ListItemIcon>
-                    <ListItemText primary="Log out" onClick={handleLogout} />
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </Menu>
           </Box>
         </Box>
       </Collapse>
