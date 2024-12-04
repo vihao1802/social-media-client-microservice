@@ -8,6 +8,7 @@ import {
   RelationshipFollowing,
 } from "@/models/relationship-following";
 import { PersonalMessenger } from "@/models/personal-messenger";
+import { RecommendationPagination } from "@/models/relationship";
 
 const prefix = "/relationship";
 
@@ -65,5 +66,11 @@ export const relationshipApi = {
   async unfollowUser(user_id: string) {
     const res = await axiosInstance.post(`${prefix}/${user_id}/unfollow`);
     return res;
+  },
+  async getRecommendation() {
+    const res = await axiosInstance.get<RecommendationPagination>(
+      `${prefix}/recommendation`
+    );
+    return res.data;
   },
 };

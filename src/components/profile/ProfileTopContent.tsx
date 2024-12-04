@@ -84,8 +84,8 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
   const handleFollow = async () => {
     try {
       const res = await followUser({ user_id: id });
-      if (res.status === 200) {
-        toast.error("Followed successfully");
+      if (res) {
+        toast.success("Followed successfully");
       }
     } catch (error) {
       console.error(error);

@@ -1,72 +1,103 @@
-import { Box, Button, Link, Typography } from "@mui/material";
+import { useGetRecommendation } from "@/hooks/relationship/useGetRecommendation";
+import { Avatar, Box, Button, Link, Typography } from "@mui/material";
+import GradientCircularProgress from "../shared/Loader";
+import toast from "react-hot-toast";
+import { usePostFollowUser } from "@/hooks/relationship/usePostFollowUser";
+import { mutate } from "swr";
 
 const SuggestionsList = () => {
+  const { data: recommendations } = useGetRecommendation({});
+  const { followUser } = usePostFollowUser();
+
+  const handleFollow = async (user_id: string) => {
+    try {
+      const res = await followUser({ user_id });
+      if (res) {
+        toast.success("Followed successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Box
       sx={{
         display: "grid",
         gridTemplateColumns: {
           xs: "repeat(1, 1fr)", // extra small
-          // sm: "repeat(1, 1fr)", // small
           md: "repeat(2, 1fr)", // medium
-          // lg: "repeat(2, 1fr)", // large
           xl: "repeat(3, 1fr)", // extra large
         },
         gap: "15px",
       }}
     >
-      {Array.from(new Array(10)).map((item, index) => (
+      {!recommendations ? (
         <Box
-          key={index}
           sx={{
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            padding: "22px 15px",
-            gap: "12px",
-            border: "2px solid #e3e3e3",
-            borderRadius: "10px",
+            width: "100%",
           }}
         >
-          <img
-            src={"https://material-ui.com/static/images/avatar/1.jpg"}
-            alt="Avatar"
-            className="w-24 h-24 rounded-full"
-          />
+          <GradientCircularProgress />
+        </Box>
+      ) : (
+        recommendations.items.map((item, index) => (
           <Box
+            key={index}
             sx={{
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
+              alignItems: "center",
+              padding: "22px 15px",
+              gap: "12px",
+              border: "2px solid #e3e3e3",
+              borderRadius: "10px",
             }}
           >
-            <Link href="/" underline="none" color="black">
-              <Typography>Nguyen Van A</Typography>
-            </Link>
-            <Typography
+            <Avatar
+              src={item.profile_img || "/icons/user.png"}
+              alt={item.userName}
+              sx={{ width: "100px", height: "100px" }}
+            />
+            <Box
               sx={{
-                color: "gray",
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
               }}
             >
-              123 followers
-            </Typography>
+              <Link href={`profile/${item.id}`} underline="none" color="black">
+                <Typography>{item.userName}</Typography>
+              </Link>
+              <Typography
+                sx={{
+                  color: "gray",
+                }}
+              >
+                {item.mutualFriends} mutual friends
+              </Typography>
+            </Box>
+            <Button
+              sx={{
+                backgroundColor: "#4491F5",
+                color: "white",
+                height: "30px",
+                width: "100%",
+                textTransform: "none",
+                ":hover": {
+                  backgroundColor: "#1877F2",
+                },
+              }}
+              onClick={() => handleFollow(item.id)}
+            >
+              Follow
+            </Button>
           </Box>
-          <Button
-            sx={{
-              backgroundColor: "#4491F5",
-              color: "white",
-              height: "30px",
-              width: "100%",
-              textTransform: "none",
-              ":hover": {
-                backgroundColor: "#1877F2",
-              },
-            }}
-          >
-            Follow
-          </Button>
-        </Box>
-      ))}
+        ))
+      )}
     </Box>
   );
 };
