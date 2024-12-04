@@ -28,9 +28,8 @@ const SearchPanel = ({ open }: { open: boolean }) => {
   const [search, setSearch] = useState("");
   const { data, isLoading } = useGetSearchUser({
     query: search,
+    enabled: Boolean(search),
   });
-
-  if (isLoading || !data) return null;
 
   return (
     <Collapse orientation="horizontal" in={open}>
@@ -104,7 +103,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
           </IconButton>
         </Box>
 
-        {data.items.length > 0 && (
+        {data && search && data.items.length > 0 ? (
           <List
             sx={{
               width: "100%",
@@ -138,9 +137,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
               </ListItem>
             ))}
           </List>
-        )}
-
-        {data.items.length === 0 && (
+        ) : (
           <Box
             sx={{
               width: "100%",
