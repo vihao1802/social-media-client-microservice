@@ -12,19 +12,13 @@ export interface UseDeleteCommentReactionProps {
 export function useDeleteCommentReaction() {
 	const { mutate } = useSWRConfig()
 
-	async function DeleteCommentReaction(CommentReactionId: number) {
+	async function DeleteCommentReaction(CommentReactionId: number, commentId: number) {
 		try {
-			const deleteCommentReaction = await commentReactionApi.deleteCommentReaction(CommentReactionId);
+			await commentReactionApi.deleteCommentReaction(CommentReactionId);
 
 			// mutate work list if add successfully
-			mutate(
-				(key: Arguments) =>
-				Array.isArray(key) && key.includes(QueryKeys.GET_COMMENT_LIST),
-				undefined,
-				{ revalidate: true }
-			);
+			await mutate([QueryKeys.GET_COMMENT_REACTION, commentId])
 
-			return deleteCommentReaction
 		} catch (error: AxiosError | any) {
 			console.log('Failed to post court:', error);
 		}
