@@ -145,7 +145,7 @@ const StoryCard = ({
           color: "white",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", zIndex: 999 }}>
           <Avatar
             src={story.creator.profile_img}
             alt="User Avatar"
@@ -243,7 +243,7 @@ const StoryCard = ({
           position: "absolute",
           bottom: 0,
           width: "100%",
-          bgcolor: "rgba(0, 0, 0, 0.5)",
+          bgcolor: "rgba(0, 0, 0, 0.3)",
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "row" }}>
