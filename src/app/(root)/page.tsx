@@ -33,7 +33,7 @@ export default function Home() {
 
   const postList: Array<Post> =
     data?.reduce((result: Array<Post>, currentPage: ListResponse<Post>) => {
-      result.push(...currentPage.items);
+      if (currentPage && currentPage.items) result.push(...currentPage.items);
 
       return result;
     }, []) || [];

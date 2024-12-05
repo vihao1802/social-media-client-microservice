@@ -76,8 +76,7 @@ const PostComment = ({
   const [commentContent, setCommentContent] = useState("");
   const [parentCommentId, setParentCommentId] = useState<number | null>(null);
   const createComment = usePostComment();
-  const handleClickComment = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleClickComment = async () => {
     if (post === null) {
       toast.error("Post not found!");
       return;
@@ -94,6 +93,12 @@ const PostComment = ({
       toast.success("Commented successfully!");
       setCommentContent("");
       setParentCommentId(null);
+    }
+  };
+
+  const handleKeyDownComment = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      handleClickComment(); // Gọi lại handler của button
     }
   };
 
@@ -377,6 +382,7 @@ const PostComment = ({
                 padding: "10px",
                 borderTop: "1px solid #e0e0e0",
               }}
+              onKeyDown={handleKeyDownComment}
             >
               <InputBase
                 placeholder="Add comment..."
