@@ -93,7 +93,18 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
   };
 
   if (!user || !currentUser || !followerList || !followingList)
-    return <GradientCircularProgress />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <GradientCircularProgress />
+      </Box>
+    );
 
   return (
     <Box
