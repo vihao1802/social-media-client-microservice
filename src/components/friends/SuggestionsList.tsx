@@ -38,7 +38,7 @@ const SuggestionsList = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            width: "100%",
+            gridArea: "1 / 1 / 2 / 4",
           }}
         >
           <GradientCircularProgress />
