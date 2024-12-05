@@ -163,7 +163,7 @@ const LeftSideBar = () => {
                           },
                           padding: "7px 12px",
                           borderRadius: "7px",
-                          height: "40px",
+                          height: "48px",
                           border:
                             (item.id === 2 && openSearch) ||
                             (item.id === 6 && openNotification)

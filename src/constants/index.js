@@ -111,13 +111,13 @@ export const sideBarItems = [
     route: "/messages",
     label: "Messages",
   },
-  {
-    id: 6,
-    iconNonActive: <FavoriteBorderOutlined />,
-    iconActive: <FavoriteRounded />,
-    route: "",
-    label: "Notifications",
-  },
+  // {
+  //   id: 6,
+  //   iconNonActive: <FavoriteBorderOutlined />,
+  //   iconActive: <FavoriteRounded />,
+  //   route: "",
+  //   label: "Notifications",
+  // },
   {
     id: 7,
     iconNonActive: <PeopleAltOutlined />,

@@ -32,7 +32,7 @@ export function usePostListInfinity({ params, options, enabled = true }: UsePost
 			return `/post?${qs.stringify(query)}`
 		},
 		async(url: string) => {
-			const response = await axiosInstance.get(url)
+			const response = await axiosInstance.get(url)									
 			return response.data
 		},
 		{

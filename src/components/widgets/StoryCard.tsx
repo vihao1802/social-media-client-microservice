@@ -60,8 +60,6 @@ const StoryCard = ({
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: story.id });
 
-  console.log({ mediaContentData });
-
   const { data: postViewerData, isLoading: isPostViewerDataLoading } =
     useGetPostViewerByPostId({ postId: story.id });
 
