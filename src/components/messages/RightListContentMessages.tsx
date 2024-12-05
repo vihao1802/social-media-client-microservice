@@ -96,6 +96,26 @@ const RightListContentMessages = () => {
     }
   }, [messageList, boxRef]);
 
+  useEffect(() => {
+    const handleImageLoad = () => {
+      const scrollContainer = boxRef.current;
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
+    };
+
+    const images = boxRef.current?.querySelectorAll("img");
+    images?.forEach((img) => {
+      img.addEventListener("load", handleImageLoad);
+    });
+
+    return () => {
+      images?.forEach((img) => {
+        img.removeEventListener("load", handleImageLoad);
+      });
+    };
+  }, [messageList]);
+
   if (!messageList) return null;
 
   const handleTextFieldChange = (

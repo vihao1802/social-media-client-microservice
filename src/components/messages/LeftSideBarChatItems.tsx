@@ -320,7 +320,10 @@ const LeftSideBarMessages = () => {
       </Box>
       <Box
         sx={{
-          height: "calc(100vh - 126px)",
+          height:
+            currentSideBarMessagesType.id === "2"
+              ? "calc(100vh - 126px)"
+              : "calc(100vh - 70px)",
         }}
       >
         <List
@@ -344,7 +347,7 @@ const LeftSideBarMessages = () => {
           {renderChatGroups()}
         </List>
       </Box>
-      {authenticatedUser && (
+      {authenticatedUser && currentSideBarMessagesType.id === "2" && (
         <ModalAddGroup
           adminId={authenticatedUser.id}
           openModal={openModalAddGroup}
