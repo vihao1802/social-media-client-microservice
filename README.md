@@ -64,7 +64,7 @@
 
 ## 📷 Screenshots
 
-- Go to this: <a href="" target="_blank">SCREENSHOT.md</a>
+- Go to this: <a href="" target="_blank">SCREENSHOTS.md</a>
 
 <!-- GETTING STARTED -->
 

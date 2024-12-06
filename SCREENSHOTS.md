@@ -1,0 +1,9 @@
+- Sign In page
+- Sign Up page
+- Home page
+- Story page
+- Search
+- Explore page
+- Reels page
+- Messages page
+- Profile page
