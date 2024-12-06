@@ -3,6 +3,7 @@ import { LoginRequest } from "@/models/auth-login";
 import useSWR, { SWRConfiguration } from "swr";
 import cookies from "js-cookie";
 import { RegisterRequest } from "@/models/auth-register";
+import { ResetPassword, ResetPasswordRequest } from "@/models/auth-forgotpassword";
 
 export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   const {
@@ -60,6 +61,14 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     const res = await authApi.signInFacebook();
     return res;
   }
+  async function sendEmail(payload:ResetPasswordRequest) {
+    const res = await authApi.sendResetPasswordToken(payload);
+    return res;
+  }
+  async function resetPassword(payload:ResetPassword) {
+    const res = await authApi.resetPassword(payload);
+    return res;
+  }
 
   return {
     user,
@@ -71,5 +80,7 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     register,
     signInGoogle,
     signInFacebook,
+    sendEmail,
+    resetPassword
   };
 }
