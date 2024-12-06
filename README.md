@@ -30,36 +30,41 @@
 
 ### Frontend
 
-- React.js: JavaScript library for building dynamic, reusable UI components.
-- Next.js: React framework for server-side rendering (SSR) and static site generation (SSG).
-- Material UI: React component library implementing Google's Material Design for responsive UIs.
-- TypeScript: JavaScript superset offering static typing for better code quality.
-- Tailwind CSS: utility-first CSS framework for rapid and flexible styling.
-- SWR: lightweight library for data fetching, caching, and revalidation in React.
-- WebSocket: protocol enabling real-time, two-way communication between client and server.
-- Stream.io: platform for building scalable real-time features like feeds, chat, and video calls.
+- `React.js`: JavaScript library for building dynamic, reusable UI components.
+- `Next.js`: React framework for server-side rendering (SSR) and static site generation (SSG).
+- `Material UI`: React component library implementing Google's Material Design for responsive UIs.
+- `TypeScript`: JavaScript superset offering static typing for better code quality.
+- `Tailwind CSS`: utility-first CSS framework for rapid and flexible styling.
+- `SWR`: lightweight library for data fetching, caching, and revalidation in React.
+- `WebSocket`: protocol enabling real-time, two-way communication between client and server.
+- `Stream.io`: platform for building scalable real-time features like feeds, chat, and video calls.
 
 ### Backend
 
-- ASP.NET: framework for building scalable, high-performance web applications on .NET.
-- JWT (JSON Web Tokens): secure mechanism for user authentication and information exchange.
-- Cloudinary: cloud-based service for managing and optimizing media assets like images and videos.
-- Google and Facebook OAuth: Authentication protocols for secure user login using Google or Facebook accounts.
+- `ASP.NET`: framework for building scalable, high-performance web applications on .NET.
+- `JWT (JSON Web Tokens)`: secure mechanism for user authentication and information exchange.
+- `Cloudinary`: cloud-based service for managing and optimizing media assets like images and videos.
+- `Google and Facebook OAuth`: Authentication protocols for secure user login using Google or Facebook accounts.
 
 ### Database
 
-- SQL Server: A relational database management system by Microsoft, designed for storing, retrieving, and managing data efficiently.
+- `SQL Server`: A relational database management system by Microsoft, designed for storing, retrieving, and managing data efficiently.
 
 ### Others
-- Layer Architecture (Service, Repository, Controller): design pattern that separates layers for maintainable and testable applications.
-- Vercel: platform for deploying and hosting modern web applications.
-- GitHub Actions: CI/CD tool for automating workflows, builds, and deployments directly from your GitHub repository.
-- Node.js (v22+): Backend runtime environment for the development and execution of the frontend.
-- npm: Package manager to handle JavaScript libraries and dependencies.
+
+- `Layer Architecture (Service, Repository, Controller)`: design pattern that separates layers for maintainable and testable applications.
+- `Vercel`: platform for deploying and hosting modern web applications.
+- `GitHub Actions`: CI/CD tool for automating workflows, builds, and deployments directly from your GitHub repository.
+- `Node.js (v22+)`: Backend runtime environment for the development and execution of the frontend.
+- `npm`: Package manager to handle JavaScript libraries and dependencies.
 
 ### APIs
 
 - RESTful APIs are used to handle interactions between the frontend and backend, ensuring scalability and performance.
+
+## 📷 Screenshots
+
+- Go to this: <a href="" target="_blank">SCREENSHOT.md</a>
 
 <!-- GETTING STARTED -->
 
@@ -70,14 +75,16 @@
 ### 💎 Prerequisites
 
 You should create a `main` directory to wrap 2 repo (client and server) of this system
+
 - npm(comes with node)
-Ensure you have the following tools installed:
+  Ensure you have the following tools installed:
 - [.NET SDK](https://dotnet.microsoft.com/download) (version 8.0 or higher)
 - A code editor such as [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio](https://visualstudio.microsoft.com/)
 
 ### ⚙️ Installation
 
-#### 🔧 Frontend 
+#### 🔧 Frontend
+
 1. Clone the repo in the `main` directory
 
 ```sh
@@ -122,17 +129,21 @@ CLOUDINARY_API_SECRET=
 CLIENT_DOMAIN=http://localhost:3000
 ```
 
-#### 🔧 Backend 
+#### 🔧 Backend
+
 1. **Trust the HTTPS development certificate**
-  
+
 - Run the following command to trust the development certificate for secure HTTPS connections:
- ```bash
- dotnet dev-certs https --trust
- ```
+
+```bash
+dotnet dev-certs https --trust
+```
+
 2. **Add Required NuGet Packages from csproj file**
- ```bash
- dotnet restore
- ```
+
+```bash
+dotnet restore
+```
 
 Packages would be installed:
 
@@ -146,19 +157,24 @@ Packages would be installed:
 - [Microsoft.AspNetCore.Identity.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore) --version 8.0.8
 
 3. **Install Entity Framework CLI Tool**
- Install the global Entity Framework Core CLI tool to handle migrations and database updates:
+   Install the global Entity Framework Core CLI tool to handle migrations and database updates:
 
- ```bash
- dotnet tool install --global dotnet-ef --version 8.*
- ```
+```bash
+dotnet tool install --global dotnet-ef --version 8.*
+```
+
 4. **Run Migrations and update changes to database**
- ```bash
- dotnet-ef migrations add [name_of_migration]
- ```
- Apply the migration to the database:
- ```bash
- dotnet-ef database update
- ```
+
+```bash
+dotnet-ef migrations add [name_of_migration]
+```
+
+Apply the migration to the database:
+
+```bash
+dotnet-ef database update
+```
+
 5. Create file `appsettings.Development.json` in folder `server` with format:
 
 ```json
@@ -177,9 +193,7 @@ Packages would be installed:
     "Issuer": "",
     "Audience": "",
 
-
     "SigningKey": ""
-
   },
   "SmtpSettings": {
     "Server": "smtp.gmail.com",
@@ -191,18 +205,16 @@ Packages would be installed:
     "Password": "",
     "EnableSsl": true
   },
-  "GoogleKeys":{
-    "ClientId":"",
-    "ClientSecret":""
+  "GoogleKeys": {
+    "ClientId": "",
+    "ClientSecret": ""
   },
-  "FacebookKeys":{
-    "AppId":"",
-    "AppSecret":""
+  "FacebookKeys": {
+    "AppId": "",
+    "AppSecret": ""
   }
 }
-
 ```
-
 
 ## 🚀 Usage
 
@@ -221,12 +233,15 @@ npm run dev
 ```
 
 ### Server:
+
 - To watch for changes and automatically rebuild the application during development, use:
+
 ```bash
 dotnet watch run
 ```
 
 - To run the application, use:
+
 ```bash
 dotnet build
 ```
@@ -238,15 +253,11 @@ dotnet run
 ## ✨ Code Contributors
 
 - This project exists thanks to all the people who contribute.
-<a href="https://github.com/vihao1802/Social-Media-Client/graphs/contributors">
+  <a href="https://github.com/vihao1802/Social-Media-Client/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=vihao1802/Social-Media-Client" />
-</a>
+  </a>
 
 Made with [contrib.rocks](https://contrib.rocks).
-
-## 📷 Screenshots
-
-- Go to this: <a href="" target="_blank">SCREENSHOT.md</a>
 
 ## 📝 License
 
