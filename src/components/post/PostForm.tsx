@@ -105,12 +105,13 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
                 return;
               }
             });
-            mutate(
+            await mutate(
               (key: Arguments) =>
                 Array.isArray(key) && key.includes(QueryKeys.GET_POST_LIST),
               undefined,
               { revalidate: true }
             );
+            await mutate("get_posts_by_user_id");
             toast.success("Post created successfully");
           }
         } else {

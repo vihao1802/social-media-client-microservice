@@ -7,7 +7,6 @@ export function useCreatePost() {
   async function CreatePost(postRequest: PostRequest) {
     try {
       const newPost = await postApi.createPost(postRequest);
-      await mutate("get_posts_by_user_id");
       return newPost;
     } catch (error: AxiosError | any) {
       console.log("Failed to create Post:", error);
