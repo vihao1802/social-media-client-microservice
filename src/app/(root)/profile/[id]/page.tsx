@@ -16,7 +16,7 @@ const Profile = () => {
     userId: id,
   });
 
-  if (!postResponse) return <GradientCircularProgress />;
+  if (!postResponse || isValidating) return <GradientCircularProgress />;
 
   return (
     <Box
