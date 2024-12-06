@@ -47,7 +47,7 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
           {/* Image */}
           <Box
             component={
-              mediaContentData?.items[0].media_type?.includes("video")
+              mediaContentData?.items[0]?.media_type?.includes("video")
                 ? "video"
                 : "img"
             }
@@ -60,7 +60,7 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
           />
 
           {/* Icon that appears on the bottom right corner of the image */}
-          {mediaContentData?.items[0].media_type?.includes("video") ? (
+          {mediaContentData?.items[0]?.media_type?.includes("video") ? (
             <SmartDisplayRounded
               sx={{
                 position: "absolute",
@@ -96,7 +96,7 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
           />
 
           {/* Icon that appears on the bottom right corner of the image */}
-          {mediaContentData?.items[0].media_type?.includes("video") ? (
+          {mediaContentData?.items[0]?.media_type?.includes("video") ? (
             <SmartDisplayRounded
               sx={{
                 position: "absolute",
