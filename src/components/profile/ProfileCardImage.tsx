@@ -26,7 +26,10 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
   const { data: commentData } = useGetCommentByPostId({ postId: post.id });
   return (
     <>
-      {mediaContentData && postViewerData && commentData ? (
+      {mediaContentData &&
+      postViewerData &&
+      commentData &&
+      mediaContentData.items ? (
         <Box
           sx={{
             width: "100%",
@@ -56,7 +59,7 @@ const ProfileCardImage = ({ post }: { post: Post }) => {
               height: "100%",
               objectFit: "cover",
             }}
-            src={mediaContentData?.items[0].media_Url}
+            src={mediaContentData?.items[0]?.media_Url}
           />
 
           {/* Icon that appears on the bottom right corner of the image */}
