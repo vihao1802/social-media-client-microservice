@@ -10,6 +10,8 @@ import { User } from "@/models/user";
 import toast from "react-hot-toast";
 import cookies from "js-cookie";
 import { RegisterRequest, RegisterResponse } from "@/models/auth-register";
+import { send } from "process";
+import { ResetPassword, ResetPasswordRequest } from "@/models/auth-forgotpassword";
 
 const prefix = "/auth";
 export const authApi = {
@@ -93,4 +95,19 @@ export const authApi = {
     const res = await axiosInstance.get(`${prefix}/external-login/Facebook`);
     return res.data;
   },
+
+  async sendResetPasswordToken(request: ResetPasswordRequest) {
+    const res = await axiosInstance.post(`${prefix}/forgot-password`, {
+      email: request.email,
+    });
+    return res; 
+  },
+  async resetPassword(request: ResetPassword) {
+    const res = await axiosInstance.post(`${prefix}/reset-password`, {
+      Email: request.email,
+      NewPassword: request.newPassword,
+      ResetToken: request.resetToken
+    });
+    return res; 
+  }
 };

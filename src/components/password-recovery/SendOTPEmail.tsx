@@ -1,11 +1,14 @@
 "use client";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { RecoveryContext } from "@/context/recovery-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useRouter } from "next/navigation";
 
 const SendOTPEmailSchema = Yup.object().shape({
   email: Yup.string().email("Email is invalid").required("Email is required"),
@@ -13,7 +16,10 @@ const SendOTPEmailSchema = Yup.object().shape({
 
 const SendOTPEmail = () => {
   const { setPage, setEmail, setOTP } = useContext(RecoveryContext);
+  const [isSentMail, setIsSentMail] = useState(false);
 
+  const { sendEmail } = useAuthenticatedUser();
+  const router = useRouter();
   return (
     <Box
       sx={{
@@ -34,7 +40,17 @@ const SendOTPEmail = () => {
           fontSize: "22px",
         }}
       >
-        Forgot password
+        {isSentMail ? (
+          <CheckCircleIcon
+            fontSize="large"
+            sx={{
+              color: "green",
+              marginRight: "10px",
+            }}
+          />
+        ) : (
+          "Forgot Password?"
+        )}
       </Typography>
       <Typography
         sx={{
@@ -43,8 +59,9 @@ const SendOTPEmail = () => {
         }}
         fontSize={"16px"}
       >
-        Please enter your email account. You will receive an OTP with 4 digit to
-        reset new password.
+        {!isSentMail
+          ? "Please enter your email account. You will receive an OTP with 4 digit to reset new password."
+          : "Please check your email to recover your password."}
       </Typography>
       <Box
         sx={{
@@ -57,16 +74,13 @@ const SendOTPEmail = () => {
           initialValues={{ email: "" }}
           validationSchema={SendOTPEmailSchema}
           onSubmit={async (values) => {
-            // handle send OTP code to email
-            const OTP = Math.floor(Math.random() * 9000 + 1000);
-            console.log(OTP);
-            setOTP(OTP);
+            console.log("values", values);
 
-            console.log(values.email);
-            setEmail(values.email);
-
-            toast.success("OTP code sent!");
-            setPage("otp");
+            const res = await sendEmail(values);
+            if (res.status >= 200 && res.status < 300) {
+              toast.success("Email sent!");
+              setIsSentMail(true);
+            }
           }}
         >
           {({ errors, touched }) => (
@@ -86,26 +100,48 @@ const SendOTPEmail = () => {
                 helperText={<ErrorMessage name="email" />}
               />
 
-              <Button
-                type="submit"
-                size="large"
-                sx={{
-                  marginTop: "10px",
-                  width: "100%",
-                  color: "white",
-                  backgroundColor: "var(--buttonColor)",
-                  ":hover": {
-                    backgroundColor: "var(--buttonHoverColor)",
-                  },
-                  position: "relative",
-                }}
-                // onClick={() => setPage("otp")}
-              >
-                Continue{" "}
-                <ArrowForwardIcon
-                  sx={{ fontSize: "24px", position: "absolute", right: "20px" }}
-                />
-              </Button>
+              {!isSentMail ? (
+                <Button
+                  type="submit"
+                  size="large"
+                  sx={{
+                    marginTop: "10px",
+                    width: "100%",
+                    color: "white",
+                    backgroundColor: "var(--buttonColor)",
+                    ":hover": {
+                      backgroundColor: "var(--buttonHoverColor)",
+                    },
+                    position: "relative",
+                  }}
+                  // onClick={() => setPage("otp")}
+                >
+                  Continue{" "}
+                  <ArrowForwardIcon
+                    sx={{
+                      fontSize: "24px",
+                      position: "absolute",
+                      right: "20px",
+                    }}
+                  />
+                </Button>
+              ) : (
+                <Button
+                  sx={{
+                    marginTop: "10px",
+                    width: "100%",
+                    color: "white",
+                    backgroundColor: "var(--buttonColor)",
+                    ":hover": {
+                      backgroundColor: "var(--buttonHoverColor)",
+                    },
+                    position: "relative",
+                  }}
+                  href={"/sign-in"}
+                >
+                  Back to sign in page
+                </Button>
+              )}
             </Form>
           )}
         </Formik>
