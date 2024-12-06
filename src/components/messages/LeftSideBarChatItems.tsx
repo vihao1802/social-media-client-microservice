@@ -182,95 +182,101 @@ const LeftSideBarMessages = () => {
       ) {
         return <LeftSideBarChatItemSkeleton />;
       } else {
-        return chatGroupPagination.items.map((item, index: number) => (
-          <Box key={index}>
-            <ListItem disablePadding>
-              <ListItemButton
-                sx={{
-                  color: "black",
-                  height: "70px",
-                  padding: "0",
-                  alignItems: "start",
-                  paddingLeft: "10px",
-                  paddingRight: "20px",
-                  paddingTop: "10px",
-                  backgroundColor:
-                    g_id && item.id.toString() === g_id ? "#DFE0E0" : "white",
-                }}
-                onClick={() => handleSelectGroup(item)}
-              >
-                <Box
+        return chatGroupPagination.items
+          .sort(
+            (a, b) =>
+              new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+          )
+          .map((item, index: number) => (
+            <Box key={index}>
+              <ListItem disablePadding>
+                <ListItemButton
                   sx={{
-                    borderRadius: "50%",
-                    padding: "0 10px",
+                    color: "black",
+                    height: "70px",
+                    padding: "0",
+                    alignItems: "start",
+                    paddingLeft: "10px",
+                    paddingRight: "20px",
+                    paddingTop: "10px",
+                    backgroundColor:
+                      g_id && item.id.toString() === g_id ? "#DFE0E0" : "white",
                   }}
-                >
-                  <Avatar
-                    alt={item.avatar}
-                    src={item.avatar || "/icons/user.png"}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    width: "calc(100% - 60px)",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
+                  onClick={() => handleSelectGroup(item)}
                 >
                   <Box
                     sx={{
-                      display: "flex",
-                      gap: "5px",
+                      borderRadius: "50%",
+                      padding: "0 10px",
                     }}
                   >
+                    <Avatar
+                      alt={item.avatar}
+                      src={item.avatar || "/icons/user.png"}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "calc(100% - 60px)",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: "5px",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          color: "black",
+                          flex: 1,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          paddingBottom: "5px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {item.name}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "12px",
+                          color: "#9595AF",
+                        }}
+                      >
+                        {item.sent_at &&
+                          item.sent_at !== "0001-01-01T00:00:00" &&
+                          dayjs(item.sent_at).fromNow().replace(" ago", "")}
+                      </Typography>
+                    </Box>
+
                     <Typography
                       sx={{
-                        fontSize: "16px",
-                        color: "black",
-                        flex: 1,
+                        fontSize: "15px",
+                        color: "#555555",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        paddingBottom: "5px",
                         fontWeight: "400",
                       }}
                     >
-                      {item.name}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "12px",
-                        color: "#9595AF",
-                      }}
-                    >
-                      {item.sent_at &&
-                        item.sent_at !== "0001-01-01T00:00:00" &&
-                        dayjs(item.sent_at).fromNow().replace(" ago", "")}
+                      {item.latest_message_sender &&
+                        item.latest_message_sender.id ===
+                          authenticatedUser.id &&
+                        "You: "}
+                      {item.latest_message_content
+                        ? item.latest_message_content
+                        : "You can chat now"}
                     </Typography>
                   </Box>
-
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      color: "#555555",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontWeight: "400",
-                    }}
-                  >
-                    {item.latest_message_sender &&
-                      item.latest_message_sender.id === authenticatedUser.id &&
-                      "You: "}
-                    {item.latest_message_content
-                      ? item.latest_message_content
-                      : "You can chat now"}
-                  </Typography>
-                </Box>
-              </ListItemButton>
-            </ListItem>
-          </Box>
-        ));
+                </ListItemButton>
+              </ListItem>
+            </Box>
+          ));
       }
     } else {
       return null;
