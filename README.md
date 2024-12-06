@@ -64,7 +64,7 @@
 
 ## 📷 Screenshots
 
-- Go to this: <a href="" target="_blank">SCREENSHOTS.md</a>
+- Go to this: <a href="https://github.com/vihao1802/Social-Media-Client/blob/main/SCREENSHOTS.md" target="_blank">SCREENSHOTS.md</a>
 
 <!-- GETTING STARTED -->
 
