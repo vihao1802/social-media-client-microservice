@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   timeout: 60000,
   headers: {
+    "ngrok-skip-browser-warning": "69420",
     "Content-Type": "application/json",
   },
 });
