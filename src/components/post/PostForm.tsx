@@ -32,6 +32,7 @@ import { usePostMediaContent } from "@/hooks/media-content/usePostMediaContent";
 import { Arguments, useSWRConfig } from "swr";
 import { QueryKeys } from "@/constants/query-keys";
 import { usePatchPost } from "@/hooks/post/usePatchPost";
+import { mutate as global_mutate } from "swr";
 
 const schema = yup.object({
   caption: yup.string().required("Caption is required"),
@@ -111,7 +112,7 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
               undefined,
               { revalidate: true }
             );
-            await mutate("get_posts_by_user_id");
+            await global_mutate("get_posts_by_user_id");
             toast.success("Post created successfully");
           }
         } else {
