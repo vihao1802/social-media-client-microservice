@@ -255,9 +255,10 @@ dotnet run
 ## ✨ Code Contributors
 
 - This project exists thanks to all the people who contribute.
-  <a href="https://github.com/vihao1802/Social-Media-Client/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vihao1802/Social-Media-Client" />
-  </a>
+
+<a href="https://github.com/vihao1802/Social-Media-Client/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=vihao1802/Social-Media-Client" />
+</a>
 
 Made with [contrib.rocks](https://contrib.rocks).
 
