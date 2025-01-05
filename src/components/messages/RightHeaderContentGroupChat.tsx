@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Avatar,
   Box,
@@ -6,14 +6,14 @@ import {
   IconButton,
   Skeleton,
   Typography,
-} from "@mui/material";
-import { InfoOutlined, PhoneOutlined } from "@mui/icons-material";
-import { useState } from "react";
-import { useStreamVideoClient } from "@stream-io/video-react-sdk";
-import { tokenProvider } from "@/actions/stream.action";
-import { useParams, useRouter } from "next/navigation";
-import { useGetGroupChatById } from "@/hooks/chat-group/useGetGroupChatById";
-import RightDrawerContentGroupChat from "./RightDrawerContentGroupChat";
+} from '@mui/material';
+import { InfoOutlined, PhoneOutlined } from '@mui/icons-material';
+import { useState } from 'react';
+import { useStreamVideoClient } from '@stream-io/video-react-sdk';
+import { tokenProvider } from '@/actions/stream.action';
+import { useParams, useRouter } from 'next/navigation';
+import { useGetGroupChatById } from '@/hooks/chat-group/useGetGroupChatById';
+import RightDrawerContentGroupChat from './RightDrawerContentGroupChat';
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
@@ -33,13 +33,13 @@ const RightHeaderContentGroupChat = () => {
 
   const initiateCall = async () => {
     if (!client) {
-      console.log("Video client is not initialized");
+      console.log('Video client is not initialized');
       return;
     }
 
     try {
       const callId = crypto.randomUUID();
-      const call = client.call("default", callId);
+      const call = client.call('default', callId);
       await call.getOrCreate();
 
       router.push(`/call/${callId}`);
@@ -51,13 +51,13 @@ const RightHeaderContentGroupChat = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        padding: "14px",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom: "2px solid #c7c5c5",
-        height: "70px",
+        display: 'flex',
+        flexDirection: 'row',
+        padding: '14px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '2px solid #c7c5c5',
+        height: '70px',
       }}
     >
       <Drawer open={open} anchor="right" onClose={toggleDrawer(false)}>
@@ -68,22 +68,22 @@ const RightHeaderContentGroupChat = () => {
       </Drawer>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
         }}
       >
         {groupChat ? (
-          <Avatar src={groupChat.avatar || "/icons/user.png"} />
+          <Avatar src={groupChat.avatar || '/icons/user.png'} />
         ) : (
           <Skeleton variant="circular" width={40} height={40} />
         )}
 
         <Typography
           sx={{
-            fontSize: "17px",
-            color: "black",
-            paddingLeft: "10px",
+            fontSize: '17px',
+            color: 'black',
+            paddingLeft: '10px',
           }}
         >
           {groupChat ? groupChat.name : <Skeleton variant="text" width={100} />}
@@ -92,30 +92,30 @@ const RightHeaderContentGroupChat = () => {
 
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-          fontSize: "28px",
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          fontSize: '28px',
         }}
       >
         <IconButton onClick={initiateCall}>
           <PhoneOutlined
-            fontSize={"inherit"}
+            fontSize={'inherit'}
             sx={{
-              borderRadius: "50%",
-              cursor: "pointer",
-              color: "black",
+              borderRadius: '50%',
+              cursor: 'pointer',
+              color: 'black',
             }}
           />
         </IconButton>
 
         <IconButton onClick={toggleDrawer(true)}>
           <InfoOutlined
-            fontSize={"inherit"}
+            fontSize={'inherit'}
             sx={{
-              borderRadius: "50%",
-              cursor: "pointer",
-              color: "black",
+              borderRadius: '50%',
+              cursor: 'pointer',
+              color: 'black',
             }}
           />
         </IconButton>

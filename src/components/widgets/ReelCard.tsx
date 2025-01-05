@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, MouseEvent } from "react";
+import React, { useEffect, useState, MouseEvent } from 'react';
 import {
   Card,
   CardMedia,
@@ -14,7 +14,7 @@ import {
   MenuItem,
   Divider,
   Link,
-} from "@mui/material";
+} from '@mui/material';
 
 import {
   VolumeOffRounded,
@@ -26,18 +26,18 @@ import {
   BookmarkBorderOutlined,
   BookmarkRounded,
   MoreHorizRounded,
-} from "@mui/icons-material";
-import { MediaContent } from "@/models/media-content";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
-import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
-import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
-import toast from "react-hot-toast";
-import PostComment from "../post/PostComment";
-import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
-import PostForm from "../post/PostForm";
-import { useRouter } from "next/navigation";
+} from '@mui/icons-material';
+import { MediaContent } from '@/models/media-content';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { useGetPostViewerByPostId } from '@/hooks/post-viewer/useGetPostViewerByPostId';
+import { PostViewer, PostViewerRequest } from '@/models/post-viewer';
+import { useCreatePostViewer } from '@/hooks/post-viewer/useCreatePostViewer';
+import { useDeletePostViewer } from '@/hooks/post-viewer/useDeletePostViewer';
+import toast from 'react-hot-toast';
+import PostComment from '../post/PostComment';
+import { useGetCommentByPostId } from '@/hooks/comment/useGetCommentByPostId';
+import PostForm from '../post/PostForm';
+import { useRouter } from 'next/navigation';
 
 interface VideoCardProps {
   mediaContent: MediaContent;
@@ -121,7 +121,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
       if (postViewerId !== 0) {
         await deletePostViewer(postViewerId, mediaContent.post.id);
       } else {
-        toast.error("Post viewer not found!");
+        toast.error('Post viewer not found!');
         return null;
       }
     } else {
@@ -138,8 +138,8 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
     <>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
+          display: 'flex',
+          flexDirection: 'row',
           gap: 2,
         }}
       >
@@ -148,10 +148,10 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
           sx={{
             width: 350,
             height: 625,
-            position: "relative",
-            borderRadius: "5px",
-            overflow: "hidden",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.7)",
+            position: 'relative',
+            borderRadius: '5px',
+            overflow: 'hidden',
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.7)',
           }}
         >
           {/* Video Section */}
@@ -161,19 +161,19 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
             autoPlay
             loop
             muted={muted}
-            sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
 
           {/* Mute/Unmute Button */}
           <IconButton
             onClick={() => setMuted(!muted)}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               top: 16,
               right: 16,
-              color: "white",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.7)" },
+              color: 'white',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
             }}
           >
             {muted ? <VolumeOffRounded /> : <VolumeUpRounded />}
@@ -182,24 +182,24 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
           {/* Bottom Video Description */}
           <Box
             sx={{
-              position: "absolute",
+              position: 'absolute',
               bottom: 16,
               left: 16,
               right: 16,
-              justifyContent: "space-between",
-              color: "white",
-              display: "flex",
-              flexDirection: "column",
+              justifyContent: 'space-between',
+              color: 'white',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <Box
               sx={{
-                display: "flex",
+                display: 'flex',
                 gap: 1,
-                alignItems: "center",
-                flexDirection: "row",
+                alignItems: 'center',
+                flexDirection: 'row',
                 marginBottom: 1,
-                cursor: "pointer",
+                cursor: 'pointer',
               }}
               onClick={() =>
                 router.push(`/profile/${mediaContent.post.creator.id}`)
@@ -207,7 +207,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
             >
               <Avatar
                 src={
-                  mediaContent.post.creator.profile_img || "/icons/person.png"
+                  mediaContent.post.creator.profile_img || '/icons/person.png'
                 } // Avatar Image
                 alt={mediaContent.post.creator.username} // Avatar Alt Text
                 sx={{ width: 32, height: 32 }}
@@ -217,7 +217,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
               </Typography>
             </Box>
 
-            <Typography variant="caption" sx={{ fontSize: "12px" }}>
+            <Typography variant="caption" sx={{ fontSize: '12px' }}>
               {mediaContent.post.content}
             </Typography>
           </Box>
@@ -226,25 +226,25 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
         {/* Action Buttons */}
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "end",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'end',
             gap: 2,
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <IconButton onClick={handleClickLike}>
               {isLiked ? (
                 <FavoriteRounded
                   sx={{
-                    color: "red",
+                    color: 'red',
                   }}
                 />
               ) : (
@@ -261,10 +261,10 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <IconButton onClick={handleClickOpenComment}>
@@ -277,10 +277,10 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
           {currentUser.id === mediaContent.post.creator.id && (
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <IconButton onClick={handleClickMenu}>
@@ -303,37 +303,37 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
             paper: {
               elevation: 0,
               sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                 mt: 1.5,
                 width: 200,
 
-                "& .MuiAvatar-root": {
+                '& .MuiAvatar-root': {
                   width: 32,
                   height: 32,
                   ml: -0.5,
                   mr: 1,
                 },
-                "&::before": {
+                '&::before': {
                   content: '""',
-                  display: "block",
-                  position: "absolute",
+                  display: 'block',
+                  position: 'absolute',
                   top: 0,
                   right: 14,
                   width: 10,
                   height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
                   zIndex: 0,
                 },
               },
             },
           }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
           <MenuItem onClick={handleCloseMenu}>
-            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+            <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
               Delete
             </Typography>
           </MenuItem>

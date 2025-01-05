@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Avatar,
   Box,
@@ -8,26 +8,26 @@ import {
   Modal,
   Skeleton,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   Call,
   CallEnd,
   InfoOutlined,
   PhoneOutlined,
-} from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
+} from '@mui/icons-material';
+import { useEffect, useRef, useState } from 'react';
 import {
   useStreamVideoClient,
   useCalls,
   CallingState,
   StreamVideoClient,
-} from "@stream-io/video-react-sdk";
-import { tokenProvider } from "@/actions/stream.action";
-import RightDrawerContentMessages from "@/components/messages/RightDrawerContentMessages";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useGetUserById } from "@/hooks/user/useGetUserById";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import toast from "react-hot-toast";
+} from '@stream-io/video-react-sdk';
+import { tokenProvider } from '@/actions/stream.action';
+import RightDrawerContentMessages from '@/components/messages/RightDrawerContentMessages';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useGetUserById } from '@/hooks/user/useGetUserById';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import toast from 'react-hot-toast';
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
@@ -55,18 +55,18 @@ const RightHeaderContentMessages = () => {
       `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/messenge`
     );
     ws.onopen = () => {
-      console.log("WebSocket connected");
+      console.log('WebSocket connected');
     };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (
-        data.type === "incoming_call" &&
+        data.type === 'incoming_call' &&
         data.userId === authenticatedUser.id
       ) {
         handleIncomingCall(data.callId);
         if (!user) {
-          console.log("User is not initialized");
+          console.log('User is not initialized');
           return;
         }
         /* const newClient = new StreamVideoClient({
@@ -83,11 +83,11 @@ const RightHeaderContentMessages = () => {
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error('WebSocket error:', error);
     };
 
     ws.onclose = () => {
-      console.log("WebSocket connection closed");
+      console.log('WebSocket connection closed');
     };
 
     webSocket.current = ws;
@@ -101,18 +101,18 @@ const RightHeaderContentMessages = () => {
 
   const initiateCall = async () => {
     if (!client) {
-      console.log("Video client is not initialized");
+      console.log('Video client is not initialized');
       return;
     }
 
     if (!apiKey) {
-      console.error("API key is not defined");
+      console.error('API key is not defined');
       return;
     }
 
     try {
       const callId = crypto.randomUUID();
-      const call = client.call("default", callId);
+      const call = client.call('default', callId);
       await call.create({
         data: {
           members: [{ user_id: id }],
@@ -125,7 +125,7 @@ const RightHeaderContentMessages = () => {
       ) {
         webSocket.current.send(
           JSON.stringify({
-            type: "incoming_call",
+            type: 'incoming_call',
             userId: id,
             callId: callId,
           })
@@ -134,7 +134,7 @@ const RightHeaderContentMessages = () => {
 
       router.push(`/call/${callId}`);
     } catch (error) {
-      console.log("Failed initiate" + error);
+      console.log('Failed initiate' + error);
     }
   };
 
@@ -149,7 +149,7 @@ const RightHeaderContentMessages = () => {
       return;
     } */
     if (!incomingCallId) {
-      console.log("Incoming call id is not defined");
+      console.log('Incoming call id is not defined');
       return;
     }
 
@@ -184,7 +184,7 @@ const RightHeaderContentMessages = () => {
       return;
     } */
 
-    console.log("rejecting call");
+    console.log('rejecting call');
 
     // const { calls } = await clientReceiver.queryCalls({
     //   filter_conditions: { id: incomingCallId },
@@ -195,7 +195,7 @@ const RightHeaderContentMessages = () => {
       setIncomingCallId(null);
       setOpenCall(false);
     } catch (error) {
-      console.error("Error rejecting call:", error);
+      console.error('Error rejecting call:', error);
     }
   };
 
@@ -206,13 +206,13 @@ const RightHeaderContentMessages = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        padding: "14px",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom: "2px solid #c7c5c5",
-        height: "70px",
+        display: 'flex',
+        flexDirection: 'row',
+        padding: '14px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '2px solid #c7c5c5',
+        height: '70px',
       }}
     >
       <Modal
@@ -223,49 +223,49 @@ const RightHeaderContentMessages = () => {
       >
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px",
-            backgroundColor: "white",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%,-50%)",
-            padding: "20px",
-            border: "none",
-            outline: "none",
-            borderRadius: "10px",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '10px',
+            backgroundColor: 'white',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%,-50%)',
+            padding: '20px',
+            border: 'none',
+            outline: 'none',
+            borderRadius: '10px',
           }}
         >
           <Avatar
             src={user?.profile_img}
-            sx={{ width: "100px", height: "100px" }}
+            sx={{ width: '100px', height: '100px' }}
           />
           <Typography
             sx={{
-              fontSize: "17px",
-              color: "black",
+              fontSize: '17px',
+              color: 'black',
             }}
           >
             Calling from <strong className="text-lg">{user?.username}</strong>
           </Typography>
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "20px",
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '20px',
             }}
           >
             <Button
               onClick={rejectCall}
-              sx={{ backgroundColor: "red", color: "white" }}
+              sx={{ backgroundColor: 'red', color: 'white' }}
               startIcon={
                 <CallEnd
-                  fontSize={"inherit"}
+                  fontSize={'inherit'}
                   sx={{
-                    cursor: "pointer",
-                    color: "white",
+                    cursor: 'pointer',
+                    color: 'white',
                   }}
                 />
               }
@@ -274,13 +274,13 @@ const RightHeaderContentMessages = () => {
             </Button>
             <Button
               onClick={joinCall}
-              sx={{ backgroundColor: "green", color: "white" }}
+              sx={{ backgroundColor: 'green', color: 'white' }}
               startIcon={
                 <Call
-                  fontSize={"inherit"}
+                  fontSize={'inherit'}
                   sx={{
-                    cursor: "pointer",
-                    color: "white",
+                    cursor: 'pointer',
+                    color: 'white',
                   }}
                 />
               }
@@ -299,22 +299,22 @@ const RightHeaderContentMessages = () => {
       </Drawer>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
         }}
       >
         {user ? (
-          <Avatar src={user.profile_img || "/icons/user.png"} />
+          <Avatar src={user.profile_img || '/icons/user.png'} />
         ) : (
           <Skeleton variant="circular" width={40} height={40} />
         )}
 
         <Typography
           sx={{
-            fontSize: "17px",
-            color: "black",
-            paddingLeft: "10px",
+            fontSize: '17px',
+            color: 'black',
+            paddingLeft: '10px',
           }}
         >
           {user ? user.username : <Skeleton variant="text" width={100} />}
@@ -323,30 +323,30 @@ const RightHeaderContentMessages = () => {
 
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-          fontSize: "28px",
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          fontSize: '28px',
         }}
       >
         <IconButton onClick={initiateCall}>
           <PhoneOutlined
-            fontSize={"inherit"}
+            fontSize={'inherit'}
             sx={{
-              borderRadius: "50%",
-              cursor: "pointer",
-              color: "black",
+              borderRadius: '50%',
+              cursor: 'pointer',
+              color: 'black',
             }}
           />
         </IconButton>
 
         <IconButton onClick={toggleDrawer(true)}>
           <InfoOutlined
-            fontSize={"inherit"}
+            fontSize={'inherit'}
             sx={{
-              borderRadius: "50%",
-              cursor: "pointer",
-              color: "black",
+              borderRadius: '50%',
+              cursor: 'pointer',
+              color: 'black',
             }}
           />
         </IconButton>

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import ExploreImage from "@/components/explore/ExploreImage";
-import GradientCircularProgress from "@/components/shared/Loader";
-import { PostContext } from "@/context/post-context";
-import { usePostListInfinity } from "@/hooks/post/useGetPostListInfinity";
-import { ListResponse, Pagination } from "@/models/api";
-import { Post } from "@/models/post";
-import { Favorite, Forum } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
-import { useInView } from "react-intersection-observer";
+import ExploreImage from '@/components/explore/ExploreImage';
+import GradientCircularProgress from '@/components/shared/Loader';
+import { PostContext } from '@/context/post-context';
+import { usePostListInfinity } from '@/hooks/post/useGetPostListInfinity';
+import { ListResponse, Pagination } from '@/models/api';
+import { Post } from '@/models/post';
+import { Favorite, Forum } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
+import { useInView } from 'react-intersection-observer';
 interface ImageItem {
   id: number;
   src: string;
@@ -24,7 +24,7 @@ const Explore = () => {
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 10,
-    sort: "-id",
+    sort: '-id',
   };
 
   const { data, isLoading, isValidating, setSize } = usePostListInfinity({
@@ -45,31 +45,31 @@ const Explore = () => {
   return (
     <Box
       sx={{
-        width: "calc(100% - 250px)",
-        marginLeft: "auto",
+        width: 'calc(100% - 250px)',
+        marginLeft: 'auto',
       }}
     >
       <Box
         sx={{
-          maxWidth: "900px",
-          width: "100%",
-          margin: "0 auto",
-          padding: "30px 0",
+          maxWidth: '900px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '30px 0',
         }}
       >
         <Box
           sx={{
-            display: "grid",
+            display: 'grid',
             gridTemplateColumns: {
-              sm: "repeat(2,  1fr)",
-              md: "repeat(3,  1fr)",
+              sm: 'repeat(2,  1fr)',
+              md: 'repeat(3,  1fr)',
             },
-            gridAutoRows: "300px",
-            "& .card:nth-of-type(10n+8) , & .card:nth-of-type(10n+1)": {
-              gridColumn: "span 1",
-              gridRow: "span 2",
+            gridAutoRows: '300px',
+            '& .card:nth-of-type(10n+8) , & .card:nth-of-type(10n+1)': {
+              gridColumn: 'span 1',
+              gridRow: 'span 2',
             },
-            gap: "5px",
+            gap: '5px',
           }}
         >
           {postList
@@ -88,8 +88,8 @@ const Explore = () => {
             <Box
               ref={ref}
               sx={{
-                display: "flex",
-                justifyContent: "center",
+                display: 'flex',
+                justifyContent: 'center',
               }}
             >
               {loadingMore && <GradientCircularProgress />}

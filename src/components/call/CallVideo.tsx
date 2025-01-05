@@ -1,5 +1,5 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 import {
   CallControls,
   CallParticipantsList,
@@ -9,17 +9,17 @@ import {
   SpeakerLayout,
   useCall,
   useCallStateHooks,
-} from "@stream-io/video-react-sdk";
-import { useRouter } from "next/navigation";
-import { Box } from "@mui/material";
-import { AccountCircle } from "@mui/icons-material";
-import GradientCircularProgress from "../shared/Loader";
+} from '@stream-io/video-react-sdk';
+import { useRouter } from 'next/navigation';
+import { Box } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material';
+import GradientCircularProgress from '../shared/Loader';
 
-type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
+type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
 const CallVideo = () => {
   const router = useRouter();
-  const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
+  const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   // const [openMenu,setOpenMenu] = useState(false)
@@ -27,7 +27,7 @@ const CallVideo = () => {
   // for more detail about types of CallingState see: https://getstream.io/video/docs/react/ui-cookbook/ringing-call/#incoming-call-panel
   const call = useCall();
   if (!call) {
-    throw new Error("usecall must be used within a StreamCall component");
+    throw new Error('usecall must be used within a StreamCall component');
   }
   const callingState = useCallCallingState();
 
@@ -36,23 +36,23 @@ const CallVideo = () => {
     return (
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%,-50%)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%,-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '10px',
         }}
       >
         <GradientCircularProgress />
 
         <Box
           sx={{
-            color: "white",
-            textAlign: "center",
+            color: 'white',
+            textAlign: 'center',
           }}
         >
           Ending...
@@ -65,22 +65,22 @@ const CallVideo = () => {
     return (
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%,-50%)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%,-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '10px',
         }}
       >
         <GradientCircularProgress />
         <Box
           sx={{
-            color: "white",
-            textAlign: "center",
+            color: 'white',
+            textAlign: 'center',
           }}
         >
           Joining...
@@ -90,9 +90,9 @@ const CallVideo = () => {
 
   const CallLayout = () => {
     switch (layout) {
-      case "grid":
+      case 'grid':
         return <PaginatedGridLayout />;
-      case "speaker-right":
+      case 'speaker-right':
         return <SpeakerLayout participantsBarPosition="left" />;
       default:
         return <SpeakerLayout participantsBarPosition="right" />;
@@ -107,7 +107,7 @@ const CallVideo = () => {
         </div>
         <div
           className={`h-[calc(100vh-86px)] hidden ml-2 ${
-            showParticipants && "show-block"
+            showParticipants && 'show-block'
           }`}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
@@ -129,8 +129,8 @@ const CallVideo = () => {
           <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <AccountCircle
               sx={{
-                fontSize: "20px",
-                color: "white",
+                fontSize: '20px',
+                color: 'white',
               }}
             />
           </div>

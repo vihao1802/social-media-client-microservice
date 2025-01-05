@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useRef, useEffect, useContext } from "react";
+'use client';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Box,
   TextField,
@@ -7,45 +7,45 @@ import {
   styled,
   Button,
   Link,
-} from "@mui/material";
-import { BiErrorCircle } from "react-icons/bi";
-import { RecoveryContext } from "@/context/recovery-context";
-import toast from "react-hot-toast";
+} from '@mui/material';
+import { BiErrorCircle } from 'react-icons/bi';
+import { RecoveryContext } from '@/context/recovery-context';
+import toast from 'react-hot-toast';
 
 const InputContainer = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-around",
+  display: 'flex',
+  justifyContent: 'space-around',
 }));
 
 const StyledTextField = styled(TextField)(({ theme, error }) => ({
-  width: "3rem",
-  height: "3rem",
-  [theme.breakpoints.down("sm")]: {
-    width: "2rem",
-    height: "2rem",
+  width: '3rem',
+  height: '3rem',
+  [theme.breakpoints.down('sm')]: {
+    width: '2rem',
+    height: '2rem',
   },
-  "& .MuiOutlinedInput-root": {
-    height: "100%",
+  '& .MuiOutlinedInput-root': {
+    height: '100%',
   },
-  "& input": {
-    textAlign: "center",
-    fontSize: "1.5rem",
+  '& input': {
+    textAlign: 'center',
+    fontSize: '1.5rem',
     padding: 0,
   },
 }));
 
 const ErrorMessage = styled(Typography)(({ theme }) => ({
   color: theme.palette.error.main,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   gap: theme.spacing(0.5),
   marginTop: theme.spacing(1),
 }));
 
 const OTPInput = () => {
-  const [code, setCode] = useState(["", "", "", ""]);
-  const [error, setError] = useState("");
+  const [code, setCode] = useState(['', '', '', '']);
+  const [error, setError] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setPage, email, otp } = useContext(RecoveryContext);
 
@@ -60,7 +60,7 @@ const OTPInput = () => {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-      setError("");
+      setError('');
 
       if (value && index < 3) {
         inputRefs.current[index + 1]?.focus();
@@ -72,27 +72,27 @@ const OTPInput = () => {
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
+    if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "Enter") {
+    } else if (e.key === 'Enter') {
       verifyOTP();
     }
   };
 
   const resendOTP = () => {
-    console.log("OTP: " + otp + "," + "email: " + email);
+    console.log('OTP: ' + otp + ',' + 'email: ' + email);
   };
 
   const verifyOTP = () => {
-    if (code.some((digit) => digit === "")) {
-      setError("Please enter 4 digit.");
+    if (code.some((digit) => digit === '')) {
+      setError('Please enter 4 digit.');
     } else {
-      if (parseInt(code.join("")) !== otp) {
-        setError("OTP is not correct. Please try again.");
+      if (parseInt(code.join('')) !== otp) {
+        setError('OTP is not correct. Please try again.');
       } else {
-        setError("");
-        toast.success("Verify OTP successfully!");
-        setPage("reset");
+        setError('');
+        toast.success('Verify OTP successfully!');
+        setPage('reset');
         // alert("Mã hợp lệ!");
       }
     }
@@ -101,21 +101,21 @@ const OTPInput = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
         borderRadius: 4,
         padding: 3,
-        maxWidth: "420px",
-        width: "100%",
-        textAlign: "center",
-        "& > * + *": {
-          marginTop: "15px",
+        maxWidth: '420px',
+        width: '100%',
+        textAlign: 'center',
+        '& > * + *': {
+          marginTop: '15px',
         },
       }}
     >
       <Typography
         sx={{
-          fontSize: "22px",
+          fontSize: '22px',
         }}
       >
         Verify OTP
@@ -144,18 +144,18 @@ const OTPInput = () => {
           {error}
         </ErrorMessage>
       )}
-      <Box sx={{ textAlign: "center", marginTop: 2 }}>
+      <Box sx={{ textAlign: 'center', marginTop: 2 }}>
         <Button
           type="submit"
           size="large"
           onClick={verifyOTP}
           sx={{
-            width: "100%",
-            color: "white",
-            transition: "background-color 0.3s",
-            backgroundColor: "var(--buttonColor)",
-            ":hover": {
-              backgroundColor: "var(--buttonHoverColor)",
+            width: '100%',
+            color: 'white',
+            transition: 'background-color 0.3s',
+            backgroundColor: 'var(--buttonColor)',
+            ':hover': {
+              backgroundColor: 'var(--buttonHoverColor)',
             },
           }}
         >
@@ -164,50 +164,50 @@ const OTPInput = () => {
       </Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "10px",
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '10px',
           alignItems: {
-            xs: "center",
-            sm: "normal",
+            xs: 'center',
+            sm: 'normal',
           },
           flexDirection: {
-            xs: "column-reverse",
-            sm: "row",
+            xs: 'column-reverse',
+            sm: 'row',
           },
         }}
       >
         <Link
           sx={{
-            color: "darkgray",
-            textDecoration: "none",
-            cursor: "pointer",
-            fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(
-              ","
+            color: 'darkgray',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(
+              ','
             ),
-            fontWeight: "400",
-            fontSize: "1rem",
-            lineHeight: "1.5",
-            letterSpacing: "0.00938em",
+            fontWeight: '400',
+            fontSize: '1rem',
+            lineHeight: '1.5',
+            letterSpacing: '0.00938em',
           }}
-          onClick={() => setPage("send-email")}
+          onClick={() => setPage('send-email')}
         >
           Back
         </Link>
         <Typography
           sx={{
-            color: "gray",
+            color: 'gray',
           }}
         >
-          Didn't receive code?{" "}
+          Didn't receive code?{' '}
           <Box
-            component={"span"}
+            component={'span'}
             sx={{
-              color: "darkgray",
-              cursor: "pointer",
-              ":hover": {
-                color: "var(--buttonColor)",
-                textDecoration: "underline",
+              color: 'darkgray',
+              cursor: 'pointer',
+              ':hover': {
+                color: 'var(--buttonColor)',
+                textDecoration: 'underline',
               },
             }}
             onClick={() => resendOTP()}

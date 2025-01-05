@@ -1,6 +1,6 @@
-import { chatGroupMemberApi } from "@/api/chat-group-member";
-import { useGetAllUser } from "@/hooks/user/useGetAllUser";
-import { User } from "@/models/user";
+import { chatGroupMemberApi } from '@/api/chat-group-member';
+import { useGetAllUser } from '@/hooks/user/useGetAllUser';
+import { User } from '@/models/user';
 import {
   Modal,
   Box,
@@ -9,10 +9,10 @@ import {
   Button,
   Stack,
   Autocomplete,
-} from "@mui/material";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { mutate } from "swr";
+} from '@mui/material';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { mutate } from 'swr';
 
 interface RightModalAddMembersProps {
   groupChatId: string;
@@ -30,14 +30,14 @@ const RightModalAddMembers = ({
 
   const handleAddMember = async () => {
     if (!selectedUser) {
-      toast.error("Please select a user");
+      toast.error('Please select a user');
       return;
     }
     const formData = new FormData();
-    formData.append("GroupId", groupChatId);
-    formData.append("UserId", selectedUser.id);
+    formData.append('GroupId', groupChatId);
+    formData.append('UserId', selectedUser.id);
     await chatGroupMemberApi.addMember(formData);
-    mutate("get_members_by_group_id");
+    mutate('get_members_by_group_id');
     toggleModal();
   };
 
@@ -52,12 +52,12 @@ const RightModalAddMembers = ({
     >
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 400,
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
@@ -77,7 +77,7 @@ const RightModalAddMembers = ({
           disablePortal
           options={userList || []}
           getOptionLabel={(option) => option.email}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
           renderInput={(params) => <TextField {...params} label="Email" />}
           onChange={(event, newValue) => setSelectedUser(newValue)}
         />
@@ -94,7 +94,7 @@ const RightModalAddMembers = ({
             variant="contained"
             color="primary"
             onClick={handleAddMember}
-            sx={{ textTransform: "none" }}
+            sx={{ textTransform: 'none' }}
           >
             Add
           </Button>

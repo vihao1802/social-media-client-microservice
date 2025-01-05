@@ -1,5 +1,5 @@
-import { relationshipApi } from "@/api/relationship";
-import useSWR, { SWRConfiguration } from "swr";
+import { relationshipApi } from '@/api/relationship';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface useGetRelationshipMeFollowerProps {
   options?: Partial<SWRConfiguration>;

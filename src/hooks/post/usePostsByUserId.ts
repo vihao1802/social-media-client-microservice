@@ -1,5 +1,5 @@
-import { postApi } from "@/api/post";
-import useSWR, { SWRConfiguration } from "swr";
+import { postApi } from '@/api/post';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface usePostsByUserIdProps {
   userId: string;

@@ -1,12 +1,8 @@
-import { Post } from "@/models/post";
-import { createContext } from "react";
+import { Post } from '@/models/post';
+import { createContext } from 'react';
 
 export const PostContext = createContext<{
-
-    post: Post | null;
-  
-  }>({
-  
-    post: null,
-  
-  });
+  post: Post | null;
+}>({
+  post: null,
+});

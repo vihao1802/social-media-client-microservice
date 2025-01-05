@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { Box } from "@mui/material";
+import { Box } from '@mui/material';
 
-import RightSideBar from "@/components/shared/RightSideBar";
-import React, { useState } from "react";
-import StoryBar from "@/components/shared/StoryBar";
-import PostComponent from "@/components/post/Post";
-import { Post } from "@/models/post";
-import { ListResponse, Pagination } from "@/models/api";
-import { usePostListInfinity } from "@/hooks/post/useGetPostListInfinity";
-import GradientCircularProgress from "@/components/shared/Loader";
-import { useInView } from "react-intersection-observer";
-import { PostContext } from "@/context/post-context";
+import RightSideBar from '@/components/shared/RightSideBar';
+import React, { useState } from 'react';
+import StoryBar from '@/components/shared/StoryBar';
+import PostComponent from '@/components/post/Post';
+import { Post } from '@/models/post';
+import { ListResponse, Pagination } from '@/models/api';
+import { usePostListInfinity } from '@/hooks/post/useGetPostListInfinity';
+import GradientCircularProgress from '@/components/shared/Loader';
+import { useInView } from 'react-intersection-observer';
+import { PostContext } from '@/context/post-context';
 
 export default function Home() {
   const { ref } = useInView({
@@ -22,7 +22,7 @@ export default function Home() {
   const filters: Partial<Pagination> = {
     page: 1,
     pageSize: 5,
-    sort: "-id",
+    sort: '-id',
   };
 
   const { data, isLoading, isValidating, setSize } = usePostListInfinity({
@@ -44,17 +44,17 @@ export default function Home() {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        margin: "0 auto",
+        display: 'flex',
+        flexDirection: 'row',
+        margin: '0 auto',
       }}
     >
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "10px",
-          gap: "20px",
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '10px',
+          gap: '20px',
         }}
       >
         <StoryBar />
@@ -76,8 +76,8 @@ export default function Home() {
           <Box
             ref={ref}
             sx={{
-              display: "flex",
-              justifyContent: "center",
+              display: 'flex',
+              justifyContent: 'center',
             }}
           >
             {loadingMore && <GradientCircularProgress />}

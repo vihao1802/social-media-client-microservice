@@ -1,4 +1,4 @@
-import { Pagination } from "./api";
+import { Pagination } from './api';
 
 export interface UserBase {
   username: string;

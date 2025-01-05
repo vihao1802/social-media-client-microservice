@@ -3,9 +3,9 @@ import {
   FileDownloadOutlined,
   HistoryOutlined,
   RemoveCircleOutline,
-} from "@mui/icons-material";
-import { Box, IconButton, Modal } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+} from '@mui/icons-material';
+import { Box, IconButton, Modal } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 
 interface IModalImage {
   imgSrc: string;
@@ -39,11 +39,11 @@ const RightModalImageContentMessages = ({
   const downloadImage = async () => {
     const imageBlob = await fetch(imgSrc)
       .then((res) => res.arrayBuffer())
-      .then((buffer) => new Blob([buffer], { type: "image/*" }));
+      .then((buffer) => new Blob([buffer], { type: 'image/*' }));
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(imageBlob);
-    link.download = "image.jpg";
+    link.download = 'image.jpg';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -74,14 +74,14 @@ const RightModalImageContentMessages = ({
       isDragging = false;
     };
 
-    image?.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    image?.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      image?.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      image?.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [imageRef, scale]);
 
@@ -98,75 +98,75 @@ const RightModalImageContentMessages = ({
       <Box>
         <Box
           sx={{
-            position: "absolute",
+            position: 'absolute',
             right: 0,
-            padding: "20px 30px",
-            display: "flex",
-            gap: "10px",
+            padding: '20px 30px',
+            display: 'flex',
+            gap: '10px',
           }}
         >
           <IconButton
             onClick={downloadImage}
             sx={{
-              bgcolor: "#2B2B2B",
-              color: "white",
-              padding: "2px",
-              ":hover": {
-                bgcolor: "#414141",
+              bgcolor: '#2B2B2B',
+              color: 'white',
+              padding: '2px',
+              ':hover': {
+                bgcolor: '#414141',
               },
             }}
           >
-            <FileDownloadOutlined fontSize="large" sx={{ padding: "4px" }} />
+            <FileDownloadOutlined fontSize="large" sx={{ padding: '4px' }} />
           </IconButton>
           <IconButton
             onClick={resetPosition}
             sx={{
-              bgcolor: "#2B2B2B",
-              color: "white",
-              padding: "2px",
-              ":hover": {
-                bgcolor: "#414141",
+              bgcolor: '#2B2B2B',
+              color: 'white',
+              padding: '2px',
+              ':hover': {
+                bgcolor: '#414141',
               },
             }}
           >
-            <HistoryOutlined fontSize="large" sx={{ padding: "4px" }} />
+            <HistoryOutlined fontSize="large" sx={{ padding: '4px' }} />
           </IconButton>
 
           <IconButton
             onClick={handleZoomIn}
             sx={{
-              bgcolor: "#2B2B2B",
-              color: "white",
-              padding: "2px",
-              ":hover": {
-                bgcolor: "#414141",
+              bgcolor: '#2B2B2B',
+              color: 'white',
+              padding: '2px',
+              ':hover': {
+                bgcolor: '#414141',
               },
             }}
           >
-            <AddCircleOutline fontSize="large" sx={{ padding: "4px" }} />
+            <AddCircleOutline fontSize="large" sx={{ padding: '4px' }} />
           </IconButton>
 
           <IconButton
             onClick={handleZoomOut}
             sx={{
-              bgcolor: "#2B2B2B",
-              color: "white",
-              padding: "2px",
-              ":hover": {
-                bgcolor: "#414141",
+              bgcolor: '#2B2B2B',
+              color: 'white',
+              padding: '2px',
+              ':hover': {
+                bgcolor: '#414141',
               },
             }}
           >
-            <RemoveCircleOutline fontSize="large" sx={{ padding: "4px" }} />
+            <RemoveCircleOutline fontSize="large" sx={{ padding: '4px' }} />
           </IconButton>
         </Box>
         <Box
           sx={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            overflow: "hidden",
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            overflow: 'hidden',
             boxShadow: 18,
           }}
         >

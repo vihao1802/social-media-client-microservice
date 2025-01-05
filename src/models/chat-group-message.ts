@@ -1,5 +1,5 @@
-import { ChatGroup } from "./chat-group";
-import { User } from "./user";
+import { ChatGroup } from './chat-group';
+import { User } from './user';
 
 export interface ChatGroupMessage {
   id: number;

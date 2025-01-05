@@ -1,10 +1,10 @@
-"use client";
-import { Box } from "@mui/material";
-import { useParams } from "next/navigation";
-import GradientCircularProgress from "@/components/shared/Loader";
-import ProfileBottomContent from "@/components/profile/ProfileBottomContent";
-import { usePostsByUserId } from "@/hooks/post/usePostsByUserId";
-import ProfileTopContent from "@/components/profile/ProfileTopContent";
+'use client';
+import { Box } from '@mui/material';
+import { useParams } from 'next/navigation';
+import GradientCircularProgress from '@/components/shared/Loader';
+import ProfileBottomContent from '@/components/profile/ProfileBottomContent';
+import { usePostsByUserId } from '@/hooks/post/usePostsByUserId';
+import ProfileTopContent from '@/components/profile/ProfileTopContent';
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,18 +21,18 @@ const Profile = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        width: "calc(100% - 250px)",
-        marginLeft: "auto",
+        display: 'flex',
+        flexDirection: 'row',
+        width: 'calc(100% - 250px)',
+        marginLeft: 'auto',
       }}
     >
       <Box
         sx={{
-          width: "100%",
-          maxWidth: "980px",
-          margin: "0 auto",
-          padding: "50px 20px 20px",
+          width: '100%',
+          maxWidth: '980px',
+          margin: '0 auto',
+          padding: '50px 20px 20px',
         }}
       >
         <ProfileTopContent posts={postResponse.items} />

@@ -1,5 +1,5 @@
-"use client";
-import AuthSignInProvider from "@/providers/AuthSignInProvider";
+'use client';
+import AuthSignInProvider from '@/providers/AuthSignInProvider';
 
 export default function AuthLayout({
   children,

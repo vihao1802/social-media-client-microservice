@@ -1,5 +1,5 @@
-import { MessageMediaContent } from "./message-media-content";
-import { User } from "./user";
+import { MessageMediaContent } from './message-media-content';
+import { User } from './user';
 
 export interface Message {
   content: string;

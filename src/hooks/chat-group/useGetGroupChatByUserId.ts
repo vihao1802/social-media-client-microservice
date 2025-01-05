@@ -1,5 +1,5 @@
-import { chatGroupApi } from "@/api/chat-group";
-import useSWR, { SWRConfiguration } from "swr";
+import { chatGroupApi } from '@/api/chat-group';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface useGetRelationshipMeFollowerProps {
   options?: Partial<SWRConfiguration>;

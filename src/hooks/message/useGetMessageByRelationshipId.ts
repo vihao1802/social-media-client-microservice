@@ -1,5 +1,5 @@
-import { messageApi } from "@/api/message";
-import useSWR, { SWRConfiguration } from "swr";
+import { messageApi } from '@/api/message';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface useGetRelationshipMeFollowerProps {
   relationshipId: string;

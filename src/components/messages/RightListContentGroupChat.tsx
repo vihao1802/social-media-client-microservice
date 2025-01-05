@@ -1,30 +1,30 @@
-import { Avatar, Box, IconButton, TextField } from "@mui/material";
-import { MessageBox } from "react-chat-elements";
-import "react-chat-elements/dist/main.css";
+import { Avatar, Box, IconButton, TextField } from '@mui/material';
+import { MessageBox } from 'react-chat-elements';
+import 'react-chat-elements/dist/main.css';
 import {
   AddPhotoAlternateOutlined,
   CancelRounded,
   SendRounded,
-} from "@mui/icons-material";
-import FlexBetween from "../shared/FlexBetween";
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import MessageImageBox from "./MessageImageBox";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { chatGroupMessageApi } from "@/api/chat-group-message";
-import { ChatGroupMessage } from "@/models/chat-group-message";
-import { usePostGroupChatMessage } from "@/hooks/chat-group-message/usePostGroupChatMessage";
+} from '@mui/icons-material';
+import FlexBetween from '../shared/FlexBetween';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import MessageImageBox from './MessageImageBox';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { chatGroupMessageApi } from '@/api/chat-group-message';
+import { ChatGroupMessage } from '@/models/chat-group-message';
+import { usePostGroupChatMessage } from '@/hooks/chat-group-message/usePostGroupChatMessage';
 
 dayjs.extend(relativeTime);
 
 const RightListContentGroupChat = () => {
   const { user } = useAuthenticatedUser();
-  const [messageTextField, setMessageTextField] = useState("");
+  const [messageTextField, setMessageTextField] = useState('');
   const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
   const [hasImage, setHasImage] = useState(false);
-  const [photoSrc, setPhotoSrc] = useState("");
+  const [photoSrc, setPhotoSrc] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [messageList, setMessageList] = useState<ChatGroupMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
@@ -44,7 +44,7 @@ const RightListContentGroupChat = () => {
       const res = await chatGroupMessageApi.getMessagesByGroupId(id);
       setMessageList(res.items);
     } catch (error) {
-      console.error("Failed to fetch messages:", error);
+      console.error('Failed to fetch messages:', error);
     }
   };
 
@@ -54,10 +54,10 @@ const RightListContentGroupChat = () => {
     // Connect to WebSocket
     const url = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/messenge`; // WebSocket URL
     const ws = new WebSocket(url);
-    console.log("connecting to " + url);
+    console.log('connecting to ' + url);
 
     ws.onopen = () => {
-      console.log("WebSocket connected");
+      console.log('WebSocket connected');
     };
 
     ws.onmessage = (event) => {
@@ -69,11 +69,11 @@ const RightListContentGroupChat = () => {
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error('WebSocket error:', error);
     };
 
     ws.onclose = () => {
-      console.log("WebSocket connection closed");
+      console.log('WebSocket connection closed');
     };
 
     if (webSocket) webSocket.current = ws;
@@ -103,14 +103,14 @@ const RightListContentGroupChat = () => {
       }
     };
 
-    const images = boxRef.current?.querySelectorAll("img");
+    const images = boxRef.current?.querySelectorAll('img');
     images?.forEach((img) => {
-      img.addEventListener("load", handleImageLoad);
+      img.addEventListener('load', handleImageLoad);
     });
 
     return () => {
       images?.forEach((img) => {
-        img.removeEventListener("load", handleImageLoad);
+        img.removeEventListener('load', handleImageLoad);
       });
     };
   }, [messageList]);
@@ -121,7 +121,7 @@ const RightListContentGroupChat = () => {
     const value = event.target.value;
     setMessageTextField(value);
 
-    if (value.trim() === "") {
+    if (value.trim() === '') {
       setSwitchIcon(false); // Change to other icon
     } else {
       setSwitchIcon(true); // Change to send icon
@@ -143,26 +143,26 @@ const RightListContentGroupChat = () => {
     if (photoSrc) {
       URL.revokeObjectURL(photoSrc); // Clean up the Blob URL
     }
-    setPhotoSrc("");
+    setPhotoSrc('');
     setImageFile(null);
     setHasImage(false);
   };
 
   const sendMessage = async () => {
     if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
-      if (messageTextField.trim() === "" && imageFile === null) return;
+      if (messageTextField.trim() === '' && imageFile === null) return;
       setIsSending(true);
       await createMessage({
         GroupId: id,
         Content: messageTextField.trim(),
-        ReplyToId: "",
-        MediaContent: "",
+        ReplyToId: '',
+        MediaContent: '',
         SenderId: user.id,
         MediaFile: imageFile ? imageFile : null,
       });
-      webSocket.current.send(JSON.stringify("send message"));
+      webSocket.current.send(JSON.stringify('send message'));
       handleTextFieldChange({
-        target: { value: "" },
+        target: { value: '' },
       } as React.ChangeEvent<HTMLInputElement>);
       removePhoto();
     }
@@ -171,27 +171,27 @@ const RightListContentGroupChat = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        padding: "unset",
-        height: "calc(100% - 70px)",
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 'unset',
+        height: 'calc(100% - 70px)',
       }}
     >
       <Box
         ref={boxRef}
         sx={{
-          height: "100%",
-          overflowY: "scroll",
-          padding: "10px 14px",
-          "::-webkit-scrollbar": { width: "10px" },
-          "::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
+          height: '100%',
+          overflowY: 'scroll',
+          padding: '10px 14px',
+          '::-webkit-scrollbar': { width: '10px' },
+          '::-webkit-scrollbar-track': {
+            background: '#f1f1f1',
           },
-          "::-webkit-scrollbar-thumb": {
-            background: "#858585",
+          '::-webkit-scrollbar-thumb': {
+            background: '#858585',
           },
-          "::-webkit-scrollbar-thumb:hover": {
-            background: "#777",
+          '::-webkit-scrollbar-thumb:hover': {
+            background: '#777',
           },
         }}
         // onScroll={handleOnScroll}
@@ -201,22 +201,22 @@ const RightListContentGroupChat = () => {
             <Box
               key={index}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                marginTop: "20px",
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: '20px',
               }}
             >
               {item.sender.id !== user.id && (
                 <Box>
-                  <Avatar src={item.sender.profile_img || "/icons/user.png"} />
+                  <Avatar src={item.sender.profile_img || '/icons/user.png'} />
                 </Box>
               )}
 
               {item.media_content.length > 0 ? (
                 <MessageImageBox
-                  position={item.sender.id === user.id ? "right" : "left"}
+                  position={item.sender.id === user.id ? 'right' : 'left'}
                   title={
-                    item.sender.id === user.id ? "You" : item.sender.username
+                    item.sender.id === user.id ? 'You' : item.sender.username
                   }
                   text={item.content}
                   imageUrl={item.media_content}
@@ -225,11 +225,11 @@ const RightListContentGroupChat = () => {
               ) : (
                 <MessageBox
                   id={index}
-                  position={item.sender.id === user.id ? "right" : "left"}
-                  type={"text"}
+                  position={item.sender.id === user.id ? 'right' : 'left'}
+                  type={'text'}
                   focus
                   title={
-                    item.sender.id === user.id ? "You" : item.sender.username
+                    item.sender.id === user.id ? 'You' : item.sender.username
                   }
                   text={item.content}
                   date={new Date(item.sent_at)}
@@ -240,7 +240,7 @@ const RightListContentGroupChat = () => {
                   removeButton={false}
                   notch
                   retracted={false}
-                  styles={{ maxWidth: "400px" }}
+                  styles={{ maxWidth: '400px' }}
                 />
               )}
             </Box>
@@ -249,50 +249,50 @@ const RightListContentGroupChat = () => {
       </Box>
       <FlexBetween
         sx={{
-          borderRadius: "25px",
-          margin: "10px 14px",
-          border: "2px solid #c7c5c5",
-          alignItems: "end",
+          borderRadius: '25px',
+          margin: '10px 14px',
+          border: '2px solid #c7c5c5',
+          alignItems: 'end',
         }}
       >
         <Box
           sx={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           {hasImage && (
             <Box
               sx={{
-                width: "100%",
-                padding: "10px 15px",
+                width: '100%',
+                padding: '10px 15px',
               }}
             >
               <Box
                 sx={{
-                  position: "relative",
-                  width: "80px",
-                  height: "80px",
+                  position: 'relative',
+                  width: '80px',
+                  height: '80px',
                 }}
               >
                 <IconButton
                   sx={{
-                    position: "absolute",
-                    right: "-10px",
-                    top: "-10px",
-                    padding: "4px",
+                    position: 'absolute',
+                    right: '-10px',
+                    top: '-10px',
+                    padding: '4px',
                   }}
                   onClick={removePhoto}
                 >
                   <CancelRounded
                     sx={{
-                      color: "#363738",
-                      backgroundColor: "white",
-                      borderRadius: "50%",
+                      color: '#363738',
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
                       padding: 0,
-                      ":hover": {
-                        color: "#525355",
+                      ':hover': {
+                        color: '#525355',
                       },
                     }}
                   />
@@ -308,18 +308,18 @@ const RightListContentGroupChat = () => {
             id="text-field-message"
             placeholder="Type a message..."
             sx={{
-              width: "100%",
-              padding: "0",
-              color: "black",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  border: "none",
+              width: '100%',
+              padding: '0',
+              color: 'black',
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  border: 'none',
                 },
-                "&:hover fieldset": {
-                  border: "none",
+                '&:hover fieldset': {
+                  border: 'none',
                 },
-                "&.Mui-focused fieldset": {
-                  border: "none",
+                '&.Mui-focused fieldset': {
+                  border: 'none',
                 },
               },
             }}
@@ -341,13 +341,13 @@ const RightListContentGroupChat = () => {
                 event.target as HTMLInputElement
               ).value.trim();
               if (isSending) return;
-              if (event.key === "Enter" && event.shiftKey) {
+              if (event.key === 'Enter' && event.shiftKey) {
                 // Allow new line
                 return;
-              } else if (event.key === "Enter" && messageText !== "") {
+              } else if (event.key === 'Enter' && messageText !== '') {
                 event.preventDefault(); // Prevent new line
                 sendMessage(); // Call send message function
-              } else if (event.key === "Enter" && messageText === "") {
+              } else if (event.key === 'Enter' && messageText === '') {
                 event.preventDefault(); // Prevent new line
               }
             }}
@@ -358,8 +358,8 @@ const RightListContentGroupChat = () => {
           <IconButton
             id="send-message-button"
             sx={{
-              ":hover": {
-                color: "black",
+              ':hover': {
+                color: 'black',
               },
             }}
             disabled={isSending}
@@ -370,18 +370,18 @@ const RightListContentGroupChat = () => {
         ) : (
           <Box
             sx={{
-              display: "flex",
-              width: "40px",
-              height: "40px",
+              display: 'flex',
+              width: '40px',
+              height: '40px',
             }}
           >
             <label htmlFor="image-upload" className="h-full w-full p-2">
               <AddPhotoAlternateOutlined
                 sx={{
-                  color: "gray",
-                  cursor: "pointer",
-                  ":hover": {
-                    color: "black",
+                  color: 'gray',
+                  cursor: 'pointer',
+                  ':hover': {
+                    color: 'black',
                   },
                 }}
               />

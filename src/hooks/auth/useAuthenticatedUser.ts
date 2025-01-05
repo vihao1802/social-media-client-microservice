@@ -1,9 +1,12 @@
-import { authApi } from "@/api/auth";
-import { LoginRequest } from "@/models/auth-login";
-import useSWR, { SWRConfiguration } from "swr";
-import cookies from "js-cookie";
-import { RegisterRequest } from "@/models/auth-register";
-import { ResetPassword, ResetPasswordRequest } from "@/models/auth-forgotpassword";
+import { authApi } from '@/api/auth';
+import { LoginRequest } from '@/models/auth-login';
+import useSWR, { SWRConfiguration } from 'swr';
+import cookies from 'js-cookie';
+import { RegisterRequest } from '@/models/auth-register';
+import {
+  ResetPassword,
+  ResetPasswordRequest,
+} from '@/models/auth-forgotpassword';
 
 export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   const {
@@ -11,12 +14,12 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     error,
     mutate,
   } = useSWR(
-    "authenticated_user",
+    'authenticated_user',
     async () => {
       try {
         if (
-          cookies.get("token") === null ||
-          cookies.get("token") === undefined
+          cookies.get('token') === null ||
+          cookies.get('token') === undefined
         ) {
           return null;
         }
@@ -39,12 +42,12 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   }
 
   async function logout() {
-    const token = cookies.get("token");
+    const token = cookies.get('token');
     if (token) {
       await authApi.logout(token);
     }
     mutate(null, false);
-    cookies.remove("token");
+    cookies.remove('token');
   }
 
   async function register(payload: RegisterRequest) {
@@ -61,11 +64,11 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     const res = await authApi.signInFacebook();
     return res;
   }
-  async function sendEmail(payload:ResetPasswordRequest) {
+  async function sendEmail(payload: ResetPasswordRequest) {
     const res = await authApi.sendResetPasswordToken(payload);
     return res;
   }
-  async function resetPassword(payload:ResetPassword) {
+  async function resetPassword(payload: ResetPassword) {
     const res = await authApi.resetPassword(payload);
     return res;
   }
@@ -81,6 +84,6 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     signInGoogle,
     signInFacebook,
     sendEmail,
-    resetPassword
+    resetPassword,
   };
 }

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Box, CircularProgress } from "@mui/material";
-import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
-import React, { useEffect, useState } from "react";
-import { useGetCallById } from "@/hooks/stream/useGetCallById";
-import CallVideo from "@/components/call/CallVideo";
-import CallVideoSetup from "@/components/call/CallVideoSetup";
+import { Box, CircularProgress } from '@mui/material';
+import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
+import React, { useEffect, useState } from 'react';
+import { useGetCallById } from '@/hooks/stream/useGetCallById';
+import CallVideo from '@/components/call/CallVideo';
+import CallVideoSetup from '@/components/call/CallVideoSetup';
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
@@ -18,10 +18,10 @@ const Call = ({ params: { id } }: { params: { id: string } }) => {
     return (
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%,-50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%,-50%)',
         }}
       >
         <CircularProgress size={40} />
@@ -40,9 +40,9 @@ const Call = ({ params: { id } }: { params: { id: string } }) => {
     <Box
       sx={{
         zIndex: 1201,
-        height: "100vh",
-        width: "100%",
-        backgroundColor: "#24272D",
+        height: '100vh',
+        width: '100%',
+        backgroundColor: '#24272D',
       }}
     >
       <StreamCall call={call}>

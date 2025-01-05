@@ -1,5 +1,5 @@
-import { chatGroupApi } from "@/api/chat-group";
-import useSWR, { SWRConfiguration } from "swr";
+import { chatGroupApi } from '@/api/chat-group';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface UseGetGroupChatByIdProps {
   options?: Partial<SWRConfiguration>;
@@ -11,7 +11,7 @@ export const useGetGroupChatById = ({
   options,
 }: UseGetGroupChatByIdProps) => {
   const swrResponse = useSWR(
-    "get_group_chat_by_id",
+    'get_group_chat_by_id',
     async () => await chatGroupApi.getGroupChatById(groupId),
     { ...options }
   );

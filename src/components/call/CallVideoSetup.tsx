@@ -2,9 +2,9 @@ import {
   DeviceSettings,
   useCall,
   VideoPreview,
-} from "@stream-io/video-react-sdk";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+} from '@stream-io/video-react-sdk';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const CallVideoSetup = ({
   setIsSetUpComplete,
@@ -15,7 +15,7 @@ const CallVideoSetup = ({
   const call = useCall();
   const router = useRouter();
   if (!call) {
-    throw new Error("usecall must be used within a StreamCall component");
+    throw new Error('usecall must be used within a StreamCall component');
   }
 
   useEffect(() => {

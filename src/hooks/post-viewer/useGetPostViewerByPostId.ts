@@ -4,22 +4,26 @@ import { SWRConfiguration } from 'swr';
 import { postViewerApi } from '@/api/post-viewer';
 
 export interface UseGetPostViewerByPostIdProps {
-    postId: number,
-    options?:SWRConfiguration,
-    enabled?: boolean
+  postId: number;
+  options?: SWRConfiguration;
+  enabled?: boolean;
 }
 
-export function useGetPostViewerByPostId({postId, options, enabled = true}: UseGetPostViewerByPostIdProps) {
-    const swrResponse = useSWR(
-        enabled ? [QueryKeys.GET_POST_VIEWER, postId] : null,
-        () => postViewerApi.getPostViewerByPostId(postId),
-        {
-			dedupingInterval: 30 * 1000, // 30s
-			keepPreviousData: true,
-			fallbackData: null,
-			...options,
-		}
-    )
+export function useGetPostViewerByPostId({
+  postId,
+  options,
+  enabled = true,
+}: UseGetPostViewerByPostIdProps) {
+  const swrResponse = useSWR(
+    enabled ? [QueryKeys.GET_POST_VIEWER, postId] : null,
+    () => postViewerApi.getPostViewerByPostId(postId),
+    {
+      dedupingInterval: 30 * 1000, // 30s
+      keepPreviousData: true,
+      fallbackData: null,
+      ...options,
+    }
+  );
 
-    return swrResponse;
+  return swrResponse;
 }

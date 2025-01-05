@@ -1,42 +1,42 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { use, useContext, useEffect, useState, MouseEvent } from "react";
-import AspectRatio from "@mui/joy/AspectRatio";
-import Avatar from "@mui/joy/Avatar";
-import Box from "@mui/joy/Box";
-import Card from "@mui/joy/Card";
-import CardContent from "@mui/joy/CardContent";
-import CardCover from "@mui/joy/CardCover";
-import CardOverflow from "@mui/joy/CardOverflow";
-import Link from "@mui/joy/Link";
-import IconButton from "@mui/joy/IconButton";
-import Input from "@mui/joy/Input";
-import Typography from "@mui/joy/Typography";
-import MoreHoriz from "@mui/icons-material/MoreHoriz";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import ModeCommentOutlined from "@mui/icons-material/ModeCommentOutlined";
+import React, { use, useContext, useEffect, useState, MouseEvent } from 'react';
+import AspectRatio from '@mui/joy/AspectRatio';
+import Avatar from '@mui/joy/Avatar';
+import Box from '@mui/joy/Box';
+import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
+import CardCover from '@mui/joy/CardCover';
+import CardOverflow from '@mui/joy/CardOverflow';
+import Link from '@mui/joy/Link';
+import IconButton from '@mui/joy/IconButton';
+import Input from '@mui/joy/Input';
+import Typography from '@mui/joy/Typography';
+import MoreHoriz from '@mui/icons-material/MoreHoriz';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import ModeCommentOutlined from '@mui/icons-material/ModeCommentOutlined';
 import {
   GroupRounded,
   PublicRounded,
   LockRounded,
   VolumeUp,
   VolumeOff,
-} from "@mui/icons-material";
-import PostComment from "@/components/post/PostComment";
-import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
-import ImageSwiper from "./ImageSwiper";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { PostContext } from "@/context/post-context";
-import { Button, Divider, Menu, MenuItem, Skeleton } from "@mui/material";
-import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
-import { FavoriteRounded } from "@mui/icons-material";
-import { usePostComment } from "@/hooks/comment/usePostComment";
-import toast from "react-hot-toast";
-import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
-import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import PostForm from "./PostForm";
+} from '@mui/icons-material';
+import PostComment from '@/components/post/PostComment';
+import { useGetMediaContentByPostId } from '@/hooks/media-content/useGetMediaContentByPostId';
+import ImageSwiper from './ImageSwiper';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { PostContext } from '@/context/post-context';
+import { Button, Divider, Menu, MenuItem, Skeleton } from '@mui/material';
+import { useGetPostViewerByPostId } from '@/hooks/post-viewer/useGetPostViewerByPostId';
+import { PostViewer, PostViewerRequest } from '@/models/post-viewer';
+import { FavoriteRounded } from '@mui/icons-material';
+import { usePostComment } from '@/hooks/comment/usePostComment';
+import toast from 'react-hot-toast';
+import { useCreatePostViewer } from '@/hooks/post-viewer/useCreatePostViewer';
+import { useDeletePostViewer } from '@/hooks/post-viewer/useDeletePostViewer';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import PostForm from './PostForm';
 
 export default function PostComponent() {
   const { user: currentUser } = useAuthenticatedUser();
@@ -46,7 +46,7 @@ export default function PostComponent() {
   const [openComment, setOpenComment] = useState(false);
 
   if (!post) {
-    toast.error("Post not found!");
+    toast.error('Post not found!');
     return null;
   }
 
@@ -56,16 +56,16 @@ export default function PostComponent() {
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: post.id });
 
-  const [commentContent, setCommentContent] = useState("");
+  const [commentContent, setCommentContent] = useState('');
   const createComment = usePostComment();
   const handleClickComment = async () => {
     const commentData = new FormData();
-    commentData.append("content", commentContent);
-    commentData.append("postId", String(post.id));
-    commentData.append("userId", String(currentUser.id));
+    commentData.append('content', commentContent);
+    commentData.append('postId', String(post.id));
+    commentData.append('userId', String(currentUser.id));
     await createComment(commentData);
-    toast.success("Commented successfully!");
-    setCommentContent("");
+    toast.success('Commented successfully!');
+    setCommentContent('');
   };
 
   const [postViewerId, setPostViewerId] = useState(0);
@@ -124,7 +124,7 @@ export default function PostComponent() {
       if (postViewerId !== 0) {
         await deletePostViewer(postViewerId, post.id);
       } else {
-        toast.error("Post viewer not found!");
+        toast.error('Post viewer not found!');
         return null;
       }
     } else {
@@ -143,48 +143,48 @@ export default function PostComponent() {
       <Card variant="outlined" sx={{ minWidth: 300 }}>
         <CardContent
           orientation="horizontal"
-          sx={{ alignItems: "center", gap: 1 }}
+          sx={{ alignItems: 'center', gap: 1 }}
         >
           <Link
             href={`/profile/${post.creator.id}`}
-            sx={{ color: "black" }}
+            sx={{ color: 'black' }}
             underline="none"
           >
             <Box
               sx={{
-                position: "relative",
-                "&::before": {
+                position: 'relative',
+                '&::before': {
                   content: '""',
-                  position: "absolute",
+                  position: 'absolute',
                   top: 0,
                   left: 0,
                   bottom: 0,
                   right: 0,
-                  m: "-2px",
-                  borderRadius: "50%",
+                  m: '-2px',
+                  borderRadius: '50%',
                   background:
-                    "linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)",
+                    'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
                 },
               }}
             >
               <Avatar
                 size="sm"
-                src={post.creator.profile_img || "/icons/person.png"}
+                src={post.creator.profile_img || '/icons/person.png'}
                 sx={{
-                  width: "30px",
-                  height: "30px",
-                  border: "2px solid",
-                  borderColor: "background.body",
+                  width: '30px',
+                  height: '30px',
+                  border: '2px solid',
+                  borderColor: 'background.body',
                 }}
               />
             </Box>
           </Link>
           <Link
             href={`/profile/${post.creator.id}`}
-            sx={{ color: "black" }}
+            sx={{ color: 'black' }}
             underline="none"
           >
-            <Typography sx={{ fontWeight: "lg" }}>
+            <Typography sx={{ fontWeight: 'lg' }}>
               {post.creator.username}
             </Typography>
           </Link>
@@ -192,11 +192,11 @@ export default function PostComponent() {
           <Typography fontSize="10px">●</Typography>
 
           {post.visibility === 0 ? (
-            <PublicRounded sx={{ fontSize: "16px" }} />
+            <PublicRounded sx={{ fontSize: '16px' }} />
           ) : post.visibility === 1 ? (
-            <GroupRounded sx={{ fontSize: "16px" }} />
+            <GroupRounded sx={{ fontSize: '16px' }} />
           ) : (
-            <LockRounded sx={{ fontSize: "16px" }} />
+            <LockRounded sx={{ fontSize: '16px' }} />
           )}
 
           {post.creator.id === currentUser.id && (
@@ -204,7 +204,7 @@ export default function PostComponent() {
               variant="plain"
               color="neutral"
               size="sm"
-              sx={{ ml: "auto" }}
+              sx={{ ml: 'auto' }}
               onClick={handleClickMenu}
             >
               <MoreHoriz />
@@ -215,9 +215,9 @@ export default function PostComponent() {
           sx={
             mediaContentData?.items.length > 1
               ? {
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }
               : undefined
           }
@@ -226,14 +226,14 @@ export default function PostComponent() {
             <ImageSwiper postMedia={mediaContentData?.items || []} />
           ) : (
             <AspectRatio ratio="3/2">
-              {mediaContentData?.items[0].media_type === "image" ? (
+              {mediaContentData?.items[0].media_type === 'image' ? (
                 <Box
                   component="img"
                   src={mediaContentData?.items[0].media_Url}
                   alt={mediaContentData?.items[0].media_type}
                   sx={{
-                    width: "100%", // Đầy đủ chiều rộng
-                    maxHeight: "500px", // Giữ tỷ lệ ảnh
+                    width: '100%', // Đầy đủ chiều rộng
+                    maxHeight: '500px', // Giữ tỷ lệ ảnh
                   }}
                 />
               ) : (
@@ -245,9 +245,9 @@ export default function PostComponent() {
                   height="100%"
                   width="100%"
                   sx={{
-                    objectFit: "cover",
+                    objectFit: 'cover',
                     // borderRadius: "5px",
-                    backgroundColor: "#000",
+                    backgroundColor: '#000',
                   }}
                 />
                 // <video autoPlay loop muted={muted}>
@@ -280,13 +280,13 @@ export default function PostComponent() {
         <CardContent
           orientation="horizontal"
           sx={{
-            alignItems: "center",
+            alignItems: 'center',
             mx: -1,
-            display: "flex",
-            justifyContent: "space-between",
+            display: 'flex',
+            justifyContent: 'space-between',
           }}
         >
-          <Box sx={{ width: 0, display: "flex", gap: 0.5 }}>
+          <Box sx={{ width: 0, display: 'flex', gap: 0.5 }}>
             <IconButton
               variant="plain"
               color="neutral"
@@ -296,7 +296,7 @@ export default function PostComponent() {
               {isLiked ? (
                 <FavoriteRounded
                   sx={{
-                    color: "red",
+                    color: 'red',
                   }}
                 />
               ) : (
@@ -321,14 +321,14 @@ export default function PostComponent() {
               postViewerData.items.filter(
                 (postViewer: PostViewer) => postViewer.liked === true
               ).length
-            }{" "}
+            }{' '}
             Likes
           </Typography>
-          <Typography sx={{ fontSize: "sm" }}>
+          <Typography sx={{ fontSize: 'sm' }}>
             <Typography>{post.creator.username}</Typography> {post.content}
           </Typography>
           <Typography
-            sx={{ fontSize: "12px", color: "text.tertiary", my: 0.5 }}
+            sx={{ fontSize: '12px', color: 'text.tertiary', my: 0.5 }}
           >
             {dayjs(post.create_at).fromNow()}
           </Typography>
@@ -338,7 +338,7 @@ export default function PostComponent() {
             variant="plain"
             size="sm"
             placeholder="Add a comment…"
-            sx={{ flex: 1, px: 0, "--Input-focusedThickness": "0px" }}
+            sx={{ flex: 1, px: 0, '--Input-focusedThickness': '0px' }}
             value={commentContent}
             onChange={(e) => {
               setCommentContent(e.target.value);
@@ -362,37 +362,37 @@ export default function PostComponent() {
             paper: {
               elevation: 0,
               sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                 mt: 1.5,
                 width: 200,
 
-                "& .MuiAvatar-root": {
+                '& .MuiAvatar-root': {
                   width: 32,
                   height: 32,
                   ml: -0.5,
                   mr: 1,
                 },
-                "&::before": {
+                '&::before': {
                   content: '""',
-                  display: "block",
-                  position: "absolute",
+                  display: 'block',
+                  position: 'absolute',
                   top: 0,
                   right: 14,
                   width: 10,
                   height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
                   zIndex: 0,
                 },
               },
             },
           }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
           <MenuItem onClick={handleCloseMenu}>
-            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+            <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
               Delete
             </Typography>
           </MenuItem>

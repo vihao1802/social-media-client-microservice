@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Box,
   Button,
@@ -6,24 +6,24 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from "@mui/material";
-import { useContext, useState } from "react";
-import { RecoveryContext } from "@/context/recovery-context";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Visibility, VisibilityOffOutlined } from "@mui/icons-material";
-import { useRouter, useSearchParams } from "next/navigation";
-import toast from "react-hot-toast";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { AxiosError } from "@stream-io/video-react-sdk";
+} from '@mui/material';
+import { useContext, useState } from 'react';
+import { RecoveryContext } from '@/context/recovery-context';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Visibility, VisibilityOffOutlined } from '@mui/icons-material';
+import { useRouter, useSearchParams } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { AxiosError } from '@stream-io/video-react-sdk';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "Passwords do not match")
-    .required("Confirm Password is required"),
+    .oneOf([Yup.ref('password'), undefined], 'Passwords do not match')
+    .required('Confirm Password is required'),
 });
 
 const ResetPassword = () => {
@@ -33,11 +33,11 @@ const ResetPassword = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { resetPassword } = useAuthenticatedUser();
-  const token = searchParams.get("token");
-  const email = searchParams.get("email");
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
   if (!token || !email) {
-    toast.error("Invalid token or email");
-    router.push("/password-recovery");
+    toast.error('Invalid token or email');
+    router.push('/password-recovery');
     return;
   }
 
@@ -51,34 +51,34 @@ const ResetPassword = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
         borderRadius: 4,
         padding: 3,
-        maxWidth: "420px",
-        width: "100%",
-        textAlign: "center",
-        "& > * + *": {
-          marginTop: "20px",
+        maxWidth: '420px',
+        width: '100%',
+        textAlign: 'center',
+        '& > * + *': {
+          marginTop: '20px',
         },
       }}
     >
       <Typography
         sx={{
-          fontSize: "22px",
+          fontSize: '22px',
         }}
       >
         Reset new password
       </Typography>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
         }}
       >
         <Formik
-          initialValues={{ password: "", confirmPassword: "" }}
+          initialValues={{ password: '', confirmPassword: '' }}
           validationSchema={ResetPasswordSchema}
           onSubmit={async (values) => {
             // handle form submission
@@ -89,10 +89,10 @@ const ResetPassword = () => {
             });
 
             if (res.status >= 200 && res.status < 300) {
-              toast.success("Reset password successfully");
-              router.push("/sign-in");
+              toast.success('Reset password successfully');
+              router.push('/sign-in');
             } else if (res.status === 400) {
-              toast.error("Invalid password");
+              toast.error('Invalid password');
             }
           }}
         >
@@ -103,7 +103,7 @@ const ResetPassword = () => {
                 fullWidth
                 id="password"
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 label="Password"
                 variant="outlined"
                 margin="dense"
@@ -120,9 +120,9 @@ const ResetPassword = () => {
                         onMouseDown={togglePasswordVisibility}
                       >
                         {showPassword ? (
-                          <VisibilityOffOutlined sx={{ color: "black" }} />
+                          <VisibilityOffOutlined sx={{ color: 'black' }} />
                         ) : (
-                          <Visibility sx={{ color: "black" }} />
+                          <Visibility sx={{ color: 'black' }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -134,7 +134,7 @@ const ResetPassword = () => {
                 fullWidth
                 id="confirmPassword"
                 name="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
+                type={showConfirmPassword ? 'text' : 'password'}
                 label="Confirm Password"
                 variant="outlined"
                 margin="dense"
@@ -151,9 +151,9 @@ const ResetPassword = () => {
                         onMouseDown={toggleConfirmPasswordVisibility}
                       >
                         {showConfirmPassword ? (
-                          <VisibilityOffOutlined sx={{ color: "black" }} />
+                          <VisibilityOffOutlined sx={{ color: 'black' }} />
                         ) : (
-                          <Visibility sx={{ color: "black" }} />
+                          <Visibility sx={{ color: 'black' }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -164,14 +164,14 @@ const ResetPassword = () => {
                 type="submit"
                 size="large"
                 sx={{
-                  marginTop: "10px",
-                  width: "100%",
-                  color: "white",
-                  backgroundColor: "var(--buttonColor)",
-                  ":hover": {
-                    backgroundColor: "var(--buttonHoverColor)",
+                  marginTop: '10px',
+                  width: '100%',
+                  color: 'white',
+                  backgroundColor: 'var(--buttonColor)',
+                  ':hover': {
+                    backgroundColor: 'var(--buttonHoverColor)',
                   },
-                  position: "relative",
+                  position: 'relative',
                 }}
               >
                 Complete

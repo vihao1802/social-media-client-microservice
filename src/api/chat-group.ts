@@ -1,8 +1,8 @@
-import { create } from "domain";
-import axiosInstance from "./axios-instance";
-import { ChatGroup, ChatGroupPagination } from "@/models/chat-group";
+import { create } from 'domain';
+import axiosInstance from './axios-instance';
+import { ChatGroup, ChatGroupPagination } from '@/models/chat-group';
 
-const prefix = "/groupchat";
+const prefix = '/groupchat';
 
 export const chatGroupApi = {
   async getGroupChatByMe() {
@@ -26,7 +26,7 @@ export const chatGroupApi = {
       payload,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       }
     );

@@ -1,10 +1,10 @@
 import {
   ChatGroupMember,
   ChatGroupMemberPagination,
-} from "@/models/chat-group-member";
-import axiosInstance from "./axios-instance";
+} from '@/models/chat-group-member';
+import axiosInstance from './axios-instance';
 
-const prefix = "/GroupMember";
+const prefix = '/GroupMember';
 
 export const chatGroupMemberApi = {
   async getMembersByGroupId(groupId: string) {
@@ -17,7 +17,7 @@ export const chatGroupMemberApi = {
   async addMember(payload: FormData) {
     const res = await axiosInstance.post(`${prefix}/Create`, payload, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
 
