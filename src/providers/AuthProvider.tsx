@@ -8,11 +8,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { firstLoading, user } = useAuthenticatedUser();
   const router = useRouter();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!firstLoading && !user) router.push('/sign-in');
-  }, [user, firstLoading]);
+  }, [user, firstLoading]); */
 
-  if (firstLoading || !user) {
+  /* if (firstLoading || !user) {
     return (
       <Box
         sx={{
@@ -25,7 +25,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         <GradientCircularProgress />
       </Box>
     );
-  }
+  } */
 
   return <div>{children}</div>;
 };

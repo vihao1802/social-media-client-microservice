@@ -1,37 +1,47 @@
-import { CreateMessageRequest, Message } from '@/models/message';
+import {
+  CreateMessageRequest,
+  Message,
+  MessagePagination,
+} from '@/models/message';
 import axiosInstance from './axios-instance';
 
-const prefix = '/messenge';
+const prefix = '/messages';
 
 export const messageApi = {
-  async getMessageByRelationshipId(relationshipId: string) {
-    const res = await axiosInstance.get<Message[]>(
-      `${prefix}/${relationshipId}`
+  async getMessagesByChatId(chatId: string, size = 10, cursor = '') {
+    const res = await axiosInstance.get<MessagePagination>(
+      `${prefix}?chatId=${chatId}&size=${size}&cursor=${cursor}`
     );
-    return res;
+    return res.data;
   },
 
   async createMessage(payload: CreateMessageRequest) {
-    const { relationshipId, content, replyToId, files } = payload;
+    const {
+      chatId,
+      msgContent,
+      msgMediaContent,
+      senderId,
+      senderName,
+      replyTo,
+    } = payload;
 
     const formData = new FormData();
 
-    formData.append('Content', content);
-    formData.append('ReplyToId', replyToId.toString());
+    formData.append('chatId', chatId);
+    formData.append('msgContent', msgContent);
+    formData.append('senderId', senderId);
+    formData.append('senderName', senderName);
+    formData.append('replyTo', replyTo ? replyTo.toString() : '');
 
-    if (files) {
-      formData.append('files', files);
+    if (msgMediaContent) {
+      formData.append('msgMediaContent', msgMediaContent);
     }
 
-    const res = await axiosInstance.post(
-      `${prefix}/${relationshipId}`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Override content type
-        },
-      }
-    );
-    return res;
+    const res = await axiosInstance.post<Message>(`${prefix}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Override content type
+      },
+    });
+    return res.data;
   },
 };

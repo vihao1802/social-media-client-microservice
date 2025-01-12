@@ -1,11 +1,11 @@
-import { ChatGroup } from './chat-group';
+import { Chat } from './chat';
 import { User } from './user';
 
 export interface ChatGroupMessage {
   id: number;
   content: string;
   media_content: string;
-  groupChat: ChatGroup;
+  // groupChat: ChatGroup;
   sender: User;
   replyTo: null;
   sent_at: string;

@@ -1,7 +1,4 @@
 'use client';
-import LeftSideBarMessages from '@/components/messages/LeftSideBarChatItems';
-import { Friends } from '@/types';
-import { AccountCircle, AccountCircleOutlined } from '@mui/icons-material';
 import { Avatar, Box, Typography } from '@mui/material';
 
 const Messages = () => {
@@ -26,9 +23,8 @@ const Messages = () => {
             height: '80px',
             margin: '0 auto 10px',
           }}
-          src=""
         />
-        <Typography>Select a friend or group chat to send messages</Typography>
+        <Typography>Select a chat to send messages</Typography>
       </Box>
     </Box>
   );

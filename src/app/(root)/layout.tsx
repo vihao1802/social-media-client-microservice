@@ -1,7 +1,6 @@
 'use client';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import LeftSideBar from '@/components/shared/LeftSideBar';
-import StreamVideoProvider from '@/providers/StreamClientProvider';
 import '@stream-io/video-react-sdk/dist/css/styles.css';
 import AuthProvider from '@/providers/AuthProvider';
 import dayjs from 'dayjs';
@@ -17,12 +16,10 @@ export default function RootLayout({
     <div>
       <AppRouterCacheProvider>
         <AuthProvider>
-          <StreamVideoProvider>
-            <div className="flex flex-row">
-              <LeftSideBar />
-              {children}
-            </div>
-          </StreamVideoProvider>
+          <div className="flex flex-row">
+            <LeftSideBar />
+            {children}
+          </div>
         </AuthProvider>
       </AppRouterCacheProvider>
     </div>

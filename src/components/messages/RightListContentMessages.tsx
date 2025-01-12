@@ -1,173 +1,90 @@
-import { Avatar, Box, IconButton, TextField } from '@mui/material';
-import { MessageBox } from 'react-chat-elements';
+import { Avatar, Box } from '@mui/material';
 import 'react-chat-elements/dist/main.css';
-import {
-  AddPhotoAlternateOutlined,
-  CancelRounded,
-  SendRounded,
-} from '@mui/icons-material';
-import FlexBetween from '../shared/FlexBetween';
-import { useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
-import { usePostMessage } from '@/hooks/message/usePostMessage';
+import { useContext, useEffect, useRef } from 'react';
+import { useParams } from 'next/navigation';
 import { Message } from '@/models/message';
-import { messageApi } from '@/api/message';
 import MessageImageBox from './MessageImageBox';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import MessageItemBox from './MessageItemBox';
+import DateTimeFormatting from '@/utils/date-time-formatting';
+import GradientCircularProgress from '../shared/Loader';
+import MessageInput from './MessageInput';
+import { ChatContext } from '@/context/chat-context';
 
 dayjs.extend(relativeTime);
 
 const RightListContentMessages = () => {
-  const { user } = useAuthenticatedUser();
-  const [messageTextField, setMessageTextField] = useState('');
-  const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
-  const [hasImage, setHasImage] = useState(false);
-  const [photoSrc, setPhotoSrc] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [messageList, setMessageList] = useState<Message[]>([]);
-  const [isSending, setIsSending] = useState(false);
+  const currUserId = 'cm5ruu3ui0003vh3wvzmdo3jj';
   const boxRef = useRef<HTMLDivElement>(null);
-  const webSocket = useRef<WebSocket | null>(null);
 
-  // Get the user ID from the URL
-  const { r_id: id, u_id: receivedUserId } = useParams<{
-    r_id: string;
-    u_id: string;
-  }>();
+  const {
+    getMessages,
+    getMessagesWithNextCursor,
+    messages,
+    isMessagesLoading,
+    nextCursor,
+  } = useContext(ChatContext);
 
-  if (!id || !receivedUserId || !user) return null;
+  const { chat_id } = useParams<{ chat_id: string }>();
 
-  const { createMessage } = usePostMessage();
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      const scrollContainer = boxRef.current;
+      if (scrollContainer)
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }, 0);
+  };
 
-  // Fetch initial messages
+  // Fetch messages
   const fetchMessages = async () => {
     try {
-      const res = await messageApi.getMessageByRelationshipId(id);
-      setMessageList(res.data);
+      await getMessages(chat_id);
+      scrollToBottom();
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     }
   };
 
-  // web socket
+  // fetch for the first time render
   useEffect(() => {
+    console.log('[message]: chat id ', chat_id);
     fetchMessages();
-    // Connect to WebSocket
-    const url = `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/messenge`; // WebSocket URL
-    const ws = new WebSocket(url);
-    console.log('connecting to ' + url);
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-    };
-
-    ws.onmessage = (event) => {
-      fetchMessages();
-      const scrollContainer = boxRef.current;
-      if (scrollContainer)
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-      setIsSending(false);
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
-
-    if (webSocket) webSocket.current = ws;
-
-    // Clean up WebSocket connection
-    return () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-    };
-  }, []);
+  }, [chat_id]);
 
   useEffect(() => {
-    const scrollContainer = boxRef.current;
-    if (scrollContainer) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-  }, [messageList, boxRef]);
+    const handleScroll = async () => {
+      if (
+        boxRef.current &&
+        boxRef.current.scrollTop === 0 &&
+        nextCursor &&
+        messages.length > 0
+      ) {
+        const oldHeight = boxRef.current.scrollHeight;
+        console.log('oldHeight', oldHeight);
 
-  useEffect(() => {
-    const handleImageLoad = () => {
-      const scrollContainer = boxRef.current;
-      if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        await getMessagesWithNextCursor(chat_id);
+
+        const newHeight = boxRef.current.scrollHeight;
+        console.log('oldHeight', newHeight);
+
+        boxRef.current.scrollTop = newHeight - oldHeight;
+        console.log('scroll to', newHeight - oldHeight);
       }
     };
 
-    const images = boxRef.current?.querySelectorAll('img');
-    images?.forEach((img) => {
-      img.addEventListener('load', handleImageLoad);
-    });
+    const boxElement = boxRef.current;
+
+    if (boxElement) {
+      boxElement.addEventListener('scroll', handleScroll);
+    }
 
     return () => {
-      images?.forEach((img) => {
-        img.removeEventListener('load', handleImageLoad);
-      });
+      if (boxElement) {
+        boxElement.removeEventListener('scroll', handleScroll);
+      }
     };
-  }, [messageList]);
-
-  if (!messageList) return null;
-
-  const handleTextFieldChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event.target.value;
-    setMessageTextField(value);
-
-    if (value.trim() === '') {
-      setSwitchIcon(false); // Change to other icon
-    } else {
-      setSwitchIcon(true); // Change to send icon
-    }
-    console.log(value);
-  };
-
-  const addPhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]; // Get the uploaded file
-    if (file) {
-      const blobUrl = URL.createObjectURL(file); // Create a Blob URL
-      setImageFile(file);
-      setPhotoSrc(blobUrl); // Set the Blob URL to state
-      setHasImage(true);
-    }
-  };
-
-  const removePhoto = () => {
-    if (photoSrc) {
-      URL.revokeObjectURL(photoSrc); // Clean up the Blob URL
-    }
-    setPhotoSrc('');
-    setImageFile(null);
-    setHasImage(false);
-  };
-
-  const sendMessage = async () => {
-    if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
-      if (messageTextField.trim() === '' && imageFile === null) return;
-      setIsSending(true);
-      await createMessage({
-        relationshipId: id,
-        content: messageTextField.trim(),
-        replyToId: '',
-        files: imageFile ? imageFile : null,
-      });
-      webSocket.current.send(JSON.stringify('send message'));
-      handleTextFieldChange({
-        target: { value: '' },
-      } as React.ChangeEvent<HTMLInputElement>);
-      removePhoto();
-    }
-  };
+  }, [chat_id, nextCursor, messages.length]);
 
   return (
     <Box
@@ -197,206 +114,69 @@ const RightListContentMessages = () => {
         }}
         // onScroll={handleOnScroll}
       >
-        {messageList.map((item: Message, index: number) => {
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          {isMessagesLoading && <GradientCircularProgress width={25} />}
+        </Box>
+
+        {messages.map((item: Message, index: number) => {
+          const position = currUserId === item.senderId ? 'right' : 'left';
           return (
             <Box
               key={index}
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
                 marginTop: '20px',
+                gap: '8px',
+                justifyContent:
+                  position === 'right' ? 'flex-end' : 'flex-start',
+                alignItems: 'end',
               }}
             >
-              {item.senderId !== user.id && (
+              {currUserId !== item.senderId && (
                 <Box>
-                  <Avatar src={item.sender.profile_img || '/icons/user.png'} />
+                  <Avatar
+                    sx={{ width: 28, height: 28 }}
+                    src={item.senderAvatar || '/icons/user.png'}
+                  />
                 </Box>
               )}
 
-              {item.mediaContents.length > 0 ? (
-                <MessageImageBox
-                  position={item.senderId === user.id ? 'right' : 'left'}
-                  title={
-                    item.senderId === user.id ? 'You' : item.sender.username
-                  }
-                  text={item.content}
-                  imageUrl={item.mediaContents[0].media_url}
-                  sentAt={dayjs(item.sent_at).fromNow()}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {currUserId !== item.senderId && (
+                  <Box
+                    sx={{
+                      fontSize: '13px',
+                      color: '#777',
+                      textTransform: 'none',
+                      padding: '0 10px',
+                    }}
+                  >
+                    {item.senderName}
+                  </Box>
+                )}
+                <MessageItemBox
+                  position={position}
+                  msgContent={item.msgContent}
+                  sentAt={DateTimeFormatting(item.sentAt)}
                 />
-              ) : (
-                <MessageBox
-                  id={index}
-                  position={item.senderId === user.id ? 'right' : 'left'}
-                  type={'text'}
-                  focus
-                  title={
-                    item.senderId === user.id ? 'You' : item.sender.username
-                  }
-                  text={item.content}
-                  date={new Date(item.sent_at)}
-                  titleColor="var(--buttonColor)"
-                  forwarded={false}
-                  status="sent"
-                  replyButton={item.senderId !== user.id}
-                  removeButton={false}
-                  notch
-                  retracted={false}
-                  styles={{ maxWidth: '400px' }}
-                />
-              )}
+                {item.msgMediaContent.length > 0 && (
+                  <MessageImageBox
+                    position={position}
+                    imageUrl={item.msgMediaContent}
+                    sentAt={DateTimeFormatting(item.sentAt)}
+                  />
+                )}
+              </Box>
             </Box>
           );
         })}
       </Box>
-      <FlexBetween
-        sx={{
-          borderRadius: '25px',
-          margin: '10px 14px',
-          border: '2px solid #c7c5c5',
-          alignItems: 'end',
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {hasImage && (
-            <Box
-              sx={{
-                width: '100%',
-                padding: '10px 15px',
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'relative',
-                  width: '80px',
-                  height: '80px',
-                }}
-              >
-                <IconButton
-                  sx={{
-                    position: 'absolute',
-                    right: '-10px',
-                    top: '-10px',
-                    padding: '4px',
-                  }}
-                  onClick={removePhoto}
-                >
-                  <CancelRounded
-                    sx={{
-                      color: '#363738',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      padding: 0,
-                      ':hover': {
-                        color: '#525355',
-                      },
-                    }}
-                  />
-                </IconButton>
-                <img
-                  src={photoSrc}
-                  className="w-full h-full rounded-xl object-cover"
-                />
-              </Box>
-            </Box>
-          )}
-          <TextField
-            id="text-field-message"
-            placeholder="Type a message..."
-            sx={{
-              width: '100%',
-              padding: '0',
-              color: 'black',
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  border: 'none',
-                },
-                '&:hover fieldset': {
-                  border: 'none',
-                },
-                '&.Mui-focused fieldset': {
-                  border: 'none',
-                },
-              },
-            }}
-            //   variant="outlined"
-            size="small"
-            multiline
-            maxRows={8}
-            value={messageTextField}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              const { value } = event.target;
-              if (value.length <= 1000) {
-                // Check length
-                setMessageTextField(value); // Update the state with the new value
-                handleTextFieldChange(event);
-              }
-            }}
-            onKeyDown={async (event: React.KeyboardEvent<HTMLInputElement>) => {
-              const messageText = (
-                event.target as HTMLInputElement
-              ).value.trim();
-              if (isSending) return;
-              if (event.key === 'Enter' && event.shiftKey) {
-                // Allow new line
-                return;
-              } else if (event.key === 'Enter' && messageText !== '') {
-                event.preventDefault(); // Prevent new line
-                sendMessage(); // Call send message function
-              } else if (event.key === 'Enter' && messageText === '') {
-                event.preventDefault(); // Prevent new line
-              }
-            }}
-          />
-        </Box>
-
-        {switchIcon || hasImage ? (
-          <IconButton
-            id="send-message-button"
-            sx={{
-              ':hover': {
-                color: 'black',
-              },
-            }}
-            disabled={isSending}
-            onClick={sendMessage}
-          >
-            <SendRounded id="send-message-button-icon" />
-          </IconButton>
-        ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              width: '40px',
-              height: '40px',
-            }}
-          >
-            <label htmlFor="image-upload" className="h-full w-full p-2">
-              <AddPhotoAlternateOutlined
-                sx={{
-                  color: 'gray',
-                  cursor: 'pointer',
-                  ':hover': {
-                    color: 'black',
-                  },
-                }}
-              />
-            </label>
-            <input
-              type="file"
-              hidden
-              id="image-upload"
-              accept="image/*"
-              onChange={addPhoto}
-            />
-          </Box>
-        )}
-      </FlexBetween>
+      <MessageInput scrollToBottom={scrollToBottom} />
     </Box>
   );
 };

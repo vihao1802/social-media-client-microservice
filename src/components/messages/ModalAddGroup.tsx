@@ -15,7 +15,6 @@ import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import ImagesUpload, { FileWithPreview } from '../shared/ImagesUpload';
 import { MediaContent } from '@/models/media-content';
-import { chatGroupApi } from '@/api/chat-group';
 
 interface ModalAddGroupProps {
   adminId: string;
@@ -51,7 +50,7 @@ const ModalAddGroup = ({
       });
       formData.append('AdminId', adminId);
       formData.append('avatar', '');
-      const res = await chatGroupApi.createGroupChat(formData);
+      const res = { data: { id: 1 } };
 
       if (res && res.data) {
         const formMemberData = new FormData();
