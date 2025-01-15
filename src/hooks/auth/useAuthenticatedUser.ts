@@ -8,6 +8,11 @@ import {
   ResetPasswordRequest,
 } from '@/models/auth-forgotpassword';
 
+function getUserFromStorage() {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+}
+
 export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   const {
     data: user,
@@ -17,13 +22,8 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     'authenticated_user',
     async () => {
       try {
-        if (
-          cookies.get('token') === null ||
-          cookies.get('token') === undefined
-        ) {
-          return null;
-        }
-        return await authApi.getAuthenticatedUser();
+        if (!cookies.get('access_token')) return null;
+        return getUserFromStorage() ?? (await authApi.getAuthenticatedUser());
       } catch (error) {
         throw error;
       }
@@ -42,12 +42,10 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   }
 
   async function logout() {
-    const token = cookies.get('token');
-    if (token) {
-      await authApi.logout(token);
-    }
+    const token = cookies.get('access_token');
+    if (token) await authApi.logout(token);
     mutate(null, false);
-    cookies.remove('token');
+    cookies.remove('access_token');
   }
 
   async function register(payload: RegisterRequest) {
@@ -64,10 +62,12 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     const res = await authApi.signInFacebook();
     return res;
   }
+
   async function sendEmail(payload: ResetPasswordRequest) {
     const res = await authApi.sendResetPasswordToken(payload);
     return res;
   }
+
   async function resetPassword(payload: ResetPassword) {
     const res = await authApi.resetPassword(payload);
     return res;

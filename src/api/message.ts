@@ -33,9 +33,7 @@ export const messageApi = {
     formData.append('senderName', senderName);
     formData.append('replyTo', replyTo ? replyTo.toString() : '');
 
-    if (msgMediaContent) {
-      formData.append('msgMediaContent', msgMediaContent);
-    }
+    if (msgMediaContent) formData.append('msgMediaContent', msgMediaContent);
 
     const res = await axiosInstance.post<Message>(`${prefix}`, formData, {
       headers: {

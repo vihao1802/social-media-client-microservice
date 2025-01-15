@@ -4,17 +4,23 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
-  email: string;
+  status: number;
+  data: {
+    email: string;
+    access_token: string;
+    refresh_token: string;
+  };
+  message: string;
 }
 
 export interface LogoutRequest {}
 
 export interface RefreshTokenRequest {
-  token: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 export interface RefreshTokenResponse {
-  token: string;
-  authenticated: boolean;
+  email: string;
+  access_token: string;
 }

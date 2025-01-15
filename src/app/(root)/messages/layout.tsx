@@ -9,16 +9,17 @@ import { messageApi } from '@/api/message';
 import { mutate } from 'swr';
 import { Client, IMessage, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 
 const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
-  const currUserId = 'cm5ruu3ui0003vh3wvzmdo3jj';
+  // const currUserId = 'cm5ruu3ui0003vh3wvzmdo3jj';
+  const { user: authenticatedUser } = useAuthenticatedUser();
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null); // Cursor(sentAt) for pagination
   const [users, setUsers] = useState([]);
   const [isMessagesLoading, setIsMessagesLoading] = useState(false);
   const [stompClient, setStompClient] = useState<Client | null>(null);
-  // const [socket, setSocket] = useState(null);
 
   const connectWebsocket = () => {
     const socket = new SockJS('http://localhost:8101/ws');
@@ -33,7 +34,6 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
 
     // Activate the client
     stompClientInner.activate();
-    console.log('[connectWebsocket] Activated WebSocket: ', stompClientInner);
 
     setStompClient(stompClientInner);
 
@@ -79,7 +79,7 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
   const onMessageReceived = (message: IMessage) => {
     const newMessage: Message = JSON.parse(message.body);
     console.log('[onMessageReceived] Message received:', newMessage);
-    if (currUserId !== newMessage.senderId)
+    if (authenticatedUser && authenticatedUser.id !== newMessage.senderId)
       setMessages((prev) => [...prev, JSON.parse(message.body)]);
   };
 
@@ -149,13 +149,11 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       if (stompClient) {
-        unsubscribeFromTopic();
+        // unsubscribeFromTopic();
         stompClient.deactivate();
       }
     };
   }, [selectedChat]);
-
-  // console.log(chat_id);
 
   return (
     <Box
