@@ -1,12 +1,24 @@
 export interface RegisterBase {
-  userName: string;
+  username: string;
   email: string;
-  date_of_birth: string;
+  gender: boolean;
 }
 
 export interface RegisterRequest extends RegisterBase {
   password: string;
-  gender: boolean;
+  dob: string;
 }
 
-export interface RegisterResponse extends RegisterBase {}
+export interface RegisterResponse extends RegisterBase {
+  id: string;
+  bio: string;
+  profileImg: string;
+  hashedPassword: string;
+  DateOfBirth: string;
+  isLocked: boolean;
+  isEmailVerified: boolean;
+  isDisabled: boolean;
+  isOnline: boolean;
+  createdAt: string;
+  roleId: number;
+}

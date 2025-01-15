@@ -1,9 +1,9 @@
-import { userApi } from "@/api/user";
-import { UpdateUserRequest } from "@/models/user";
-import useSWR from "swr";
+import { userApi } from '@/api/user';
+import { UpdateUserRequest } from '@/models/user';
+import useSWR from 'swr';
 
 export function useUpdateUser() {
-  const swrResponse = useSWR(["update_user"], {
+  const swrResponse = useSWR(['update_user'], {
     dedupingInterval: 30 * 1000, // 30s
     keepPreviousData: true,
     fallbackData: null,

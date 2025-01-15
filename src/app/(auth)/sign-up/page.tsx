@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Box,
   Button,
@@ -8,16 +8,16 @@ import {
   Typography,
   IconButton,
   MenuItem,
-} from "@mui/material";
-import { Form, Formik, Field, ErrorMessage } from "formik";
-import { useState } from "react";
-import { Visibility, VisibilityOffOutlined } from "@mui/icons-material";
-import { SignUpSchema } from "@/validations/signup.schema";
-import { useRouter } from "next/navigation";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import toast from "react-hot-toast";
-import dayjs from "dayjs";
-import GradientCircularProgress from "@/components/shared/Loader";
+} from '@mui/material';
+import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { useState } from 'react';
+import { Visibility, VisibilityOffOutlined } from '@mui/icons-material';
+import { SignUpSchema } from '@/validations/signup.schema';
+import { useRouter } from 'next/navigation';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import toast from 'react-hot-toast';
+import dayjs from 'dayjs';
+import GradientCircularProgress from '@/components/shared/Loader';
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -36,41 +36,41 @@ const SignUpPage = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
         borderRadius: 4,
         padding: 3,
-        margin: "auto",
-        maxWidth: "420px",
-        width: "100%",
-        textAlign: "center",
-        "& > * + *": {
-          marginTop: "20px",
+        margin: 'auto',
+        maxWidth: '420px',
+        width: '100%',
+        textAlign: 'center',
+        '& > * + *': {
+          marginTop: '20px',
         },
       }}
     >
       <Typography
         sx={{
-          fontSize: "22px",
+          fontSize: '22px',
         }}
       >
         Sign Up
       </Typography>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          padding: "10px",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          padding: '10px',
         }}
       >
         <Formik
           initialValues={{
-            userName: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            date_of_birth: "",
+            userName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            date_of_birth: '',
             gender: 1,
           }}
           validationSchema={SignUpSchema}
@@ -90,11 +90,11 @@ const SignUpPage = () => {
               });
 
               if (res && res.status === 200) {
-                toast.success("Sign up successfully");
-                router.push("/sign-in");
+                toast.success('Sign up successfully');
+                router.push('/sign-in');
               }
             } catch (error) {
-              toast.error("Sign up failed");
+              toast.error('Sign up failed');
               console.log(error);
             } finally {
               setIsSignUp(false);
@@ -134,7 +134,7 @@ const SignUpPage = () => {
               <Field
                 as={TextField}
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 id="password"
                 label="Password"
@@ -154,9 +154,9 @@ const SignUpPage = () => {
                         onMouseDown={togglePasswordVisibility}
                       >
                         {showPassword ? (
-                          <VisibilityOffOutlined sx={{ color: "black" }} />
+                          <VisibilityOffOutlined sx={{ color: 'black' }} />
                         ) : (
-                          <Visibility sx={{ color: "black" }} />
+                          <Visibility sx={{ color: 'black' }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -166,7 +166,7 @@ const SignUpPage = () => {
               <Field
                 as={TextField}
                 name="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
+                type={showConfirmPassword ? 'text' : 'password'}
                 fullWidth
                 id="confirmPassword"
                 label="Confirm Password"
@@ -186,9 +186,9 @@ const SignUpPage = () => {
                         onMouseDown={toggleConfirmPasswordVisibility}
                       >
                         {showConfirmPassword ? (
-                          <VisibilityOffOutlined sx={{ color: "black" }} />
+                          <VisibilityOffOutlined sx={{ color: 'black' }} />
                         ) : (
-                          <Visibility sx={{ color: "black" }} />
+                          <Visibility sx={{ color: 'black' }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -197,8 +197,8 @@ const SignUpPage = () => {
               />
               <Box
                 sx={{
-                  display: "flex",
-                  gap: "10px",
+                  display: 'flex',
+                  gap: '10px',
                 }}
               >
                 <Field
@@ -216,7 +216,7 @@ const SignUpPage = () => {
                     shrink: true, // Forces the label to stay above the field
                   }}
                   inputProps={{
-                    max: new Date().toISOString().split("T")[0],
+                    max: new Date().toISOString().split('T')[0],
                   }}
                   error={touched.date_of_birth && !!errors.date_of_birth}
                   helperText={<ErrorMessage name="date_of_birth" />}
@@ -237,8 +237,8 @@ const SignUpPage = () => {
                   helperText={<ErrorMessage name="gender" />}
                 >
                   {[
-                    { value: 1, label: "Male" },
-                    { value: 0, label: "Female" },
+                    { value: 1, label: 'Male' },
+                    { value: 0, label: 'Female' },
                   ].map((option, index) => (
                     <MenuItem key={index} value={option.value}>
                       {option.label}
@@ -252,29 +252,29 @@ const SignUpPage = () => {
                 size="medium"
                 disabled={isSignUp}
                 sx={{
-                  marginTop: "10px",
-                  width: "100%",
-                  color: "white",
-                  backgroundColor: "var(--buttonColor)",
-                  ":hover": {
-                    backgroundColor: "var(--buttonHoverColor)",
+                  marginTop: '10px',
+                  width: '100%',
+                  color: 'white',
+                  backgroundColor: 'var(--buttonColor)',
+                  ':hover': {
+                    backgroundColor: 'var(--buttonHoverColor)',
                   },
-                  ":disabled": {
-                    backgroundColor: "#e7e7e7",
+                  ':disabled': {
+                    backgroundColor: '#e7e7e7',
                   },
                 }}
               >
                 {isSignUp ? (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
+                      display: 'flex',
+                      justifyContent: 'center',
                     }}
                   >
                     <GradientCircularProgress width={25} />
                   </Box>
                 ) : (
-                  "Sign Up"
+                  'Sign Up'
                 )}
               </Button>
             </Form>
@@ -284,13 +284,13 @@ const SignUpPage = () => {
 
       <Box>
         <Typography>
-          Have an account?{" "}
+          Have an account?{' '}
           <Link
             sx={{
-              cursor: "pointer",
-              textDecoration: "none",
+              cursor: 'pointer',
+              textDecoration: 'none',
             }}
-            href={"/sign-in"}
+            href={'/sign-in'}
           >
             Sign In Now!
           </Link>

@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    formats: ["image/avif", "image/webp"],
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "mui.com",
-        port: "",
-        pathname: "/static/images/**",
+        protocol: 'https',
+        hostname: 'mui.com',
+        port: '',
+        pathname: '/static/images/**',
       },
     ],
   },
@@ -16,11 +16,11 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/,
       use: {
-        loader: "file-loader",
+        loader: 'file-loader',
         options: {
-          name: "[name].[hash].[ext]",
+          name: '[name].[hash].[ext]',
           publicPath: `/_next/static/videos/`,
-          outputPath: `${isServer ? "../" : ""}static/videos/`,
+          outputPath: `${isServer ? '../' : ''}static/videos/`,
         },
       },
     });

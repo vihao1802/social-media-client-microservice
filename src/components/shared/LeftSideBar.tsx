@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -11,32 +11,32 @@ import {
   Menu,
   Divider,
   Collapse,
-} from "@mui/material";
-import { Dancing_Script } from "next/font/google";
-import dynamic from "next/dynamic";
+} from '@mui/material';
+import { Dancing_Script } from 'next/font/google';
+import dynamic from 'next/dynamic';
 import {
   MenuOutlined,
   SettingsOutlined,
   ExitToAppOutlined,
-} from "@mui/icons-material";
-import { sideBarItems } from "../../constants/index";
-import OnlineAvatar from "@/components/widgets/OnlineAvatar";
-import React, { useState } from "react";
-import Image from "next/image";
-import logo from "@/assets/images/logo.png";
-import SearchPanel from "../widgets/SearchPanel";
-import NotificationPanel from "../widgets/NotificationPanel";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import PostForm from "../post/PostForm";
-const FadeComponent = dynamic(() => import("@mui/material/Fade"), {
+} from '@mui/icons-material';
+import { sideBarItems } from '../../constants/index';
+import OnlineAvatar from '@/components/widgets/OnlineAvatar';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import logo from '@/assets/images/logo.png';
+import SearchPanel from '../widgets/SearchPanel';
+import NotificationPanel from '../widgets/NotificationPanel';
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import PostForm from '../post/PostForm';
+const FadeComponent = dynamic(() => import('@mui/material/Fade'), {
   ssr: false,
 });
 const dacingScript = Dancing_Script({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
 });
 
 const LeftSideBar = () => {
@@ -53,7 +53,7 @@ const LeftSideBar = () => {
     setAnchorEl(null);
   };
   const [openleftSideBar, setOpenLeftSideBar] = useState(
-    !pathname.includes("/messages")
+    !pathname.includes('/messages')
   );
 
   const [openSearch, setOpenSearch] = useState(false);
@@ -61,7 +61,7 @@ const LeftSideBar = () => {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/sign-in");
+    router.push('/sign-in');
     // window.location.href = "/sign-in";
   };
 
@@ -78,47 +78,47 @@ const LeftSideBar = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
+        display: 'flex',
+        flexDirection: 'row',
         zIndex: 1200,
-        position: "fixed",
+        position: 'fixed',
       }}
     >
       <Collapse
         orientation="horizontal"
         in={openleftSideBar}
         collapsedSize={80}
-        sx={{ borderRight: "1px solid #e2e8f0" }}
+        sx={{ borderRight: '1px solid #e2e8f0' }}
       >
         <Box
           sx={
             !openleftSideBar
               ? {
-                  width: "80px",
-                  height: "100vh",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  borderRight: "1px solid #e2e8f0",
+                  width: '80px',
+                  height: '100vh',
+                  backgroundColor: '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRight: '1px solid #e2e8f0',
                 }
               : {
-                  width: "250px",
-                  height: "100vh",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  flexDirection: "column",
-                  borderRight: "1px solid #e2e8f0",
+                  width: '250px',
+                  height: '100vh',
+                  backgroundColor: '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRight: '1px solid #e2e8f0',
                 }
           }
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "left",
-              alignItems: "center",
-              height: "10%",
-              padding: "0 20px",
-              gap: "10px",
+              display: 'flex',
+              justifyContent: 'left',
+              alignItems: 'center',
+              height: '10%',
+              padding: '0 20px',
+              gap: '10px',
             }}
           >
             {openleftSideBar ? (
@@ -141,10 +141,10 @@ const LeftSideBar = () => {
 
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              height: "90%",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '90%',
             }}
           >
             <List>
@@ -158,20 +158,20 @@ const LeftSideBar = () => {
                     <ListItem key={index}>
                       <ListItemButton
                         sx={{
-                          "&:hover": {
-                            cursor: "pointer",
+                          '&:hover': {
+                            cursor: 'pointer',
                           },
-                          padding: "7px 12px",
-                          borderRadius: "7px",
-                          height: "48px",
+                          padding: '7px 12px',
+                          borderRadius: '7px',
+                          height: '48px',
                           border:
                             (item.id === 2 && openSearch) ||
                             (item.id === 6 && openNotification)
-                              ? "1px solid #DBDBDB"
-                              : "",
+                              ? '1px solid #DBDBDB'
+                              : '',
                         }}
                         onClick={() => {
-                          if (pathname.includes("messages")) {
+                          if (pathname.includes('messages')) {
                             if (item.id === 2) {
                               setOpenSearch(!openSearch);
                               setOpenLeftSideBar(false);
@@ -212,7 +212,7 @@ const LeftSideBar = () => {
                           }
                         }}
                       >
-                        <ListItemIcon sx={{ color: "black", fontSize: "20px" }}>
+                        <ListItemIcon sx={{ color: 'black', fontSize: '20px' }}>
                           {isActive ||
                           (item.id === 2 && openSearch) ||
                           (item.id === 6 && openNotification)
@@ -223,7 +223,7 @@ const LeftSideBar = () => {
                           <ListItemText
                             primary={
                               <Typography
-                                fontWeight={isActive ? "bold" : "normal"}
+                                fontWeight={isActive ? 'bold' : 'normal'}
                               >
                                 {item.label}
                               </Typography>
@@ -245,19 +245,19 @@ const LeftSideBar = () => {
                       sx={
                         openleftSideBar
                           ? {
-                              "&:hover": {
-                                cursor: "pointer",
+                              '&:hover': {
+                                cursor: 'pointer',
                               },
-                              padding: "10px 12px",
-                              borderRadius: "7px",
+                              padding: '10px 12px',
+                              borderRadius: '7px',
                             }
                           : {
-                              "&:hover": {
-                                cursor: "pointer",
+                              '&:hover': {
+                                cursor: 'pointer',
                               },
-                              padding: "10px 12px",
-                              borderRadius: "7px",
-                              height: "52px",
+                              padding: '10px 12px',
+                              borderRadius: '7px',
+                              height: '52px',
                             }
                       }
                       // selected={selectedIndex === 1}
@@ -269,7 +269,7 @@ const LeftSideBar = () => {
                     >
                       <ListItemIcon>
                         <OnlineAvatar
-                          imgURL={user.profile_img || "/icons/user.png"}
+                          imgURL={user.profile_img || '/icons/user.png'}
                           height={25}
                           width={25}
                           isSelected={pathname.includes(`/profile/${user.id}`)}
@@ -283,8 +283,8 @@ const LeftSideBar = () => {
                                 fontWeight: pathname.includes(
                                   `/profile/${user.id}`
                                 )
-                                  ? "bold"
-                                  : "normal",
+                                  ? 'bold'
+                                  : 'normal',
                               }}
                             >
                               {user.username}
@@ -302,19 +302,19 @@ const LeftSideBar = () => {
                   sx={
                     openleftSideBar
                       ? {
-                          "&:hover": {
-                            cursor: "pointer",
+                          '&:hover': {
+                            cursor: 'pointer',
                           },
-                          padding: "7px 12px",
-                          borderRadius: "7px",
+                          padding: '7px 12px',
+                          borderRadius: '7px',
                         }
                       : {
-                          "&:hover": {
-                            cursor: "pointer",
+                          '&:hover': {
+                            cursor: 'pointer',
                           },
-                          padding: "7px 12px",
-                          borderRadius: "7px",
-                          height: "46px",
+                          padding: '7px 12px',
+                          borderRadius: '7px',
+                          height: '46px',
                         }
                   }
                   onClick={handleLogout}

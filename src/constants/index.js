@@ -11,15 +11,15 @@ import {
   FavoriteRounded,
   PeopleAltOutlined,
   PeopleAltRounded,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 export const sideBarItems = [
   {
     id: 1,
     iconNonActive: <HomeOutlined />,
     iconActive: <HomeRounded />,
-    route: "/",
-    label: "Home",
+    route: '/',
+    label: 'Home',
   },
   {
     id: 2,
@@ -87,29 +87,29 @@ export const sideBarItems = [
         ></line>
       </svg>
     ),
-    route: "",
-    label: "Search",
+    route: '',
+    label: 'Search',
   },
   {
     id: 3,
     iconNonActive: <ExploreOutlined />,
     iconActive: <ExploreRounded />,
-    route: "/explore",
-    label: "Explore",
+    route: '/explore',
+    label: 'Explore',
   },
   {
     id: 4,
     iconNonActive: <VideoLibraryOutlined />,
     iconActive: <VideoLibraryRounded />,
-    route: "/reels",
-    label: "Reels",
+    route: '/reels',
+    label: 'Reels',
   },
   {
     id: 5,
     iconNonActive: <NearMeOutlined />,
     iconActive: <NearMeRounded />,
-    route: "/messages",
-    label: "Messages",
+    route: '/messages',
+    label: 'Messages',
   },
   // {
   //   id: 6,
@@ -122,8 +122,8 @@ export const sideBarItems = [
     id: 7,
     iconNonActive: <PeopleAltOutlined />,
     iconActive: <PeopleAltRounded />,
-    route: "/friends",
-    label: "Friends",
+    route: '/friends',
+    label: 'Friends',
   },
   {
     id: 8,
@@ -213,7 +213,7 @@ export const sideBarItems = [
         ></line>
       </svg>
     ),
-    route: "",
-    label: "Create",
+    route: '',
+    label: 'Create',
   },
 ];

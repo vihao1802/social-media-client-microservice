@@ -1,5 +1,5 @@
-import { RelationshipStatus, RelationshipType } from "@/types/enum";
-import { User } from "./user";
+import { RelationshipStatus, RelationshipType } from '@/types/enum';
+import { User } from './user';
 
 export interface RelationshipFollowingBase {
   receiverId: string;

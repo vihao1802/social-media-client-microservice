@@ -1,15 +1,15 @@
 import {
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
-} from "@mui/icons-material";
-import { Box, IconButton, Paper } from "@mui/material";
-import React, { useState } from "react";
-import StoryCircle from "../widgets/StoryCircle";
-import { useRouter } from "next/navigation";
-import { useGetFriendStories } from "@/hooks/post/useGetFriendStories";
-import { Post } from "@/models/post";
-import GradientCircularProgress from "./Loader";
-import { User } from "@/models/user";
+} from '@mui/icons-material';
+import { Box, IconButton, Paper } from '@mui/material';
+import React, { useState } from 'react';
+import StoryCircle from '../widgets/StoryCircle';
+import { useRouter } from 'next/navigation';
+import { useGetFriendStories } from '@/hooks/post/useGetFriendStories';
+import { Post } from '@/models/post';
+import GradientCircularProgress from './Loader';
+import { User } from '@/models/user';
 
 const StoryBar = () => {
   const [number, setNumber] = useState(0);
@@ -71,32 +71,32 @@ const StoryBar = () => {
   return (
     <Box
       sx={{
-        width: "670px",
-        height: "130px",
-        borderRadius: "20px",
-        display: "flex",
-        flexDirection: "row",
-        position: "relative",
-        overflow: "hidden",
+        width: '670px',
+        height: '130px',
+        borderRadius: '20px',
+        display: 'flex',
+        flexDirection: 'row',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
       {number < 0 && (
         <IconButton
           sx={{
-            height: "28px",
-            width: "28px",
-            position: "absolute",
-            top: "50%",
-            left: "15px",
-            transform: "translateY(-50%)",
-            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#fff",
-            border: "1px solid #ddd",
-            padding: "10px",
-            cursor: "pointer",
+            height: '28px',
+            width: '28px',
+            position: 'absolute',
+            top: '50%',
+            left: '15px',
+            transform: 'translateY(-50%)',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#fff',
+            border: '1px solid #ddd',
+            padding: '10px',
+            cursor: 'pointer',
             zIndex: 1,
-            "&:hover": {
-              backgroundColor: "#f0f0f0",
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
             },
           }}
           onClick={handlePrevious}
@@ -106,15 +106,15 @@ const StoryBar = () => {
       )}
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "15px",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: "0 auto",
-          padding: "20px 0",
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '15px',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+          padding: '20px 0',
           transform: `translate3d(${number}px, 0px, 0px)`,
-          transition: "transform 0.3s ease",
+          transition: 'transform 0.3s ease',
         }}
       >
         {(
@@ -138,21 +138,21 @@ const StoryBar = () => {
       {number > maxTranslate && (
         <IconButton
           sx={{
-            height: "28px",
-            width: "28px",
-            position: "absolute",
-            top: "50%" /* Đặt nút ở giữa theo chiều dọc */,
-            right: "15px" /* Cách mép phải 10px */,
+            height: '28px',
+            width: '28px',
+            position: 'absolute',
+            top: '50%' /* Đặt nút ở giữa theo chiều dọc */,
+            right: '15px' /* Cách mép phải 10px */,
             transform:
-              "translateY(-50%)" /* Điều chỉnh để căn giữa theo chiều dọc */,
-            boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#fff",
-            border: "1px solid #ddd",
-            padding: "10px",
-            cursor: "pointer",
+              'translateY(-50%)' /* Điều chỉnh để căn giữa theo chiều dọc */,
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#fff',
+            border: '1px solid #ddd',
+            padding: '10px',
+            cursor: 'pointer',
             zIndex: 1,
-            "&:hover": {
-              backgroundColor: "#f0f0f0",
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
             },
           }}
           onClick={handleNext}

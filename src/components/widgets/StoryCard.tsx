@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Avatar,
@@ -7,7 +7,7 @@ import {
   Typography,
   InputBase,
   Skeleton,
-} from "@mui/material";
+} from '@mui/material';
 import {
   MoreVert,
   VolumeOff,
@@ -18,24 +18,24 @@ import {
   VolumeUp,
   Forum,
   FavoriteRounded,
-} from "@mui/icons-material";
-import { CldImage, CldVideoPlayer } from "next-cloudinary";
-import { Post } from "@/models/post";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
-import GradientCircularProgress from "../shared/Loader";
-import { useSearchParams } from "next/navigation";
-import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
-import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { User } from "@/models/user";
-import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
-import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
-import toast from "react-hot-toast";
-import PostForm from "../post/PostForm";
-import PostComment from "../post/PostComment";
+} from '@mui/icons-material';
+import { CldImage, CldVideoPlayer } from 'next-cloudinary';
+import { Post } from '@/models/post';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useGetMediaContentByPostId } from '@/hooks/media-content/useGetMediaContentByPostId';
+import GradientCircularProgress from '../shared/Loader';
+import { useSearchParams } from 'next/navigation';
+import { useGetPostViewerByPostId } from '@/hooks/post-viewer/useGetPostViewerByPostId';
+import { useGetCommentByPostId } from '@/hooks/comment/useGetCommentByPostId';
+import { PostViewer, PostViewerRequest } from '@/models/post-viewer';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { User } from '@/models/user';
+import { useCreatePostViewer } from '@/hooks/post-viewer/useCreatePostViewer';
+import { useDeletePostViewer } from '@/hooks/post-viewer/useDeletePostViewer';
+import toast from 'react-hot-toast';
+import PostForm from '../post/PostForm';
+import PostComment from '../post/PostComment';
 
 interface StoryCardProps {
   currentUser: User;
@@ -109,7 +109,7 @@ const StoryCard = ({
       if (postViewerId !== 0) {
         await deletePostViewer(postViewerId, story.id);
       } else {
-        toast.error("Post viewer not found!");
+        toast.error('Post viewer not found!');
         return null;
       }
     } else {
@@ -127,23 +127,23 @@ const StoryCard = ({
   return (
     <Box
       sx={{
-        position: "relative",
+        position: 'relative',
         width: 370,
         height: 630,
-        bgcolor: "black",
+        bgcolor: 'black',
       }}
     >
       {/* Top Bar with Avatar, Name, and Icons */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           p: 1,
-          color: "white",
+          color: 'white',
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", zIndex: 999 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', zIndex: 999 }}>
           <Avatar
             src={story.creator.profile_img}
             alt="User Avatar"
@@ -159,7 +159,7 @@ const StoryCard = ({
           </Box>
         </Box>
         <Box>
-          <IconButton onClick={() => setMuted(!muted)} sx={{ color: "white" }}>
+          <IconButton onClick={() => setMuted(!muted)} sx={{ color: 'white' }}>
             {muted ? <VolumeOff /> : <VolumeUp />}
             {/* You can toggle sound here */}
           </IconButton>
@@ -174,7 +174,7 @@ const StoryCard = ({
                 }
               }
             }}
-            sx={{ color: "white" }}
+            sx={{ color: 'white' }}
           >
             {paused ? <PlayArrow /> : <Pause />} {/* Toggle pause/play */}
           </IconButton>
@@ -182,25 +182,25 @@ const StoryCard = ({
       </Box>
 
       {/* Story Progress Bar */}
-      <Box sx={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         <LinearProgress
           variant="determinate"
           value={progress}
-          sx={{ height: 2, bgcolor: "grey.800" }}
+          sx={{ height: 2, bgcolor: 'grey.800' }}
         />
       </Box>
 
       {/* Main Story Content (Image or Video) */}
       <Box
         sx={{
-          height: "80%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
+          height: '80%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
         }}
       >
-        {mediaContentData?.items[0].media_type === "video" ? (
+        {mediaContentData?.items[0].media_type === 'video' ? (
           <video
             autoPlay
             loop
@@ -209,9 +209,9 @@ const StoryCard = ({
             ref={videoRef}
             src={mediaContentData?.items[0].media_Url}
             style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
             }}
           />
         ) : (
@@ -222,7 +222,7 @@ const StoryCard = ({
             sx={{
               width: 370,
               height: 630,
-              objectFit: "cover",
+              objectFit: 'cover',
             }}
           />
         )}
@@ -231,19 +231,19 @@ const StoryCard = ({
       {/* Reply Section */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           p: 1,
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
-          width: "100%",
-          bgcolor: "rgba(0, 0, 0, 0.3)",
+          width: '100%',
+          bgcolor: 'rgba(0, 0, 0, 0.3)',
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <IconButton
-            sx={{ color: "white" }}
+            sx={{ color: 'white' }}
             onClick={() => {
               setOpenComment(true);
               setPaused(true);
@@ -256,12 +256,12 @@ const StoryCard = ({
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
-          <IconButton sx={{ color: "white" }} onClick={handleClickLike}>
+        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+          <IconButton sx={{ color: 'white' }} onClick={handleClickLike}>
             {isLiked ? (
               <FavoriteRounded
                 sx={{
-                  color: "red",
+                  color: 'red',
                 }}
               />
             ) : (

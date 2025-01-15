@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { PostContext } from "@/context/post-context";
+import { PostContext } from '@/context/post-context';
 import {
   Favorite,
   Forum,
   CollectionsRounded,
   SmartDisplayRounded,
-} from "@mui/icons-material";
-import { Box, Skeleton, Typography } from "@mui/material";
-import { useContext, useState } from "react";
-import PostComment from "../post/PostComment";
-import { useGetMediaContentByPostId } from "@/hooks/media-content/useGetMediaContentByPostId";
-import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import toast from "react-hot-toast";
-import { PostViewer } from "@/models/post-viewer";
-import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
+} from '@mui/icons-material';
+import { Box, Skeleton, Typography } from '@mui/material';
+import { useContext, useState } from 'react';
+import PostComment from '../post/PostComment';
+import { useGetMediaContentByPostId } from '@/hooks/media-content/useGetMediaContentByPostId';
+import { useGetPostViewerByPostId } from '@/hooks/post-viewer/useGetPostViewerByPostId';
+import toast from 'react-hot-toast';
+import { PostViewer } from '@/models/post-viewer';
+import { useGetCommentByPostId } from '@/hooks/comment/useGetCommentByPostId';
 
 const ExploreImage = () => {
   const { post } = useContext(PostContext);
   if (!post) {
-    toast.error("Post not found!");
+    toast.error('Post not found!');
     return null;
   }
   const [openComment, setOpenComment] = useState(false);
@@ -46,14 +46,14 @@ const ExploreImage = () => {
       <Box
         className="card"
         sx={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          cursor: "pointer",
-          "&:hover .overlay": {
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          cursor: 'pointer',
+          '&:hover .overlay': {
             opacity: 1,
           },
-          "&:hover .icons": {
+          '&:hover .icons': {
             opacity: 1,
           },
         }}
@@ -62,35 +62,35 @@ const ExploreImage = () => {
         {/* Image */}
         <Box
           component={
-            mediaContentData?.items[0].media_type?.includes("video")
-              ? "video"
-              : "img"
+            mediaContentData?.items[0].media_type?.includes('video')
+              ? 'video'
+              : 'img'
           }
           sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
           }}
           src={mediaContentData?.items[0].media_Url}
         />
 
         {/* Icon that appears on the bottom right corner of the image */}
-        {mediaContentData?.items[0].media_type?.includes("video") ? (
+        {mediaContentData?.items[0].media_type?.includes('video') ? (
           <SmartDisplayRounded
             sx={{
-              position: "absolute",
-              top: "15px",
-              right: "10px",
-              color: "white",
+              position: 'absolute',
+              top: '15px',
+              right: '10px',
+              color: 'white',
             }}
           />
         ) : (
           <CollectionsRounded
             sx={{
-              position: "absolute",
-              top: "15px",
-              right: "10px",
-              color: "white",
+              position: 'absolute',
+              top: '15px',
+              right: '10px',
+              color: 'white',
             }}
           />
         )}
@@ -98,30 +98,30 @@ const ExploreImage = () => {
         <Box
           className="overlay"
           sx={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
             opacity: 0,
-            transition: "opacity 0.3s ease-in-out",
+            transition: 'opacity 0.3s ease-in-out',
           }}
         />
         {/* Icons positioned on top of the image, initially hidden */}
         <Box
           className="icons"
           sx={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            gap: "10px",
+            position: 'absolute',
+            top: '10px',
+            left: '10px',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: '10px',
             opacity: 0,
-            transition: "opacity 0.3s ease-in-out",
+            transition: 'opacity 0.3s ease-in-out',
           }}
         >
           <Favorite />
@@ -136,16 +136,16 @@ const ExploreImage = () => {
         <Box
           className="icons"
           sx={{
-            position: "absolute",
-            top: "50px",
-            left: "10px",
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            gap: "10px",
+            position: 'absolute',
+            top: '50px',
+            left: '10px',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: '10px',
             opacity: 0,
-            transition: "opacity 0.15s ease-in-out",
+            transition: 'opacity 0.15s ease-in-out',
           }}
         >
           <Forum />

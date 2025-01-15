@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Avatar,
@@ -11,7 +11,7 @@ import {
   MenuItem,
   Modal,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   MoreHorizRounded,
   FavoriteBorderRounded,
@@ -23,28 +23,28 @@ import {
   PublicRounded,
   GroupRounded,
   LockRounded,
-} from "@mui/icons-material";
-import React, { useContext, useEffect, useState, MouseEvent } from "react";
-import ImageSwiper from "../post/ImageSwiper";
-import { MediaContent } from "@/models/media-content";
-import { PostContext } from "@/context/post-context";
-import relativeTime from "dayjs/plugin/relativeTime";
-import dayjs from "dayjs";
-import { useGetCommentByPostId } from "@/hooks/comment/useGetCommentByPostId";
-import GradientCircularProgress from "../shared/Loader";
-import { Comment, GroupComment } from "@/models/comment";
-import GroupCommentComponent from "./GroupComment";
-import { useGetPostViewerByPostId } from "@/hooks/post-viewer/useGetPostViewerByPostId";
-import { PostViewer, PostViewerRequest } from "@/models/post-viewer";
-import { usePostComment } from "@/hooks/comment/usePostComment";
-import toast from "react-hot-toast";
-import { CommentContext } from "@/context/comment-context";
-import { useCreatePostViewer } from "@/hooks/post-viewer/useCreatePostViewer";
-import { useDeletePostViewer } from "@/hooks/post-viewer/useDeletePostViewer";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { Post } from "@/models/post";
-import PostForm from "./PostForm";
-import { useRouter } from "next/navigation";
+} from '@mui/icons-material';
+import React, { useContext, useEffect, useState, MouseEvent } from 'react';
+import ImageSwiper from '../post/ImageSwiper';
+import { MediaContent } from '@/models/media-content';
+import { PostContext } from '@/context/post-context';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+import { useGetCommentByPostId } from '@/hooks/comment/useGetCommentByPostId';
+import GradientCircularProgress from '../shared/Loader';
+import { Comment, GroupComment } from '@/models/comment';
+import GroupCommentComponent from './GroupComment';
+import { useGetPostViewerByPostId } from '@/hooks/post-viewer/useGetPostViewerByPostId';
+import { PostViewer, PostViewerRequest } from '@/models/post-viewer';
+import { usePostComment } from '@/hooks/comment/usePostComment';
+import toast from 'react-hot-toast';
+import { CommentContext } from '@/context/comment-context';
+import { useCreatePostViewer } from '@/hooks/post-viewer/useCreatePostViewer';
+import { useDeletePostViewer } from '@/hooks/post-viewer/useDeletePostViewer';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { Post } from '@/models/post';
+import PostForm from './PostForm';
+import { useRouter } from 'next/navigation';
 
 // Kích hoạt plugin
 
@@ -73,31 +73,31 @@ const PostComment = ({
   const { data: postViewerData, isLoading: isPostViewerDataLoading } =
     useGetPostViewerByPostId({ postId: post?.id ?? 0 });
 
-  const [commentContent, setCommentContent] = useState("");
+  const [commentContent, setCommentContent] = useState('');
   const [parentCommentId, setParentCommentId] = useState<number | null>(null);
   const createComment = usePostComment();
   const handleClickComment = async () => {
     if (post === null) {
-      toast.error("Post not found!");
+      toast.error('Post not found!');
       return;
     }
     const commentFormData = new FormData();
-    commentFormData.append("content", commentContent);
-    commentFormData.append("postId", String(post.id));
-    commentFormData.append("userId", String(currentUser.id));
-    if (parentCommentId && commentContent.includes("@")) {
-      commentFormData.append("parentCommentId", String(parentCommentId));
+    commentFormData.append('content', commentContent);
+    commentFormData.append('postId', String(post.id));
+    commentFormData.append('userId', String(currentUser.id));
+    if (parentCommentId && commentContent.includes('@')) {
+      commentFormData.append('parentCommentId', String(parentCommentId));
     }
     const res = await createComment(commentFormData);
     if (res) {
-      toast.success("Commented successfully!");
-      setCommentContent("");
+      toast.success('Commented successfully!');
+      setCommentContent('');
       setParentCommentId(null);
     }
   };
 
   const handleKeyDownComment = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleClickComment(); // Gọi lại handler của button
     }
   };
@@ -157,12 +157,12 @@ const PostComment = ({
       if (postViewerId !== 0) {
         await deletePostViewer(postViewerId, post?.id ?? 0);
       } else {
-        toast.error("Post viewer not found!");
+        toast.error('Post viewer not found!');
         return null;
       }
     } else {
       if (post === null) {
-        toast.error("Post or user not found!");
+        toast.error('Post or user not found!');
         return null;
       }
       const postViewerData: PostViewerRequest = {
@@ -205,75 +205,75 @@ const PostComment = ({
         open={isOpen}
         onClose={handleClose}
         sx={{
-          position: "fixed",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+          position: 'fixed',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
           zIndex: 9999,
         }}
       >
         <Box
           sx={{
-            width: "auto",
-            height: "95%",
-            bgcolor: "white",
-            display: "flex",
-            flexDirection: "row",
-            borderRadius: "7px",
+            width: 'auto',
+            height: '95%',
+            bgcolor: 'white',
+            display: 'flex',
+            flexDirection: 'row',
+            borderRadius: '7px',
           }}
         >
           <ImageSwiper postMedia={postMedia} />
 
           <Box
             sx={{
-              width: "500px",
+              width: '500px',
             }}
           >
             {/* Header */}
             <Box
               sx={{
-                height: "60px",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "14px 10px 14px 14px",
-                borderBottom: "1px solid #e0e0e0",
+                height: '60px',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '14px 10px 14px 14px',
+                borderBottom: '1px solid #e0e0e0',
               }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: "15px",
-                  cursor: "pointer",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '15px',
+                  cursor: 'pointer',
                 }}
                 onClick={() => router.push(`/profile/${post?.creator.id}`)}
               >
                 <Avatar
                   src={post?.creator.profile_img}
-                  sx={{ height: "32px", width: "32px" }}
+                  sx={{ height: '32px', width: '32px' }}
                 />
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
+                <Typography sx={{ fontSize: '14px', fontWeight: 'bold' }}>
                   {post?.creator.username}
                 </Typography>
 
                 <Typography fontSize="10px">●</Typography>
 
                 {post && post.visibility === 0 ? (
-                  <PublicRounded sx={{ fontSize: "16px" }} />
+                  <PublicRounded sx={{ fontSize: '16px' }} />
                 ) : post && post.visibility === 1 ? (
-                  <GroupRounded sx={{ fontSize: "16px" }} />
+                  <GroupRounded sx={{ fontSize: '16px' }} />
                 ) : (
-                  <LockRounded sx={{ fontSize: "16px" }} />
+                  <LockRounded sx={{ fontSize: '16px' }} />
                 )}
               </Box>
 
               {currentUser.id === post?.creator.id && (
                 <IconButton onClick={handleClickMenu}>
-                  <MoreHorizRounded sx={{ color: "black" }} />
+                  <MoreHorizRounded sx={{ color: 'black' }} />
                 </IconButton>
               )}
             </Box>
@@ -289,13 +289,13 @@ const PostComment = ({
             >
               <Box
                 sx={{
-                  height: "calc(100% - 220px)",
-                  overflowY: "scroll",
-                  padding: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                  "::-webkit-scrollbar": { width: 0 },
+                  height: 'calc(100% - 220px)',
+                  overflowY: 'scroll',
+                  padding: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '15px',
+                  '::-webkit-scrollbar': { width: 0 },
                 }}
               >
                 {commentList.length > 0 ? (
@@ -314,12 +314,12 @@ const PostComment = ({
                 ) : (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                      fontSize: "18px",
-                      color: "darkgray",
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100%',
+                      fontSize: '18px',
+                      color: 'darkgray',
                     }}
                   >
                     No comment
@@ -330,17 +330,17 @@ const PostComment = ({
 
             {/* Comment Action */}
             <Box
-              sx={{ height: "100px", display: "flex", flexDirection: "column" }}
+              sx={{ height: '100px', display: 'flex', flexDirection: 'column' }}
             >
               <Box
                 sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderTop: "1px solid #e0e0e0",
-                  padding: "5px 10px",
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderTop: '1px solid #e0e0e0',
+                  padding: '5px 10px',
                 }}
               >
                 <Box>
@@ -348,7 +348,7 @@ const PostComment = ({
                     {isLiked ? (
                       <FavoriteRounded
                         sx={{
-                          color: "red",
+                          color: 'red',
                         }}
                       />
                     ) : (
@@ -357,16 +357,16 @@ const PostComment = ({
                   </IconButton>
                 </Box>
               </Box>
-              <Box sx={{ padding: "0 20px" }}>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
+              <Box sx={{ padding: '0 20px' }}>
+                <Typography sx={{ fontSize: '14px', fontWeight: 'bold' }}>
                   {
                     postViewerData.items.filter(
                       (postViewer: PostViewer) => postViewer.liked === true
                     ).length
-                  }{" "}
+                  }{' '}
                   Likes
                 </Typography>
-                <Typography sx={{ fontSize: "12px", color: "#858585 " }}>
+                <Typography sx={{ fontSize: '12px', color: '#858585 ' }}>
                   {dayjs(post?.create_at).fromNow()}
                 </Typography>
               </Box>
@@ -375,28 +375,28 @@ const PostComment = ({
             {/* Comment Box */}
             <Box
               sx={{
-                height: "60px",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                padding: "10px",
-                borderTop: "1px solid #e0e0e0",
+                height: '60px',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: '10px',
+                borderTop: '1px solid #e0e0e0',
               }}
               onKeyDown={handleKeyDownComment}
             >
               <InputBase
                 placeholder="Add comment..."
-                sx={{ color: "black", flexGrow: 1, ml: 1 }}
+                sx={{ color: 'black', flexGrow: 1, ml: 1 }}
                 value={commentContent}
                 onChange={(e) => setCommentContent(e.target.value)}
               />
               <Button
                 sx={{
-                  height: "30px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                  padding: "5px 10px",
+                  height: '30px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  textTransform: 'capitalize',
+                  padding: '5px 10px',
                 }}
                 disabled={!commentContent}
                 onClick={handleClickComment}
@@ -419,37 +419,37 @@ const PostComment = ({
             paper: {
               elevation: 0,
               sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                 mt: 1.5,
                 width: 200,
 
-                "& .MuiAvatar-root": {
+                '& .MuiAvatar-root': {
                   width: 32,
                   height: 32,
                   ml: -0.5,
                   mr: 1,
                 },
-                "&::before": {
+                '&::before': {
                   content: '""',
-                  display: "block",
-                  position: "absolute",
+                  display: 'block',
+                  position: 'absolute',
                   top: 0,
                   right: 14,
                   width: 10,
                   height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
                   zIndex: 0,
                 },
               },
             },
           }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
           <MenuItem onClick={handleCloseMenu}>
-            <Typography sx={{ color: "red", fontWeight: "bold" }}>
+            <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
               Delete
             </Typography>
           </MenuItem>

@@ -1,20 +1,25 @@
-import { MessageMediaContent } from "./message-media-content";
-import { User } from "./user";
-
 export interface Message {
-  content: string;
-  sent_at: string;
+  id: number;
+  chatId: string;
   senderId: string;
-  receiverId: string;
-  replyToId: string | null;
-  mediaContents: MessageMediaContent[];
-  receiver: User;
-  sender: User;
+  senderName: string;
+  senderAvatar: string;
+  replyTo: string;
+  msgContent: string;
+  msgMediaContent: string;
+  sentAt: string;
+}
+
+export interface MessagePagination {
+  messages: Message[];
+  nextCursor: string;
 }
 
 export interface CreateMessageRequest {
-  relationshipId: string;
-  content: string;
-  replyToId: string;
-  files: File | null;
+  chatId: string;
+  msgContent: string;
+  msgMediaContent: File | null;
+  senderId: string;
+  senderName: string;
+  replyTo: number | null;
 }

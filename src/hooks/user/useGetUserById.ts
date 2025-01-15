@@ -1,5 +1,5 @@
-import { userApi } from "@/api/user";
-import useSWR, { SWRConfiguration } from "swr";
+import { userApi } from '@/api/user';
+import useSWR, { SWRConfiguration } from 'swr';
 
 interface useGetUserByIdProps {
   id: string;

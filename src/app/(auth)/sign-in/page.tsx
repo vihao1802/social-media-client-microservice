@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Box,
   Button,
@@ -8,16 +8,16 @@ import {
   Typography,
   IconButton,
   Divider,
-} from "@mui/material";
-import { Form, Formik, Field, ErrorMessage } from "formik";
-import { useState } from "react";
-import { Visibility, VisibilityOffOutlined } from "@mui/icons-material";
-import { SignInSchema } from "@/validations/signin.schema";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { useRouter } from "next/navigation";
-import { LoginRequest } from "@/models/auth-login";
-import toast from "react-hot-toast";
-import GradientCircularProgress from "@/components/shared/Loader";
+} from '@mui/material';
+import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { useState } from 'react';
+import { Visibility, VisibilityOffOutlined } from '@mui/icons-material';
+import { SignInSchema } from '@/validations/signin.schema';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { useRouter } from 'next/navigation';
+import { LoginRequest } from '@/models/auth-login';
+import toast from 'react-hot-toast';
+import GradientCircularProgress from '@/components/shared/Loader';
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,19 +36,19 @@ const SignInPage = () => {
     try {
       const res = await login(payload);
       if (res && res.status === 200) {
-        toast.success("Sign in successfully");
+        toast.success('Sign in successfully');
 
         /* if (res.scope === "ADMIN") {
           router.push("/dashboard");
           return;
         } */
 
-        router.push("/");
+        router.push('/');
       } else {
-        toast.error("Sign in failed");
+        toast.error('Sign in failed');
       }
     } catch (error) {
-      toast.error("Sign in failed");
+      toast.error('Sign in failed');
       console.log(error);
     } finally {
       setIsLogin(false);
@@ -57,36 +57,36 @@ const SignInPage = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
         borderRadius: 4,
         padding: 3,
-        margin: "auto",
-        maxWidth: "420px",
-        width: "100%",
-        textAlign: "center",
-        "& > * + *": {
-          marginTop: "20px",
+        margin: 'auto',
+        maxWidth: '420px',
+        width: '100%',
+        textAlign: 'center',
+        '& > * + *': {
+          marginTop: '20px',
         },
       }}
     >
       <Typography
         sx={{
-          fontSize: "22px",
+          fontSize: '22px',
         }}
       >
         Sign In
       </Typography>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          padding: "10px",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          padding: '10px',
         }}
       >
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ email: '', password: '' }}
           validationSchema={SignInSchema}
           onSubmit={async (values) => {
             handleSignIn(values);
@@ -111,7 +111,7 @@ const SignInPage = () => {
               <Field
                 as={TextField}
                 name="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 fullWidth
                 id="password"
                 label="Password"
@@ -131,9 +131,9 @@ const SignInPage = () => {
                         onMouseDown={togglePasswordVisibility}
                       >
                         {showPassword ? (
-                          <VisibilityOffOutlined sx={{ color: "black" }} />
+                          <VisibilityOffOutlined sx={{ color: 'black' }} />
                         ) : (
-                          <Visibility sx={{ color: "black" }} />
+                          <Visibility sx={{ color: 'black' }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -146,29 +146,29 @@ const SignInPage = () => {
                 size="large"
                 disabled={isLogin}
                 sx={{
-                  marginTop: "25px",
-                  width: "100%",
-                  color: "white",
-                  backgroundColor: "var(--buttonColor)",
-                  ":hover": {
-                    backgroundColor: "var(--buttonHoverColor)",
+                  marginTop: '25px',
+                  width: '100%',
+                  color: 'white',
+                  backgroundColor: 'var(--buttonColor)',
+                  ':hover': {
+                    backgroundColor: 'var(--buttonHoverColor)',
                   },
-                  ":disabled": {
-                    backgroundColor: "#e7e7e7",
+                  ':disabled': {
+                    backgroundColor: '#e7e7e7',
                   },
                 }}
               >
                 {isLogin ? (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
+                      display: 'flex',
+                      justifyContent: 'center',
                     }}
                   >
                     <GradientCircularProgress width={25} />
                   </Box>
                 ) : (
-                  "Sign In"
+                  'Sign In'
                 )}
               </Button>
             </Form>
@@ -177,16 +177,16 @@ const SignInPage = () => {
 
         <Typography
           sx={{
-            textAlign: "right",
+            textAlign: 'right',
           }}
         >
           <Link
             sx={{
-              color: "gray",
-              cursor: "pointer",
-              textDecoration: "none",
+              color: 'gray',
+              cursor: 'pointer',
+              textDecoration: 'none',
             }}
-            href={"/password-recovery"}
+            href={'/password-recovery'}
           >
             Forgot password
           </Link>
@@ -195,20 +195,20 @@ const SignInPage = () => {
       <Divider>or</Divider>
       <Box
         sx={{
-          padding: "10px",
-          marginTop: "10px",
+          padding: '10px',
+          marginTop: '10px',
         }}
       >
         <Button
           size="large"
           sx={{
-            width: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.02)",
-            color: "black",
-            ":hover": {
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            width: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.02)',
+            color: 'black',
+            ':hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
             },
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
           }}
           startIcon={
             <img
@@ -224,13 +224,13 @@ const SignInPage = () => {
         <Button
           size="large"
           sx={{
-            width: "100%",
-            backgroundColor: "#2374F2",
-            color: "white",
-            ":hover": {
-              backgroundColor: "#0a66c2",
+            width: '100%',
+            backgroundColor: '#2374F2',
+            color: 'white',
+            ':hover': {
+              backgroundColor: '#0a66c2',
             },
-            marginTop: "10px",
+            marginTop: '10px',
           }}
           startIcon={
             <img
@@ -246,13 +246,13 @@ const SignInPage = () => {
       </Box>
       <Box>
         <Typography>
-          No account?{" "}
+          No account?{' '}
           <Link
             sx={{
-              cursor: "pointer",
-              textDecoration: "none",
+              cursor: 'pointer',
+              textDecoration: 'none',
             }}
-            href={"/sign-up"}
+            href={'/sign-up'}
           >
             Sign Up Now!
           </Link>

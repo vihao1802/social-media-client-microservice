@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { Box, IconButton, Typography } from "@mui/material";
-import { Dancing_Script } from "next/font/google";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Component, use, useEffect, useRef, useState } from "react";
-import Stories from "react-insta-stories";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Pagination, Navigation } from "swiper/modules";
-import { Swiper as SwiperType } from "swiper";
+import { Box, IconButton, Typography } from '@mui/material';
+import { Dancing_Script } from 'next/font/google';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { Component, use, useEffect, useRef, useState } from 'react';
+import Stories from 'react-insta-stories';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
+import { Swiper as SwiperType } from 'swiper';
 import {
   CloseRounded,
   KeyboardArrowLeftRounded,
   KeyboardArrowRightRounded,
-} from "@mui/icons-material";
-import zIndex from "@mui/material/styles/zIndex";
-import StoryCard from "@/components/widgets/StoryCard";
-import { useGetFriendStories } from "@/hooks/post/useGetFriendStories";
-import GradientCircularProgress from "@/components/shared/Loader";
-import { User } from "@stream-io/video-react-sdk";
-import { Post } from "@/models/post";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+} from '@mui/icons-material';
+import zIndex from '@mui/material/styles/zIndex';
+import StoryCard from '@/components/widgets/StoryCard';
+import { useGetFriendStories } from '@/hooks/post/useGetFriendStories';
+import GradientCircularProgress from '@/components/shared/Loader';
+import { User } from '@stream-io/video-react-sdk';
+import { Post } from '@/models/post';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 
 const dacingScript = Dancing_Script({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
 });
 
 interface Story {
@@ -47,7 +47,7 @@ const StoriesPage = () => {
   const swiperRef = useRef<SwiperType>();
 
   const searchParams = useSearchParams();
-  const activeIndex = Number(searchParams.get("active-index")) || 0;
+  const activeIndex = Number(searchParams.get('active-index')) || 0;
 
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0); // You can use this to simulate progress
@@ -92,14 +92,14 @@ const StoriesPage = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#1a1a1a",
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-        position: "relative",
+        backgroundColor: '#1a1a1a',
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+        position: 'relative',
       }}
     >
       {/* Logo */}
@@ -109,38 +109,38 @@ const StoriesPage = () => {
         fontWeight="bold"
         fontFamily={dacingScript.style.fontFamily}
         sx={{
-          position: "absolute",
-          top: "10px",
-          left: "20px",
-          ":hover": {
-            cursor: "pointer",
+          position: 'absolute',
+          top: '10px',
+          left: '20px',
+          ':hover': {
+            cursor: 'pointer',
           },
           zIndex: 10,
         }}
-        onClick={() => router.push("/")}
+        onClick={() => router.push('/')}
       >
         Ninstagram
       </Typography>
 
       <IconButton
         sx={{
-          position: "absolute",
-          top: "10px",
-          right: "20px",
+          position: 'absolute',
+          top: '10px',
+          right: '20px',
           zIndex: 10,
         }}
-        onClick={() => router.push("/")}
+        onClick={() => router.push('/')}
       >
-        <CloseRounded sx={{ color: "white", fontSize: "32px" }} />
+        <CloseRounded sx={{ color: 'white', fontSize: '32px' }} />
       </IconButton>
 
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         {activeIndex > 0 && (
@@ -152,20 +152,20 @@ const StoriesPage = () => {
               );
             }}
             sx={{
-              height: "28px",
-              width: "28px",
-              position: "absolute",
-              top: "50%",
-              left: "15px",
-              transform: "translateY(-50%)",
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#fff",
-              border: "1px solid #ddd",
-              padding: "10px",
-              cursor: "pointer",
+              height: '28px',
+              width: '28px',
+              position: 'absolute',
+              top: '50%',
+              left: '15px',
+              transform: 'translateY(-50%)',
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              backgroundColor: '#fff',
+              border: '1px solid #ddd',
+              padding: '10px',
+              cursor: 'pointer',
               zIndex: 10,
-              "&:hover": {
-                backgroundColor: "#f0f0f0",
+              '&:hover': {
+                backgroundColor: '#f0f0f0',
               },
             }}
           >
@@ -185,8 +185,8 @@ const StoriesPage = () => {
           }}
           modules={[Pagination, Navigation]}
           style={{
-            width: "100%",
-            height: "100%",
+            width: '100%',
+            height: '100%',
           }}
           lazyPreloadPrevNext={1}
           lazyPreloaderClass="lazy-preloader"
@@ -196,10 +196,10 @@ const StoriesPage = () => {
             <SwiperSlide
               key={index}
               style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
               }}
               lazy
             >
@@ -223,21 +223,21 @@ const StoriesPage = () => {
               );
             }}
             sx={{
-              height: "28px",
-              width: "28px",
-              position: "absolute",
-              top: "50%" /* Đặt nút ở giữa theo chiều dọc */,
-              right: "15px" /* Cách mép phải 10px */,
+              height: '28px',
+              width: '28px',
+              position: 'absolute',
+              top: '50%' /* Đặt nút ở giữa theo chiều dọc */,
+              right: '15px' /* Cách mép phải 10px */,
               transform:
-                "translateY(-50%)" /* Điều chỉnh để căn giữa theo chiều dọc */,
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-              backgroundColor: "#fff",
-              border: "1px solid #ddd",
-              padding: "10px",
-              cursor: "pointer",
+                'translateY(-50%)' /* Điều chỉnh để căn giữa theo chiều dọc */,
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              backgroundColor: '#fff',
+              border: '1px solid #ddd',
+              padding: '10px',
+              cursor: 'pointer',
               zIndex: 10,
-              "&:hover": {
-                backgroundColor: "#f0f0f0",
+              '&:hover': {
+                backgroundColor: '#f0f0f0',
               },
             }}
           >

@@ -1,20 +1,20 @@
-"use client";
-import { Box, Button, Skeleton, Typography } from "@mui/material";
-import { useGetUserById } from "@/hooks/user/useGetUserById";
-import { useParams, useRouter } from "next/navigation";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { Fragment } from "react";
-import GradientCircularProgress from "@/components/shared/Loader";
-import { useGetRelationshipByUserIdFollower } from "@/hooks/relationship/useGetRelationshipByUserIdFollower";
-import { useGetRelationshipByUserIdFollowing } from "@/hooks/relationship/useGetRelationshipByUserIdFollowing";
-import { RelationshipStatus } from "@/types/enum";
-import { useGetFollowerQuantity } from "@/hooks/relationship/useGetFollowerQuantity";
-import { useGetFollowingQuantity } from "@/hooks/relationship/useGetFollowingQuantity";
-import { Post } from "@/models/post";
-import { usePostFollowUser } from "@/hooks/relationship/usePostFollowUser";
-import toast from "react-hot-toast";
-import { relationshipApi } from "@/api/relationship";
-import { mutate } from "swr";
+'use client';
+import { Box, Button, Skeleton, Typography } from '@mui/material';
+import { useGetUserById } from '@/hooks/user/useGetUserById';
+import { useParams, useRouter } from 'next/navigation';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { Fragment } from 'react';
+import GradientCircularProgress from '@/components/shared/Loader';
+import { useGetRelationshipByUserIdFollower } from '@/hooks/relationship/useGetRelationshipByUserIdFollower';
+import { useGetRelationshipByUserIdFollowing } from '@/hooks/relationship/useGetRelationshipByUserIdFollowing';
+import { RelationshipStatus } from '@/types/enum';
+import { useGetFollowerQuantity } from '@/hooks/relationship/useGetFollowerQuantity';
+import { useGetFollowingQuantity } from '@/hooks/relationship/useGetFollowingQuantity';
+import { Post } from '@/models/post';
+import { usePostFollowUser } from '@/hooks/relationship/usePostFollowUser';
+import toast from 'react-hot-toast';
+import { relationshipApi } from '@/api/relationship';
+import { mutate } from 'swr';
 
 interface ProfileBottomContentProps {
   posts: Array<Post>;
@@ -63,14 +63,14 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
     try {
       const res = await relationshipApi.unfollowUser(user_id);
       if (res) {
-        toast.success("Unfollowed");
-        mutate("get_me_following");
-        mutate("get_me_follower");
-        mutate("get_message_by_relationship_id");
-        mutate("get_follower_quantity");
-        mutate("get_following_quantity");
-        mutate("get_by_user_id_follower");
-        mutate("get_by_user_id_following");
+        toast.success('Unfollowed');
+        mutate('get_me_following');
+        mutate('get_me_follower');
+        mutate('get_message_by_relationship_id');
+        mutate('get_follower_quantity');
+        mutate('get_following_quantity');
+        mutate('get_by_user_id_follower');
+        mutate('get_by_user_id_following');
       }
     } catch (error) {
       console.log(error);
@@ -78,14 +78,14 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
   };
 
   const handleEditProfile = () => {
-    router.push("/profile/edit");
+    router.push('/profile/edit');
   };
 
   const handleFollow = async () => {
     try {
       const res = await followUser({ user_id: id });
       if (res) {
-        toast.success("Followed successfully");
+        toast.success('Followed successfully');
       }
     } catch (error) {
       console.error(error);
@@ -96,10 +96,10 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
         }}
       >
         <GradientCircularProgress />
@@ -109,32 +109,32 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
   return (
     <Box
       sx={{
-        display: "flex",
+        display: 'flex',
         flexDirection: {
-          xs: "column",
-          md: "row",
+          xs: 'column',
+          md: 'row',
         },
-        gap: "20px",
-        padding: "20px 0",
-        justifyContent: "space-between",
+        gap: '20px',
+        padding: '20px 0',
+        justifyContent: 'space-between',
       }}
     >
       <Box
         sx={{
-          maxHeight: "150px",
-          maxWidth: "150px",
-          flex: "1",
+          maxHeight: '150px',
+          maxWidth: '150px',
+          flex: '1',
         }}
       >
         {user && (
           <Box
             component="img"
-            src={user.profile_img || "/icons/user.png"}
+            src={user.profile_img || '/icons/user.png'}
             sx={{
-              width: "150px",
-              height: "150px",
-              borderRadius: "50%",
-              objectFit: "cover",
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%',
+              objectFit: 'cover',
             }}
           />
         )}
@@ -142,27 +142,27 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
       <Box
         sx={{
           width: {
-            xs: "100%",
-            md: "75%",
+            xs: '100%',
+            md: '75%',
           },
         }}
       >
         <Box
           sx={{
-            "& > * + *": {
-              marginTop: "20px",
+            '& > * + *': {
+              marginTop: '20px',
             },
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              alignItems: { xs: "flex-start", md: "center" },
+              display: 'flex',
+              alignItems: { xs: 'flex-start', md: 'center' },
               flexDirection: {
-                xs: "column",
-                md: "row",
+                xs: 'column',
+                md: 'row',
               },
-              gap: "20px",
+              gap: '20px',
             }}
           >
             <Typography fontSize="20px" fontWeight="normal">
@@ -171,11 +171,11 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
             {user.id === currentUser.id && (
               <Button
                 sx={{
-                  textTransform: "none",
-                  backgroundColor: "#e7e7e7",
-                  color: "black",
-                  ":hover": {
-                    backgroundColor: "lightgray",
+                  textTransform: 'none',
+                  backgroundColor: '#e7e7e7',
+                  color: 'black',
+                  ':hover': {
+                    backgroundColor: 'lightgray',
                   },
                 }}
                 onClick={handleEditProfile}
@@ -187,8 +187,8 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
           <Box>
             <Typography
               sx={{
-                fontWeight: "400",
-                fontSize: "15px",
+                fontWeight: '400',
+                fontSize: '15px',
               }}
             >
               {user.bio}
@@ -196,38 +196,38 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
           </Box>
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: { xs: "left", md: "center" },
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: { xs: 'left', md: 'center' },
               flexDirection: {
-                xs: "column",
-                md: "row",
+                xs: 'column',
+                md: 'row',
               },
-              gap: "20px",
+              gap: '20px',
             }}
           >
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                maxWidth: "300px",
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                maxWidth: '300px',
               }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
-                <Typography sx={{ color: "GrayText" }}>Posts</Typography>
+                <Typography sx={{ color: 'GrayText' }}>Posts</Typography>
                 {posts ? (
                   <Typography
                     sx={{
-                      fontWeight: "700",
-                      fontSize: "20px",
+                      fontWeight: '700',
+                      fontSize: '20px',
                     }}
                   >
                     {posts.length}
@@ -238,17 +238,17 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
-                <Typography sx={{ color: "GrayText" }}>Followers</Typography>
+                <Typography sx={{ color: 'GrayText' }}>Followers</Typography>
                 {followerQuantity ? (
                   <Typography
                     sx={{
-                      fontWeight: "700",
-                      fontSize: "20px",
+                      fontWeight: '700',
+                      fontSize: '20px',
                     }}
                   >
                     {followerQuantity.quantity}
@@ -259,17 +259,17 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
-                <Typography sx={{ color: "GrayText" }}>Following</Typography>
+                <Typography sx={{ color: 'GrayText' }}>Following</Typography>
                 {followingQuantity ? (
                   <Typography
                     sx={{
-                      fontWeight: "700",
-                      fontSize: "20px",
+                      fontWeight: '700',
+                      fontSize: '20px',
                     }}
                   >
                     {followingQuantity.quantity}
@@ -281,9 +281,9 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
             </Box>
             <Box
               sx={{
-                display: "flex",
-                gap: "10px",
-                height: "40px",
+                display: 'flex',
+                gap: '10px',
+                height: '40px',
               }}
             >
               {currentUser &&
@@ -302,9 +302,9 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                   <Fragment>
                     <Button
                       sx={{
-                        textTransform: "none",
-                        ":hover": {
-                          backgroundColor: "lightcyan",
+                        textTransform: 'none',
+                        ':hover': {
+                          backgroundColor: 'lightcyan',
                         },
                       }}
                       onClick={() => handleUnFollow(user.id)}
@@ -313,11 +313,11 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                     </Button>
                     <Button
                       sx={{
-                        textTransform: "none",
-                        backgroundColor: "var(--buttonColor)",
-                        color: "white",
-                        ":hover": {
-                          backgroundColor: "var(--buttonHoverColor)",
+                        textTransform: 'none',
+                        backgroundColor: 'var(--buttonColor)',
+                        color: 'white',
+                        ':hover': {
+                          backgroundColor: 'var(--buttonHoverColor)',
                         },
                       }}
                       onClick={handleMessage}
@@ -338,10 +338,10 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                     <Button
                       disabled
                       sx={{
-                        textTransform: "none",
-                        backgroundColor: "#e7e7e7",
-                        ":disabled": {
-                          color: "black",
+                        textTransform: 'none',
+                        backgroundColor: '#e7e7e7',
+                        ':disabled': {
+                          color: 'black',
                         },
                       }}
                       onClick={handleFollow}
@@ -361,11 +361,11 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                   <Fragment>
                     <Button
                       sx={{
-                        textTransform: "none",
-                        backgroundColor: "var(--buttonColor)",
-                        color: "white",
-                        ":hover": {
-                          backgroundColor: "var(--buttonHoverColor)",
+                        textTransform: 'none',
+                        backgroundColor: 'var(--buttonColor)',
+                        color: 'white',
+                        ':hover': {
+                          backgroundColor: 'var(--buttonHoverColor)',
                         },
                       }}
                       onClick={handleFollow}
@@ -386,11 +386,11 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
                   <Fragment>
                     <Button
                       sx={{
-                        textTransform: "none",
-                        backgroundColor: "var(--buttonColor)",
-                        color: "white",
-                        ":hover": {
-                          backgroundColor: "var(--buttonHoverColor)",
+                        textTransform: 'none',
+                        backgroundColor: 'var(--buttonColor)',
+                        color: 'white',
+                        ':hover': {
+                          backgroundColor: 'var(--buttonHoverColor)',
                         },
                       }}
                       onClick={handleFollow}

@@ -1,16 +1,16 @@
 import {
   FollowerQuantity,
   RelationshipFollower,
-} from "@/models/relationship-follower";
-import axiosInstance from "./axios-instance";
+} from '@/models/relationship-follower';
+import axiosInstance from './axios-instance';
 import {
   FollowingQuantity,
   RelationshipFollowing,
-} from "@/models/relationship-following";
-import { PersonalMessenger } from "@/models/personal-messenger";
-import { RecommendationPagination } from "@/models/relationship";
+} from '@/models/relationship-following';
+import { PersonalMessenger } from '@/models/personal-messenger';
+import { RecommendationPagination } from '@/models/relationship';
 
-const prefix = "/relationship";
+const prefix = '/relationship';
 
 export const relationshipApi = {
   async getRelationshipMeFollower() {

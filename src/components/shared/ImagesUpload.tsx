@@ -1,8 +1,8 @@
-import React from "react";
-import { useDropzone, DropzoneOptions } from "react-dropzone";
-import { Box, Typography, IconButton, SvgIcon, Button } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { MediaContent } from "@/models/media-content";
+import React from 'react';
+import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { Box, Typography, IconButton, SvgIcon, Button } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { MediaContent } from '@/models/media-content';
 
 export type FileWithPreview = File & {
   preview: string;
@@ -15,7 +15,7 @@ interface ImagesUploadProps {
 
 const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
   // Hàm xử lý khi người dùng kéo/thả file
-  const onDrop: DropzoneOptions["onDrop"] = (acceptedFiles) => {
+  const onDrop: DropzoneOptions['onDrop'] = (acceptedFiles) => {
     const newFiles = acceptedFiles.map((file) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
@@ -27,8 +27,8 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
-      "video/*": [".mp4", ".mov", ".avi", ".mkv"],
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif'],
+      'video/*': ['.mp4', '.mov', '.avi', '.mkv'],
     },
     multiple: true,
   });
@@ -43,19 +43,19 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
     <Box
       sx={{
         p: 2,
-        height: "100%",
-        minHeight: "400px",
-        width: "550px",
+        height: '100%',
+        minHeight: '400px',
+        width: '550px',
       }}
     >
       <Box
         {...getRootProps()}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
 
-          cursor: "pointer",
+          cursor: 'pointer',
         }}
       >
         <input {...getInputProps()} />
@@ -63,18 +63,18 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
         {value.length === 0 && (
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
               gap: 2,
             }}
           >
-            <SvgIcon sx={{ height: "77px", width: "96px" }}>
+            <SvgIcon sx={{ height: '77px', width: '96px' }}>
               <svg
                 aria-label="Icon to represent media such as images or videos"
                 className="x1lliihq x1n2onr6 x5n08af"
@@ -99,7 +99,7 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
                 ></path>
               </svg>
             </SvgIcon>
-            <Button variant="contained" sx={{ height: "32px" }}>
+            <Button variant="contained" sx={{ height: '32px' }}>
               Select from computer
             </Button>
           </Box>
@@ -109,23 +109,23 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
       {/* Hiển thị danh sách file */}
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
           gap: 4,
-          flexWrap: "wrap",
+          flexWrap: 'wrap',
         }}
       >
         {value.map((file, index) => (
           <Box
             key={index}
             sx={{
-              position: "relative",
-              display: "inline-flex",
-              alignItems: "center",
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center',
             }}
           >
             {/* Phân loại xem trước dựa trên loại file */}
-            {file instanceof File && file.type.startsWith("video") ? (
+            {file instanceof File && file.type.startsWith('video') ? (
               <Box
                 component="video"
                 controls
@@ -133,12 +133,12 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
                 height="400px"
                 width="300px"
                 sx={{
-                  objectFit: "cover",
-                  borderRadius: "5px",
-                  backgroundColor: "#000",
+                  objectFit: 'cover',
+                  borderRadius: '5px',
+                  backgroundColor: '#000',
                 }}
               />
-            ) : file instanceof File && file.type.startsWith("image") ? (
+            ) : file instanceof File && file.type.startsWith('image') ? (
               <Box
                 component="img"
                 alt={file.name}
@@ -146,11 +146,11 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
                 height="150px"
                 width="150px"
                 sx={{
-                  objectFit: "cover",
-                  borderRadius: "5px",
+                  objectFit: 'cover',
+                  borderRadius: '5px',
                 }}
               />
-            ) : "media_type" in file && file.media_type === "video" ? (
+            ) : 'media_type' in file && file.media_type === 'video' ? (
               <Box
                 component="video"
                 controls
@@ -158,12 +158,12 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
                 height="400px"
                 width="300px"
                 sx={{
-                  objectFit: "cover",
-                  borderRadius: "5px",
-                  backgroundColor: "#000",
+                  objectFit: 'cover',
+                  borderRadius: '5px',
+                  backgroundColor: '#000',
                 }}
               />
-            ) : "media_type" in file ? (
+            ) : 'media_type' in file ? (
               <Box
                 component="img"
                 alt={file.media_type}
@@ -171,8 +171,8 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
                 height="150px"
                 width="150px"
                 sx={{
-                  objectFit: "cover",
-                  borderRadius: "5px",
+                  objectFit: 'cover',
+                  borderRadius: '5px',
                 }}
               />
             ) : null}
@@ -180,16 +180,16 @@ const ImagesUpload = ({ value, onChange }: ImagesUploadProps) => {
             <IconButton
               onClick={() => removeFile(file)}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 right: 0,
-                transform: "translate(50%, -50%)",
-                backgroundColor: "white",
-                "&:hover": { backgroundColor: "#1976d2" },
-                height: "28px",
-                width: "28px",
-                bgcolor: "#1999F9",
-                color: "white",
+                transform: 'translate(50%, -50%)',
+                backgroundColor: 'white',
+                '&:hover': { backgroundColor: '#1976d2' },
+                height: '28px',
+                width: '28px',
+                bgcolor: '#1999F9',
+                color: 'white',
               }}
             >
               <CloseIcon fontSize="small" />

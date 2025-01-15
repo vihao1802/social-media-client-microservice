@@ -1,9 +1,9 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export const RecoveryContext = createContext({
-  page: "login",
+  page: 'login',
   setPage: (page: string) => {},
-  email: "",
+  email: '',
   setEmail: (email: string) => {},
   otp: 0,
   setOTP: (otp: number) => {},

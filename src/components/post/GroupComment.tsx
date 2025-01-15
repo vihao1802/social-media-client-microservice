@@ -1,5 +1,5 @@
-import { Comment, GroupComment } from "@/models/comment";
-import { FavoriteBorderOutlined, FavoriteRounded } from "@mui/icons-material";
+import { Comment, GroupComment } from '@/models/comment';
+import { FavoriteBorderOutlined, FavoriteRounded } from '@mui/icons-material';
 import {
   Avatar,
   Box,
@@ -7,20 +7,20 @@ import {
   Collapse,
   IconButton,
   Typography,
-} from "@mui/material";
-import Link from "next/link";
-import dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
-import { useGetCommentReaction } from "@/hooks/comment-reaction/useGetCommentReaction";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+} from '@mui/material';
+import Link from 'next/link';
+import dayjs from 'dayjs';
+import React, { useContext, useEffect, useState } from 'react';
+import { useGetCommentReaction } from '@/hooks/comment-reaction/useGetCommentReaction';
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import {
   CommentReaction,
   CommentReactionRequest,
-} from "@/models/comment-reaction";
-import { CommentContext } from "@/context/comment-context";
-import { usePostCommentReaction } from "@/hooks/comment-reaction/usePostCommentReaction";
-import { useDeleteCommentReaction } from "@/hooks/comment-reaction/useDeleteCommentReaction";
-import toast from "react-hot-toast";
+} from '@/models/comment-reaction';
+import { CommentContext } from '@/context/comment-context';
+import { usePostCommentReaction } from '@/hooks/comment-reaction/usePostCommentReaction';
+import { useDeleteCommentReaction } from '@/hooks/comment-reaction/useDeleteCommentReaction';
+import toast from 'react-hot-toast';
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
   const { user: currentUser } = useAuthenticatedUser();
@@ -58,7 +58,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
       if (commentReactionId !== 0) {
         await deleteCommentReaction(commentReactionId, comment.id);
       } else {
-        toast.error("Comment Reaction not found!");
+        toast.error('Comment Reaction not found!');
         return null;
       }
     } else {
@@ -66,9 +66,8 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
         userId: currentUser.id,
         commentId: comment.id,
       };
-      const commentReactionResponse = await createCommentReaction(
-        commentReactionData
-      );
+      const commentReactionResponse =
+        await createCommentReaction(commentReactionData);
       setCommentReactionId(commentReactionResponse.id);
     }
   };
@@ -76,50 +75,50 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "start",
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'start',
       }}
     >
       <Box width="10%">
         <Link href={`/profile/${comment.user.id}`}>
           <Avatar
             src={comment.user.profile_img}
-            sx={{ height: "32px", width: "32px" }}
+            sx={{ height: '32px', width: '32px' }}
           />
         </Link>
       </Box>
 
       <Box
         sx={{
-          width: "90%",
-          display: "flex",
-          flexDirection: "column",
+          width: '90%',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px",
-            backgroundColor: "#f0f2f5",
-            padding: "10px",
-            borderRadius: "10px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '5px',
+            backgroundColor: '#f0f2f5',
+            padding: '10px',
+            borderRadius: '10px',
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <Link href={`/profile/${comment.user.id}`}>
               <Typography
                 sx={{
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  ":hover": { color: "#858585" },
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  ':hover': { color: '#858585' },
                 }}
               >
                 {comment.user.username}
@@ -127,54 +126,54 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
             </Link>
             <IconButton
               sx={{
-                height: "20px",
-                width: "20px",
+                height: '20px',
+                width: '20px',
               }}
               onClick={handleClickLike}
             >
               {isLiked ? (
                 <FavoriteRounded
                   sx={{
-                    color: "red",
-                    fontSize: "13px",
+                    color: 'red',
+                    fontSize: '13px',
                   }}
                 />
               ) : (
                 <FavoriteBorderOutlined
-                  sx={{ color: "#858585", fontSize: "13px" }}
+                  sx={{ color: '#858585', fontSize: '13px' }}
                 />
               )}
             </IconButton>
           </Box>
 
-          <Typography sx={{ fontSize: "14px" }}>{comment.content}</Typography>
+          <Typography sx={{ fontSize: '14px' }}>{comment.content}</Typography>
         </Box>
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "10px",
-            alignItems: "center",
-            marginTop: "5px",
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '10px',
+            alignItems: 'center',
+            marginTop: '5px',
           }}
         >
-          <Typography sx={{ fontSize: "12px", color: "#858585" }}>
+          <Typography sx={{ fontSize: '12px', color: '#858585' }}>
             {dayjs(comment.createdAt).fromNow()}
           </Typography>
-          <Typography sx={{ fontSize: "12px", color: "#858585" }}>
+          <Typography sx={{ fontSize: '12px', color: '#858585' }}>
             {commentReactionData.totalItems} likes
           </Typography>
           <Typography
             sx={{
-              fontSize: "12px",
-              color: "#858585",
-              ":hover": { color: "#000", cursor: "pointer" },
+              fontSize: '12px',
+              color: '#858585',
+              ':hover': { color: '#000', cursor: 'pointer' },
             }}
             onClick={() => {
               if (comment.parentComment) {
                 setParentCommentId(comment.parentComment.id);
               } else setParentCommentId(comment.id);
-              setCommentContent("@" + comment.user.username + " ");
+              setCommentContent('@' + comment.user.username + ' ');
             }}
           >
             Reply
@@ -209,7 +208,7 @@ const GroupCommentComponent = ({
           size="small"
           sx={{ mt: 1, ml: 4 }}
         >
-          {isExpanded ? "Hide Replies" : "Show Replies"} (
+          {isExpanded ? 'Hide Replies' : 'Show Replies'} (
           {groupComment.subComments.length})
         </Button>
       )}
@@ -219,10 +218,10 @@ const GroupCommentComponent = ({
         <Box
           sx={{
             pl: 4, // Indentation for subcomments
-            borderLeft: "2px solid #e0e0e0", // Optional: A border for visual hierarchy
+            borderLeft: '2px solid #e0e0e0', // Optional: A border for visual hierarchy
             mt: 1, // Space above the subcomments list
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
             gap: 1, // Space between subcomments
           }}
         >

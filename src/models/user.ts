@@ -1,20 +1,28 @@
-import { Pagination } from "./api";
-
 export interface UserBase {
   username: string;
   email: string;
-  gender: boolean;
-  date_of_birth: string;
-  id: string;
+  gender: string;
+  DateOfBirth: string;
   bio: string;
-  profile_img: string;
-  phoneNumber: string;
+  profileImg: string;
 }
 
 export interface User extends UserBase {
-  create_at: string;
-  relationshipId?: number;
-  externalUser: boolean;
+  id: string;
+  createdAt: string;
+  isLocked: boolean;
+  isEmailVerified: boolean;
+  isDisabled: boolean;
+  isOnline: boolean;
+  roleId: number;
+  role: {
+    roleName: string;
+  };
+}
+
+export interface CurrentUserResponse {
+  status: number;
+  data: User;
 }
 
 export interface UpdateUserRequest extends UserBase {}

@@ -1,25 +1,25 @@
-import { Post } from "./post";
-import { User } from "./user";
+import { Post } from './post';
+import { User } from './user';
 
 export interface CommentBase {
-    content: string;
+  content: string;
 }
 
 export interface Comment extends CommentBase {
-    id: number;
-    user: User;
-    post: Post;
-    content_gif: string;
-    createdAt: string;
-    parentComment: Comment;
+  id: number;
+  user: User;
+  post: Post;
+  content_gif: string;
+  createdAt: string;
+  parentComment: Comment;
 }
 
 export interface CommentRequest extends CommentBase {
-    postId: number;
-    userId: number;
+  postId: number;
+  userId: number;
 }
 
 export interface GroupComment {
-    mainComment: Comment;
-    subComments: Comment[];
+  mainComment: Comment;
+  subComments: Comment[];
 }
