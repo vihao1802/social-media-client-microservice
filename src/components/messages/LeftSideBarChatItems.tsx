@@ -2,9 +2,11 @@
 import {
   Avatar,
   Box,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
@@ -17,33 +19,34 @@ import ModalAddGroup from './ModalAddGroup';
 import { useGetChats } from '@/hooks/chat/useGetChats';
 import { ChatContext } from '@/context/chat-context';
 import { Chat } from '@/models/chat';
+import { PersonAddAlt } from '@mui/icons-material';
 
 dayjs.extend(relativeTime);
 
-const leftBarWidth = '350px';
-
 const LeftSideBarMessages = () => {
-  const currUserId = 'cm5ruu3ui0003vh3wvzmdo3jj';
   const router = useRouter();
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
-  const toggleModalAddGroup = () => setOpenModalAddGroup(!openModalAddGroup);
+
+  const { selectedChat, setSelectedChat } = useContext(ChatContext);
+  const { user: authenticatedUser } = useAuthenticatedUser();
+
+  if (!authenticatedUser) return null;
+
+  const { data: chats } = useGetChats(authenticatedUser.id);
   const { chat_id } = useParams<{
     chat_id: string;
   }>();
-  const { selectedChat, setSelectedChat } = useContext(ChatContext);
 
-  const { data: chats } = useGetChats(currUserId);
+  const toggleModalAddGroup = () => setOpenModalAddGroup(!openModalAddGroup);
 
   const handleSelect = (chat: Chat) => {
     router.push(`/messages/t/${chat.id}`);
     setSelectedChat(chat);
   };
 
-  const { user: authenticatedUser } = useAuthenticatedUser();
-
   useEffect(() => {
     if (chat_id && chats && !selectedChat) {
-      const chat = chats.content.filter((item) => item.id === chat_id)[0];
+      const chat = chats.content.filter((item: Chat) => item.id === chat_id)[0];
       setSelectedChat(chat);
     }
   }, [chats]);
@@ -51,7 +54,11 @@ const LeftSideBarMessages = () => {
   return (
     <Box
       sx={{
-        width: leftBarWidth,
+        maxWidth: '350px',
+        width: {
+          xs: 'auto',
+          md: '100%',
+        },
         height: '100%',
         borderRight: '2px solid #c7c5c5',
       }}
@@ -61,9 +68,20 @@ const LeftSideBarMessages = () => {
           padding: '16px 20px',
           height: '70px',
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
         }}
-      ></Box>
+      >
+        <Tooltip title="Add chat" placement="right">
+          <IconButton>
+            <PersonAddAlt
+              onClick={toggleModalAddGroup}
+              fontSize="medium"
+              className="text-black"
+            />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <Box
         sx={{
           height: 'calc(100vh - 70px)',
@@ -89,7 +107,7 @@ const LeftSideBarMessages = () => {
           {!chats ? (
             <LeftSideBarChatItemSkeleton />
           ) : (
-            chats.content.map((item, index: number) => (
+            chats.content.map((item: Chat, index: number) => (
               <Box key={index}>
                 <ListItem disablePadding>
                   <ListItemButton
@@ -111,18 +129,34 @@ const LeftSideBarMessages = () => {
                     <Box
                       sx={{
                         borderRadius: '50%',
-                        padding: '0 10px',
+                        padding: {
+                          xs: '0',
+                          md: '0 10px',
+                        },
                       }}
                     >
                       <Avatar
                         alt={'avatar'}
                         src={item.groupAvatar || '/icons/user.png'}
+                        sx={{
+                          width: {
+                            xs: '50px',
+                            md: '40px',
+                          },
+                          height: {
+                            xs: '50px',
+                            md: '40px',
+                          },
+                        }}
                       />
                     </Box>
                     <Box
                       sx={{
                         width: 'calc(100% - 60px)',
-                        display: 'flex',
+                        display: {
+                          xs: 'none',
+                          md: 'flex',
+                        },
                         flexDirection: 'column',
                       }}
                     >
@@ -173,7 +207,8 @@ const LeftSideBarMessages = () => {
                         }}
                       >
                         {item.latestMessage &&
-                          (item.latestMessage.senderId === currUserId
+                          (authenticatedUser &&
+                          item.latestMessage.senderId === authenticatedUser.id
                             ? 'You: '
                             : item.isGroup &&
                               `${item.latestMessage.senderName}: `)}
@@ -196,24 +231,6 @@ const LeftSideBarMessages = () => {
           toggleModal={toggleModalAddGroup}
         />
       )}
-      {/* {
-        <Box
-          sx={{
-            padding: '10px 20px',
-          }}
-        >
-          <Button
-            sx={{
-              backgroundColor: 'var(--buttonColor)',
-              color: 'white',
-              width: '100%',
-            }}
-            onClick={toggleModalAddGroup}
-          >
-            <GroupAdd />
-          </Button>
-        </Box>
-      } */}
     </Box>
   );
 };

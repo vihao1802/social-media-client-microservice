@@ -25,4 +25,20 @@ export interface CurrentUserResponse {
   data: User;
 }
 
+export interface UserPagination {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPage: number;
+  data: User[];
+}
+
+/* 
+"total": 8,
+    "page": 1,
+    "pageSize": 10,
+    "totalPage": 1,
+    "data": []
+*/
+
 export interface UpdateUserRequest extends UserBase {}

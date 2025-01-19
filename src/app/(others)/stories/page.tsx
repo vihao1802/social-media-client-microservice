@@ -20,7 +20,6 @@ import zIndex from '@mui/material/styles/zIndex';
 import StoryCard from '@/components/widgets/StoryCard';
 import { useGetFriendStories } from '@/hooks/post/useGetFriendStories';
 import GradientCircularProgress from '@/components/shared/Loader';
-import { User } from '@stream-io/video-react-sdk';
 import { Post } from '@/models/post';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 

@@ -117,7 +117,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
                   onClick={() => router.push(`/profile/${user.id}`)}
                 >
                   <ListItemAvatar>
-                    <Avatar alt="Remy Sharp" src={user.profile_img} />
+                    <Avatar alt="Remy Sharp" src={user.profileImg} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={user.username}

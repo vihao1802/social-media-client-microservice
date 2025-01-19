@@ -24,14 +24,12 @@ const MessageItemBox = ({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'left',
-          // margin: '0 20px',
           maxWidth: '400px',
           gap: '2px',
         }}
       >
         <Box
           sx={{
-            // marginBottom: '5px',
             borderRadius: '20px',
             padding: '6px 12px',
             backgroundColor:

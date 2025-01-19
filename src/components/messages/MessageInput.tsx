@@ -8,11 +8,17 @@ import {
 import FlexBetween from '../shared/FlexBetween';
 import { useContext, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { usePostMessage } from '@/hooks/message/usePostMessage';
 import GradientCircularProgress from '../shared/Loader';
 import { ChatContext } from '@/context/chat-context';
+import { User } from '@/models/user';
 
-const MessageInput = ({ scrollToBottom }: { scrollToBottom: () => void }) => {
+const MessageInput = ({
+  scrollToBottom,
+  authenticatedUser,
+}: {
+  scrollToBottom: () => void;
+  authenticatedUser: User;
+}) => {
   const [messageTextField, setMessageTextField] = useState('');
   const [switchIcon, setSwitchIcon] = useState(false); // Manage icon state here
   const [hasImage, setHasImage] = useState(false);
@@ -64,15 +70,15 @@ const MessageInput = ({ scrollToBottom }: { scrollToBottom: () => void }) => {
         msgContent: messageTextField.trim(),
         replyTo: null,
         msgMediaContent: imageFile ? imageFile : null,
-        senderId: 'cm5ruu3ui0003vh3wvzmdo3jj',
-        senderName: '',
+        senderId: authenticatedUser.id,
+        senderName: authenticatedUser.username,
       });
 
       handleTextFieldChange({
         target: { value: '' },
       } as React.ChangeEvent<HTMLInputElement>);
       removePhoto();
-      scrollToBottom();
+      // scrollToBottom();
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
