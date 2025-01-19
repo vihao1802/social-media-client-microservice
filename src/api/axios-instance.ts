@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
       const remainingTime = tokenPayload.exp - currentTime;
 
       console.log('[config token] config.url:', config.url);
-      console.log('[config token] Remaining time:', remainingTime);
+      // console.log('[config token] Remaining time:', remainingTime);
       console.log('[config token] token in config:', access_token);
 
       if (remainingTime <= 20 && !isRefreshing) {
@@ -52,7 +52,8 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error: Error) => {
     if (error.response) {
-      console.log('[axios] API Error:', error.request);
+      const res = JSON.parse(error.request.response);
+      console.log('[axios] API Error:', res);
 
       if (error.response.status === 400) {
         toast.error('Bad request, please try again');
@@ -61,6 +62,12 @@ axiosInstance.interceptors.response.use(
         toast.error('Resource not found');
       } else if (error.response.status >= 500) {
         toast.error('Server error, please try again later');
+        if (res.message)
+          toast.error(
+            res.message.length < 25
+              ? res.message
+              : 'See [axios] API Error in browser logs'
+          );
       }
     } else if (error.request) {
       console.error('No response received from server:', error.request);

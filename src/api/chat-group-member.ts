@@ -8,13 +8,4 @@ export const chatGroupMemberApi = {
 
     return res.data;
   },
-  async addMember(payload: FormData) {
-    const res = await axiosInstance.post(`${prefix}/Create`, payload, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    return res;
-  },
 };

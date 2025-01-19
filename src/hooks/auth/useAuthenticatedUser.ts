@@ -7,10 +7,11 @@ import {
   ResetPassword,
   ResetPasswordRequest,
 } from '@/models/auth-forgotpassword';
+import { User } from '@/models/user';
 
 function getUserFromStorage() {
   const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  return user ? (JSON.parse(user) as User) : null;
 }
 
 export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
@@ -42,10 +43,11 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
   }
 
   async function logout() {
-    const token = cookies.get('access_token');
-    if (token) await authApi.logout(token);
+    // if (token) await authApi.logout(token);
     mutate(null, false);
     cookies.remove('access_token');
+    cookies.remove('refresh_token');
+    localStorage.clear();
   }
 
   async function register(payload: RegisterRequest) {

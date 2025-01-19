@@ -1,5 +1,4 @@
 import { chatGroupMemberApi } from '@/api/chat-group-member';
-import { useGetAllUser } from '@/hooks/user/useGetAllUser';
 import { User } from '@/models/user';
 import {
   Modal,
@@ -14,7 +13,9 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { mutate } from 'swr';
 import ImagesUpload, { FileWithPreview } from '../shared/ImagesUpload';
-import { MediaContent } from '@/models/media-content';
+import { userApi } from '@/api/user';
+import { chatApi } from '@/api/chat';
+import { AddMembersCreation } from '@/models/chat-member';
 
 interface ModalAddGroupProps {
   adminId: string;
@@ -22,56 +23,122 @@ interface ModalAddGroupProps {
   toggleModal: () => void;
 }
 
+const convertUrlToFile = async (url: string) => {
+  return fetch(url)
+    .then((res) => res.blob())
+    .then((blob) => new File([blob], 'avatar.png', { type: blob.type }));
+};
+
 const ModalAddGroup = ({
   adminId,
   openModal,
   toggleModal,
 }: ModalAddGroupProps) => {
   const [groupChatName, setGroupChatName] = useState('');
-  const [mediaContentList, setMediaContentList] = useState<
-    (FileWithPreview | MediaContent)[]
-  >([]);
   const [loadingAddition, setLoadingAddition] = useState(false);
+  const [chatAvatar, setChatAvatar] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const handleAddMember = async () => {
-    if (!groupChatName || mediaContentList.length === 0) {
-      toast.error('Please fill in all fields');
+    if (selectedUsers.length === 0) {
+      toast.error('Please select at least one user');
       return;
     }
     try {
       setLoadingAddition(true);
+
       const formData = new FormData();
-      formData.append('name', groupChatName);
-      mediaContentList.forEach((media) => {
-        if (media instanceof File) {
-          formData.append('mediaFile', media);
+
+      if (selectedUsers.length == 1) {
+        // If it's a one-to-one chat
+        const file = selectedUsers[0].profileImg
+          ? await convertUrlToFile(selectedUsers[0].profileImg)
+          : await convertUrlToFile('http://localhost:3000/icons/user.png');
+
+        formData.append('groupName', selectedUsers[0].username);
+        formData.append('isGroup', 'false');
+        formData.append('groupAvatar', file);
+      } else {
+        if (!chatAvatar) {
+          toast.error('Please choose a group avatar');
           return;
         }
-      });
-      formData.append('AdminId', adminId);
-      formData.append('avatar', '');
-      const res = { data: { id: 1 } };
+        if (!groupChatName) {
+          toast.error('Please enter a group name');
+          return;
+        }
+        // If it's a group chat
+        formData.append('groupName', groupChatName);
+        formData.append('isGroup', 'true');
+        formData.append('groupAvatar', chatAvatar);
+      }
 
-      if (res && res.data) {
-        const formMemberData = new FormData();
-        formMemberData.append('GroupId', res.data.id.toString());
-        formMemberData.append('UserId', adminId);
-        const resMember = await chatGroupMemberApi.addMember(formMemberData);
+      const res = await chatApi.createGroupChat(formData);
+
+      if (res) {
+        const members = selectedUsers.map((user) => ({
+          userId: user.id,
+          isAdmin: false,
+        }));
+
+        members.push({ userId: adminId, isAdmin: selectedUsers.length > 1 });
+
+        // Wrap members in an object matching the AddMembersCreation interface
+        const payload: AddMembersCreation = { members };
+
+        const resMember = await chatApi.addMembers(payload, res.id);
+
         if (resMember) {
-          toast.success('Add group chat successful');
-          mutate('get_group_chat_by_me');
+          toast.success('Add chat success');
           toggleModal();
           setGroupChatName('');
-          setMediaContentList([]);
+          mutate('get_chats_by_user_id');
         }
       } else {
         toast.error('Add group chat failed');
       }
     } catch (error) {
-      console.log(error);
+      console.log('[handleAddMember]', error);
     } finally {
       setLoadingAddition(false);
     }
+  };
+
+  const handleFilteredUsers = async (value: string) => {
+    if (value.length > 0) {
+      const filtered = await userApi.getSearchUser(value);
+      console.log('[filtered]');
+
+      setFilteredUsers(
+        filtered.data.filter(
+          (user) =>
+            user.id !== adminId &&
+            selectedUsers.filter((filtered) => filtered.id === user.id)
+              .length === 0
+        )
+      );
+    } else {
+      setFilteredUsers([]);
+    }
+  };
+
+  const handleSelectedUsers = (arrayValue: User[]) => {
+    setSelectedUsers(arrayValue);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setChatAvatar(file);
+      setPreviewUrl(URL.createObjectURL(file)); // Generate a preview URL for the image
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setChatAvatar(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -101,32 +168,131 @@ const ModalAddGroup = ({
           variant="h6"
           component="h2"
           gutterBottom
+          fontWeight={600}
+          className="text-center"
         >
-          Add Group Chat
+          New message
         </Typography>
-        <ImagesUpload
-          value={mediaContentList}
-          onChange={(value) => {
-            setMediaContentList(value);
+        <Autocomplete
+          multiple
+          id="tags-standard"
+          options={filteredUsers}
+          getOptionLabel={(option) => option.username + ' - ' + option.email}
+          onChange={(e, value) => {
+            // called when user selects a user from the dropdown
+            handleSelectedUsers(value);
           }}
+          onInputChange={(e, value) => {
+            // called when user types in the input field
+            handleFilteredUsers(value);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              label="To anyone"
+              placeholder="Search..."
+            />
+          )}
         />
-        <TextField
-          label="Group Chat Name"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 2 }}
-          value={groupChatName}
-          onChange={(e) => setGroupChatName(e.target.value)}
-        />
-        <Stack direction="row" justifyContent="flex-end" spacing={2} mt={2}>
+        {selectedUsers.length > 1 && (
+          <>
+            <Box
+              sx={{
+                position: 'relative',
+                border: '2px dashed #ccc',
+                borderRadius: '8px',
+                mt: 2,
+                padding: '16px',
+                textAlign: 'center',
+                minHeight: '80px',
+                cursor: 'pointer',
+                '&:hover': {
+                  borderColor: '#3f51b5',
+                },
+              }}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="file-input"
+                onChange={handleFileChange}
+              />
+              <label
+                htmlFor="file-input"
+                style={{
+                  cursor: 'pointer',
+                  position: 'absolute',
+                  inset: 0,
+                  paddingTop: '8px',
+                }}
+              >
+                <Typography variant="body1" color="textSecondary">
+                  {chatAvatar
+                    ? `Selected File: ${chatAvatar.name.length > 25 ? chatAvatar.name.slice(0, 25) + '...' : chatAvatar.name}`
+                    : 'Click to upload a group avatar'}
+                </Typography>
+              </label>
+
+              {previewUrl && (
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mb: 1 }}
+                  >
+                    Preview:
+                  </Typography>
+                  <img
+                    src={previewUrl}
+                    alt="Selected Avatar"
+                    style={{
+                      width: '100px',
+                      height: '100px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </Box>
+              )}
+              {chatAvatar && previewUrl && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{ mt: 2 }}
+                  onClick={handleDeleteImage}
+                >
+                  Delete
+                </Button>
+              )}
+            </Box>
+            <TextField
+              label="Group Chat Name"
+              variant="outlined"
+              fullWidth
+              sx={{ mt: 2 }}
+              value={groupChatName}
+              onChange={(e) => setGroupChatName(e.target.value)}
+            />
+          </>
+        )}
+        <Stack mt={2}>
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddMember}
-            sx={{ textTransform: 'none' }}
-            disabled={loadingAddition}
+            sx={{ py: 1, textTransform: 'none' }}
+            disabled={loadingAddition || selectedUsers.length === 0}
           >
-            Add
+            Chat
           </Button>
         </Stack>
       </Box>

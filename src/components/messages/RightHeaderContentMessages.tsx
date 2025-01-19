@@ -1,5 +1,5 @@
 'use client';
-import { Box } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { ChatContext } from '@/context/chat-context';
 
@@ -36,24 +36,13 @@ const RightHeaderContentMessages = () => {
           alignItems: 'center',
         }}
       >
-        <img
+        <Avatar
           alt={'avatar'}
+          sx={{ width: 30, height: 30 }}
           src={chatAvatar || '/icons/user.png'}
-          height={30}
-          width={30}
         />
         <p className="text-lg pl-3 text-black">{chatName || 'Loading...'}</p>
       </Box>
-
-      {/* <InfoOutlined
-        fontSize={'inherit'}
-        sx={{
-          borderRadius: '50%',
-          cursor: 'pointer',
-          color: 'black',
-        }}
-        onClick={toggleDrawer(true)}
-      /> */}
     </Box>
   );
 };

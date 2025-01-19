@@ -17,7 +17,7 @@ const MessageImageBox = ({
         width: '100%',
         display: 'flex',
         justifyContent: position === 'right' ? 'flex-end' : 'flex-start',
-        marginTop: '5px',
+        marginTop: '2px',
       }}
     >
       <Box

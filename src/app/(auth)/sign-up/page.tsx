@@ -85,8 +85,9 @@ const SignUpPage = () => {
             try {
               const res = await register({
                 ...newValues,
+                username: newValues.userName,
                 gender: 1 ? true : false,
-                date_of_birth: dayjs(values.date_of_birth).toISOString(),
+                dob: dayjs(values.date_of_birth).toISOString(),
               });
 
               if (res && res.status === 200) {

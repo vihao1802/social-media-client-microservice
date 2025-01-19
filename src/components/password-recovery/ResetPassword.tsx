@@ -15,7 +15,6 @@ import { Visibility, VisibilityOffOutlined } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
-import { AxiosError } from '@stream-io/video-react-sdk';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()

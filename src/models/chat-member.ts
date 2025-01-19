@@ -10,6 +10,13 @@ export interface ChatMember {
   user: User;
 }
 
+export interface AddMembersCreation {
+  members: {
+    userId: string;
+    isAdmin: boolean;
+  }[];
+}
+
 export interface ChatMemberPagination {
   items: ChatMember[];
   totalItems: number;

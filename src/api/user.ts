@@ -1,4 +1,4 @@
-import { UpdateUserRequest, User } from '@/models/user';
+import { UpdateUserRequest, User, UserPagination } from '@/models/user';
 import axiosInstance from './axios-instance';
 
 const prefix = '/user';
@@ -26,9 +26,12 @@ export const userApi = {
   },
 
   async getSearchUser(query: string) {
-    const res = await axiosInstance.get(
-      `${prefix}/search?username=like:${query}&email=like:${query}`
+    const res = await axiosInstance.get<UserPagination>(
+      `${prefix}?page=1&pageSize=10&usernameOrEmail=${query}`
     );
+
+    console.log('[getSearchUser] ', res.data);
+
     return res.data;
   },
 };

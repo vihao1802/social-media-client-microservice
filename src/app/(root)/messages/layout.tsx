@@ -12,7 +12,6 @@ import SockJS from 'sockjs-client';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 
 const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
-  // const currUserId = 'cm5ruu3ui0003vh3wvzmdo3jj';
   const { user: authenticatedUser } = useAuthenticatedUser();
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -80,7 +79,7 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
     const newMessage: Message = JSON.parse(message.body);
     console.log('[onMessageReceived] Message received:', newMessage);
     if (authenticatedUser && authenticatedUser.id !== newMessage.senderId)
-      setMessages((prev) => [...prev, JSON.parse(message.body)]);
+      setMessages((prev) => [...prev, newMessage]);
   };
 
   // get latest messages
@@ -102,7 +101,8 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
   const getMessagesWithNextCursor = async (chatId: string, size = 20) => {
     try {
       setIsMessagesLoading(true);
-      if (messages.length > 0 && messages.length % size === 0 && nextCursor) {
+
+      if (messages.length > 0 && nextCursor) {
         // fetch with nextCursor
         console.log('[message]: fetch with nextCursor');
         const res = await messageApi.getMessagesByChatId(
@@ -125,16 +125,9 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
   const sendMessage = async (payload: CreateMessageRequest): Promise<void> => {
     try {
       const res = await messageApi.createMessage(payload);
-      setMessages((prev) => [...prev, res]);
+      console.log('[sendMessage]: Message sent:', res);
+      if (res) setMessages((prev) => [...prev, res]);
       mutate('get_chats_by_user_id');
-
-      /* if (stompClient && stompClient.connected) {
-        console.log('[sendMessage] Sending message to WebSocket');
-        stompClient.publish({
-          destination: `/app/send-message`,
-          body: JSON.stringify(res),
-        });
-      } */
     } catch (error) {
       console.log('[error]: sendMessage error', error);
     }
@@ -145,11 +138,9 @@ const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
       connectWebsocket();
       localStorage.setItem('selectedChat', JSON.stringify(selectedChat));
     }
-    // subscribeToTopic();
 
     return () => {
       if (stompClient) {
-        // unsubscribeFromTopic();
         stompClient.deactivate();
       }
     };
