@@ -27,7 +27,12 @@
     --buttonHoverColor: #1877f2;
   }
 }
-
+:root {
+  --background: #fff;
+  --foreground: #0a0a0a;
+  --buttonColor: #4491f5;
+  --buttonHoverColor: #1877f2;
+}
 body {
   color: var(--foreground);
   background: var(--background);

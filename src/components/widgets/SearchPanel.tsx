@@ -103,7 +103,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
           </IconButton>
         </Box>
 
-        {data && search && data.items.length > 0 ? (
+        {data && search && data.data.length > 0 ? (
           <List
             sx={{
               width: '100%',
@@ -111,7 +111,7 @@ const SearchPanel = ({ open }: { open: boolean }) => {
               overflowY: 'auto',
             }}
           >
-            {data.items.map((user: User, index: number) => (
+            {data.data.map((user: User, index: number) => (
               <ListItem alignItems="flex-start" disablePadding key={index}>
                 <ListItemButton
                   onClick={() => router.push(`/profile/${user.id}`)}

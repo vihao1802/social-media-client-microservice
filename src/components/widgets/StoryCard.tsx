@@ -145,7 +145,7 @@ const StoryCard = ({
       >
         <Box sx={{ display: 'flex', alignItems: 'center', zIndex: 999 }}>
           <Avatar
-            src={story.creator.profile_img}
+            src={story.creator.profileImg}
             alt="User Avatar"
             sx={{ width: 32, height: 32, mr: 1 }}
           />

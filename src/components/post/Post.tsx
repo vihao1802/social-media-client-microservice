@@ -169,7 +169,7 @@ export default function PostComponent() {
             >
               <Avatar
                 size="sm"
-                src={post.creator.profile_img || '/icons/person.png'}
+                src={post.creator.profileImg || '/icons/person.png'}
                 sx={{
                   width: '30px',
                   height: '30px',

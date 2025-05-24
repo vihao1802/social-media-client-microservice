@@ -4,7 +4,16 @@ export interface ResetPasswordRequestBase {
 
 export interface ResetPasswordRequest extends ResetPasswordRequestBase {}
 
-export interface ResetPassword extends ResetPasswordRequestBase {
-  newPassword: string;
+export interface ResetPassword {
   resetToken: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface OTPPayload extends ResetPasswordRequestBase {
+  otp: string;
+}
+
+export interface OTPPayloadResponse {
+  data: string;
 }

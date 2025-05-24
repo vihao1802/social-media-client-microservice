@@ -269,7 +269,7 @@ const LeftSideBar = () => {
                     >
                       <ListItemIcon>
                         <OnlineAvatar
-                          imgURL={user.profile_img || '/icons/user.png'}
+                          imgURL={user.profileImg || '/icons/user.png'}
                           height={25}
                           width={25}
                           isSelected={pathname.includes(`/profile/${user.id}`)}

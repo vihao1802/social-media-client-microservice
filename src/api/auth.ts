@@ -11,6 +11,8 @@ import toast from 'react-hot-toast';
 import cookies from 'js-cookie';
 import { RegisterRequest, RegisterResponse } from '@/models/auth-register';
 import {
+  OTPPayload,
+  OTPPayloadResponse,
   ResetPassword,
   ResetPasswordRequest,
 } from '@/models/auth-forgotpassword';
@@ -123,11 +125,19 @@ export const authApi = {
     return res;
   },
 
+  async verifyOTP(request: OTPPayload) {
+    const res = await axiosInstance.post<OTPPayloadResponse>(
+      `${prefix}/verify-otp`,
+      request
+    );
+    return res;
+  },
+
   async resetPassword(request: ResetPassword) {
     const res = await axiosInstance.post(`${prefix}/reset-password`, {
-      Email: request.email,
-      NewPassword: request.newPassword,
-      ResetToken: request.resetToken,
+      resetToken: request.resetToken,
+      newPassword: request.newPassword,
+      confirmPassword: request.confirmPassword,
     });
     return res;
   },

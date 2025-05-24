@@ -11,25 +11,26 @@ import {
 import { BiErrorCircle } from 'react-icons/bi';
 import { RecoveryContext } from '@/context/recovery-context';
 import toast from 'react-hot-toast';
-
+import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-around',
 }));
 
 const StyledTextField = styled(TextField)(({ theme, error }) => ({
-  width: '3rem',
-  height: '3rem',
+  width: '4rem',
+  height: '4rem',
+  marginRight: '0.5rem', // <-- tạo khoảng cách giữa các ô
   [theme.breakpoints.down('sm')]: {
-    width: '2rem',
-    height: '2rem',
+    width: '3rem',
+    height: '3rem',
   },
   '& .MuiOutlinedInput-root': {
     height: '100%',
   },
   '& input': {
     textAlign: 'center',
-    fontSize: '1.5rem',
+    fontSize: '1.5rem', // <-- chữ to hơn
     padding: 0,
   },
 }));
@@ -44,10 +45,12 @@ const ErrorMessage = styled(Typography)(({ theme }) => ({
 }));
 
 const OTPInput = () => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [isLoading, setIsLoading] = useState(false);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const { setPage, email, otp } = useContext(RecoveryContext);
+  const { setPage, email, setResetPasswordToken } = useContext(RecoveryContext);
+  const { verifyOTP, getOTP } = useAuthenticatedUser();
 
   useEffect(() => {
     if (inputRefs.current[0]) {
@@ -62,7 +65,7 @@ const OTPInput = () => {
       setCode(newCode);
       setError('');
 
-      if (value && index < 3) {
+      if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
       }
     }
@@ -75,25 +78,38 @@ const OTPInput = () => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     } else if (e.key === 'Enter') {
-      verifyOTP();
+      verifyOTPHandle();
     }
   };
 
-  const resendOTP = () => {
-    console.log('OTP: ' + otp + ',' + 'email: ' + email);
+  const resendOTP = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    const res = await getOTP({ email });
+    if (res.status >= 200 && res.status < 300) {
+      setIsLoading(false);
+      toast.success(`Email sent to ${email}!`);
+    } else {
+      setIsLoading(false);
+      toast.error(`Send OTP failed!`);
+    }
   };
 
-  const verifyOTP = () => {
+  const verifyOTPHandle = async () => {
     if (code.some((digit) => digit === '')) {
-      setError('Please enter 4 digit.');
+      setError('Please enter 6 digit.');
     } else {
-      if (parseInt(code.join('')) !== otp) {
-        setError('OTP is not correct. Please try again.');
-      } else {
-        setError('');
+      const res = await verifyOTP({ email: email, otp: code.join('') });
+
+      if (res.status >= 200 && res.status < 300) {
         toast.success('Verify OTP successfully!');
+        setResetPasswordToken(res.data.data);
         setPage('reset');
-        // alert("Mã hợp lệ!");
+        setError('');
+      } else {
+        toast.error('OTP is not correct. Please try again.');
+        setError('OTP is not correct. Please try again.');
       }
     }
   };
@@ -121,7 +137,7 @@ const OTPInput = () => {
         Verify OTP
       </Typography>
       <Typography variant="body1" color="gray">
-        Enter the 4-digit OTP sent to your email.
+        Enter the 6-digit OTP sent to your email.
       </Typography>
       <InputContainer>
         {code.map((digit, index) => (
@@ -148,7 +164,7 @@ const OTPInput = () => {
         <Button
           type="submit"
           size="large"
-          onClick={verifyOTP}
+          onClick={verifyOTPHandle}
           sx={{
             width: '100%',
             color: 'white',

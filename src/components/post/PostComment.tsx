@@ -253,7 +253,7 @@ const PostComment = ({
                 onClick={() => router.push(`/profile/${post?.creator.id}`)}
               >
                 <Avatar
-                  src={post?.creator.profile_img}
+                  src={post?.creator.profileImg}
                   sx={{ height: '32px', width: '32px' }}
                 />
                 <Typography sx={{ fontSize: '14px', fontWeight: 'bold' }}>

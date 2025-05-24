@@ -5,7 +5,7 @@ export interface FollowUserRequest {
 export interface Recommendation {
   id: string;
   userName: string;
-  profile_img: string;
+  profileImg: string;
   mutualFriends: number;
 }
 

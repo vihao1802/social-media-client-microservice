@@ -58,7 +58,7 @@ const SuggestionsList = () => {
             }}
           >
             <Avatar
-              src={item.profile_img || '/icons/user.png'}
+              src={item.profileImg || '/icons/user.png'}
               alt={item.userName}
               sx={{ width: '100px', height: '100px' }}
             />

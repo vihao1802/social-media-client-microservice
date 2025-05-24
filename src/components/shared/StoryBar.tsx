@@ -129,7 +129,7 @@ const StoryBar = () => {
               key={index}
               userId={creator.id}
               nickName={creator.username}
-              avatar={creator.profile_img}
+              avatar={creator.profileImg}
               activeIndex={posts[0].activeIndex}
             />
           ))}

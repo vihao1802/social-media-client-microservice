@@ -5,6 +5,6 @@ export const RecoveryContext = createContext({
   setPage: (page: string) => {},
   email: '',
   setEmail: (email: string) => {},
-  otp: 0,
-  setOTP: (otp: number) => {},
+  resetPasswordToken: '',
+  setResetPasswordToken: (token: string) => {},
 });

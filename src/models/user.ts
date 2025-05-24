@@ -2,6 +2,7 @@ export interface UserBase {
   username: string;
   email: string;
   gender: string;
+  phoneNumber: string;
   DateOfBirth: string;
   bio: string;
   profileImg: string;
@@ -32,13 +33,5 @@ export interface UserPagination {
   totalPage: number;
   data: User[];
 }
-
-/* 
-"total": 8,
-    "page": 1,
-    "pageSize": 10,
-    "totalPage": 1,
-    "data": []
-*/
 
 export interface UpdateUserRequest extends UserBase {}
