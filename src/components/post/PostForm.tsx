@@ -224,8 +224,8 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
                       gap: '15px',
                     }}
                   >
-                    {currentUser.profile_img ? (
-                      <Avatar src={currentUser.profile_img} />
+                    {currentUser.profileImg ? (
+                      <Avatar src={currentUser.profileImg} />
                     ) : (
                       <Avatar sx={{ height: '32px', width: '32px' }}>
                         {currentUser.username.charAt(0).toUpperCase()}

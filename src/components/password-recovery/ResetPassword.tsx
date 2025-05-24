@@ -15,6 +15,7 @@ import { Visibility, VisibilityOffOutlined } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+import { resolveSoa } from 'dns';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()
@@ -26,23 +27,17 @@ const ResetPasswordSchema = Yup.object().shape({
 });
 
 const ResetPassword = () => {
-  const { setPage } = useContext(RecoveryContext);
+  const { setPage, resetPasswordToken } = useContext(RecoveryContext);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const { resetPassword } = useAuthenticatedUser();
-  const token = searchParams.get('token');
-  const email = searchParams.get('email');
-  if (!token || !email) {
-    toast.error('Invalid token or email');
-    router.push('/password-recovery');
-    return;
-  }
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
@@ -81,17 +76,19 @@ const ResetPassword = () => {
           validationSchema={ResetPasswordSchema}
           onSubmit={async (values) => {
             // handle form submission
+            console.log('resetPasswordToken', resetPasswordToken);
+
             const res = await resetPassword({
-              email,
-              resetToken: token,
+              resetToken: resetPasswordToken,
               newPassword: values.password,
+              confirmPassword: values.confirmPassword,
             });
 
             if (res.status >= 200 && res.status < 300) {
               toast.success('Reset password successfully');
               router.push('/sign-in');
             } else if (res.status === 400) {
-              toast.error('Invalid password');
+              toast.error(res.data.message);
             }
           }}
         >

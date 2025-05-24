@@ -118,7 +118,7 @@ const RightSideBar = () => {
                     }}
                   >
                     <Avatar
-                      src={user.profile_img || '/icons/user.png'}
+                      src={user.profileImg || '/icons/user.png'}
                       sx={{ height: '44px', width: '44px' }}
                     />
                     <Box>

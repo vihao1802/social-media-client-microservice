@@ -129,7 +129,7 @@ const ProfileTopContent = ({ posts }: ProfileBottomContentProps) => {
         {user && (
           <Box
             component="img"
-            src={user.profile_img || '/icons/user.png'}
+            src={user.profileImg || '/icons/user.png'}
             sx={{
               width: '150px',
               height: '150px',

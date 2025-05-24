@@ -9,7 +9,7 @@ import { RecoveryContext } from '@/context/recovery-context';
 const PasswordRecoveryPage = () => {
   const [page, setPage] = useState('send-email');
   const [email, setEmail] = useState('');
-  const [otp, setOTP] = useState(0);
+  const [resetPasswordToken, setResetPasswordToken] = useState('');
 
   const NavigateComponents = () => {
     if (page === 'send-email') return <SendOTPEmail />;
@@ -26,8 +26,8 @@ const PasswordRecoveryPage = () => {
         setPage,
         email,
         setEmail,
-        otp,
-        setOTP,
+        resetPasswordToken,
+        setResetPasswordToken,
       }}
     >
       <div className="m-auto">

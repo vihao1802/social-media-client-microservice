@@ -83,7 +83,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
       <Box width="10%">
         <Link href={`/profile/${comment.user.id}`}>
           <Avatar
-            src={comment.user.profile_img}
+            src={comment.user.profileImg}
             sx={{ height: '32px', width: '32px' }}
           />
         </Link>

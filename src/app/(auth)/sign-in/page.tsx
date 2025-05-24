@@ -217,7 +217,8 @@ const SignInPage = () => {
               style={{ width: 25, height: 25 }}
             />
           }
-          href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/external-login/Google`}
+          // href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/login`}
+          href={`http://localhost:8103/auth/google/login`}
         >
           Sign In with Google
         </Button>
@@ -239,7 +240,7 @@ const SignInPage = () => {
               style={{ width: 20, height: 20 }}
             />
           }
-          href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/external-login/Facebook`}
+          href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/facebook/login`}
         >
           Sign In with Facebook
         </Button>

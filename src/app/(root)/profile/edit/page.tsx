@@ -44,12 +44,12 @@ const EditProfilePage = () => {
       return;
     }
     try {
-      const { create_at, ...newUser } = user;
+      const { createdAt, ...newUser } = user;
       const res = await updateUser({
         ...newUser,
         bio: newBio,
         phoneNumber: newPhoneNumber,
-        profile_img: user.profile_img || '',
+        profileImg: user.profileImg || '',
       });
       if (res) toast.success('Save successful');
     } catch (error) {
@@ -206,7 +206,7 @@ const EditProfilePage = () => {
               ) : (
                 <Box
                   component="img"
-                  src={user.profile_img || '/icons/user.png'}
+                  src={user.profileImg || '/icons/user.png'}
                   sx={{
                     width: '60px',
                     height: '60px',

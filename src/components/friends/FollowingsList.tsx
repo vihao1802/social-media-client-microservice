@@ -78,7 +78,7 @@ const FollowingsList = () => {
             }}
           >
             <img
-              src={followingItem?.profile_img || '/icons/user.png'}
+              src={followingItem?.profileImg || '/icons/user.png'}
               alt="Avatar"
               className="w-24 h-24 rounded-full mx-auto"
             />
@@ -155,7 +155,7 @@ const FollowingsList = () => {
           >
             <Avatar
               alt={item.receiver.username}
-              src={item.receiver.profile_img || '/icons/user.png'}
+              src={item.receiver.profileImg || '/icons/user.png'}
             />
             <Box
               sx={{

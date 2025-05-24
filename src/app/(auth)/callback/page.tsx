@@ -2,20 +2,24 @@
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import { Box, Skeleton, Typography } from '@mui/material';
 import cookies from 'js-cookie';
-import { useParams, useSearchParams } from 'next/navigation';
+import { redirect, useParams, useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const CallBackHandle = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
 
-  if (!token) {
+  const access_token = searchParams.get('access_token');
+  const refresh_token = searchParams.get('refresh_token');
+
+  if (!access_token || !refresh_token) {
     router.push('/sign-in');
   } else {
-    cookies.set('token', token);
-    window.location.href = '/';
+    cookies.set('access_token', access_token);
+    cookies.set('refresh_token', refresh_token);
+    // window.location.href = '/';
+    router.push('/');
   }
   return (
     <Box

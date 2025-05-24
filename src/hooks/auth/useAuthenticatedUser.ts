@@ -4,6 +4,7 @@ import useSWR, { SWRConfiguration } from 'swr';
 import cookies from 'js-cookie';
 import { RegisterRequest } from '@/models/auth-register';
 import {
+  OTPPayload,
   ResetPassword,
   ResetPasswordRequest,
 } from '@/models/auth-forgotpassword';
@@ -65,8 +66,13 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     return res;
   }
 
-  async function sendEmail(payload: ResetPasswordRequest) {
+  async function getOTP(payload: ResetPasswordRequest) {
     const res = await authApi.sendResetPasswordToken(payload);
+    return res;
+  }
+
+  async function verifyOTP(payload: OTPPayload) {
+    const res = await authApi.verifyOTP(payload);
     return res;
   }
 
@@ -85,7 +91,8 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     register,
     signInGoogle,
     signInFacebook,
-    sendEmail,
+    getOTP,
     resetPassword,
+    verifyOTP,
   };
 }

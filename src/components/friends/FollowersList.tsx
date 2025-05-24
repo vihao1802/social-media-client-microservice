@@ -65,7 +65,7 @@ const FollowersList = () => {
             >
               <Avatar
                 alt={item.sender.username}
-                src={item.sender.profile_img || '/icons/user.png'}
+                src={item.sender.profileImg || '/icons/user.png'}
               />
               <Box
                 sx={{

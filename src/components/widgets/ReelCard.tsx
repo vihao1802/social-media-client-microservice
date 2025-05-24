@@ -207,7 +207,7 @@ const VideoCard = ({ mediaContent }: VideoCardProps) => {
             >
               <Avatar
                 src={
-                  mediaContent.post.creator.profile_img || '/icons/person.png'
+                  mediaContent.post.creator.profileImg || '/icons/person.png'
                 } // Avatar Image
                 alt={mediaContent.post.creator.username} // Avatar Alt Text
                 sx={{ width: 32, height: 32 }}
