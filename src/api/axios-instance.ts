@@ -55,9 +55,10 @@ axiosInstance.interceptors.response.use(
       const res = JSON.parse(error.request.response);
       console.log('[axios] API Error:', res);
 
-      if (error.response.status === 400) {
-        toast.error('Bad request, please try again');
-      } else if (error.response.status === 404) {
+      // if (error.response.status === 400) {
+      //   toast.error('Bad request, please try again');
+      // } else
+      if (error.response.status === 404) {
         console.error('[axios] Resource not found');
         toast.error('Resource not found');
       } else if (error.response.status >= 500) {

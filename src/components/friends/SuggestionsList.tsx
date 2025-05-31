@@ -14,6 +14,9 @@ const SuggestionsList = () => {
       const res = await followUser({ user_id });
       if (res) {
         toast.success('Followed successfully');
+        mutate('get_me_following');
+        mutate('get_me_follower');
+        mutate('get_recommendation');
       }
     } catch (error) {
       console.error(error);
@@ -44,7 +47,7 @@ const SuggestionsList = () => {
           <GradientCircularProgress />
         </Box>
       ) : (
-        recommendations.items.map((item, index) => (
+        recommendations.data.map((item, index) => (
           <Box
             key={index}
             sx={{
@@ -59,7 +62,7 @@ const SuggestionsList = () => {
           >
             <Avatar
               src={item.profileImg || '/icons/user.png'}
-              alt={item.userName}
+              alt={item.username}
               sx={{ width: '100px', height: '100px' }}
             />
             <Box
@@ -70,7 +73,7 @@ const SuggestionsList = () => {
               }}
             >
               <Link href={`profile/${item.id}`} underline="none" color="black">
-                <Typography>{item.userName}</Typography>
+                <Typography>{item.username}</Typography>
               </Link>
               <Typography
                 sx={{

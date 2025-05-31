@@ -15,15 +15,16 @@ import GradientCircularProgress from '../shared/Loader';
 import { relationshipApi } from '@/api/relationship';
 import toast from 'react-hot-toast';
 import { mutate } from 'swr';
+import { Receiver } from '@/models/relationship-following';
 
 const FollowingsList = () => {
   const [open, setOpen] = useState(false);
-  const handleOpen = (user: User) => {
+  const handleOpen = (user: Receiver) => {
     setOpen(true);
     setFollowingItem(user);
   };
   const handleClose = () => setOpen(false);
-  const [followingItem, setFollowingItem] = useState<User | null>(null);
+  const [followingItem, setFollowingItem] = useState<Receiver | null>(null);
   const { data: relationshipMeFollowing } = useGetRelationshipMeFollowing({});
 
   const handleUnFollow = async (user_id: string) => {
@@ -143,7 +144,7 @@ const FollowingsList = () => {
           <GradientCircularProgress />
         </Box>
       ) : (
-        relationshipMeFollowing.map((item, index) => (
+        relationshipMeFollowing.data.data.map((item, index) => (
           <Box
             key={index}
             sx={{
@@ -154,8 +155,8 @@ const FollowingsList = () => {
             }}
           >
             <Avatar
-              alt={item.receiver.username}
-              src={item.receiver.profileImg || '/icons/user.png'}
+              alt={item.Receiver.username}
+              src={item.Receiver.profileImg || '/icons/user.png'}
             />
             <Box
               sx={{
@@ -171,7 +172,7 @@ const FollowingsList = () => {
               }}
             >
               <Link
-                href={`profile/${item.receiverId}`}
+                href={`profile/${item.ReceiverId}`}
                 underline="none"
                 color="black"
               >
@@ -184,7 +185,7 @@ const FollowingsList = () => {
                     fontSize: '15px',
                   }}
                 >
-                  {item.receiver.username}
+                  {item.Receiver.username}
                 </Typography>
               </Link>
               <Typography
@@ -193,11 +194,11 @@ const FollowingsList = () => {
                   fontSize: '13px',
                 }}
               >
-                {item.receiver.email}
+                {item.Receiver.email}
               </Typography>
             </Box>
 
-            {item.status === RelationshipStatus.Accepted ? (
+            {item.Status === RelationshipStatus.Accepted ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -220,7 +221,7 @@ const FollowingsList = () => {
                       color: 'red',
                     },
                   }}
-                  onClick={() => handleOpen(item.receiver)}
+                  onClick={() => handleOpen(item.Receiver)}
                 >
                   <Typography sx={{ fontSize: '14px' }}>Unfollow</Typography>
                 </Button>
@@ -237,7 +238,7 @@ const FollowingsList = () => {
                       backgroundColor: '#DBDBDB',
                     },
                   }}
-                  href={`/messages/r/${item.id}/u/${item.receiverId}`}
+                  href={`/messages/r/${item.Id}/u/${item.ReceiverId}`}
                 >
                   <Typography sx={{ fontSize: '14px' }}>Message</Typography>
                 </Link>
