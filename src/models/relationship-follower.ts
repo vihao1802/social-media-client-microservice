@@ -1,20 +1,31 @@
 import { RelationshipStatus, RelationshipType } from '@/types/enum';
 import { User } from './user';
 
-export interface RelationshipFollowerBase {
-  senderId: string;
-  relationship_type: RelationshipType;
+export interface RelationshipFollowerList {
+  status: number;
+  data: {
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPage: number;
+    data: Follower[];
+  };
+  message: string;
 }
-
-export interface RelationshipFollower extends RelationshipFollowerBase {
-  id: number;
-  create_at: string;
-  status: RelationshipStatus;
-  sender: User;
+export interface Follower {
+  Id: string;
+  SenderId: string;
+  Sender: Sender;
+  Status: string;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
-
-export interface RelationshipFollowerRequest extends RelationshipFollowerBase {}
-
+export interface Sender {
+  id: string;
+  username: string;
+  profileImg: string;
+  email: string;
+}
 export interface FollowerQuantity {
   quantity: number;
 }
