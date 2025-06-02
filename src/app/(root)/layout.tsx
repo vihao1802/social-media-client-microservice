@@ -4,6 +4,7 @@ import LeftSideBar from '@/components/shared/LeftSideBar';
 import AuthProvider from '@/providers/AuthProvider';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { WebSocketProvider } from '@/providers/WebSocketProvider';
 
 export default function RootLayout({
   children,
@@ -15,10 +16,12 @@ export default function RootLayout({
     <div>
       <AppRouterCacheProvider>
         <AuthProvider>
-          <div className="flex flex-row">
-            <LeftSideBar />
-            {children}
-          </div>
+          <WebSocketProvider>
+            <div className="flex flex-row">
+              <LeftSideBar />
+              {children}
+            </div>
+          </WebSocketProvider>
         </AuthProvider>
       </AppRouterCacheProvider>
     </div>

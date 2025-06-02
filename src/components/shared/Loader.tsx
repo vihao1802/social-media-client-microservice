@@ -1,15 +1,18 @@
-import * as React from 'react';
+import { Fragment } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from '@mui/material';
 
 interface GradientCircularProgressProps {
   width?: number;
+  paddingRight?: number;
 }
 
 export default function GradientCircularProgress({
   width = 40,
+  paddingRight = 0,
 }: GradientCircularProgressProps) {
   return (
-    <React.Fragment>
+    <Fragment>
       <svg width={0} height={0}>
         <defs>
           <linearGradient id="my_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -18,12 +21,17 @@ export default function GradientCircularProgress({
           </linearGradient>
         </defs>
       </svg>
-      <CircularProgress
-        size={width}
-        sx={{
-          'svg circle': { stroke: 'url(#my_gradient)' },
-        }}
-      />
-    </React.Fragment>
+      <Box
+        paddingRight={paddingRight}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <CircularProgress
+          size={width}
+          sx={{
+            'svg circle': { stroke: 'url(#my_gradient)' },
+          }}
+        />
+      </Box>
+    </Fragment>
   );
 }
