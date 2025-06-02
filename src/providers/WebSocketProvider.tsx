@@ -15,7 +15,7 @@ export const WebSocketProvider = ({
 
   useEffect(() => {
     if (!authenticatedUser) return;
-    const BASE_URL = 'http://localhost:8101';
+    const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
     const socket = new SockJS(`${BASE_URL}/ws`);
 
     stompClientRef.current = new Client({
