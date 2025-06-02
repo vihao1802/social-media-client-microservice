@@ -25,12 +25,10 @@ export const authApi = {
       request
     );
 
-    if (res.status === 400) {
-      return;
+    if (res.status === 200) {
+      cookies.set('access_token', res.data.data.access_token);
+      cookies.set('refresh_token', res.data.data.refresh_token);
     }
-
-    cookies.set('access_token', res.data.data.access_token);
-    cookies.set('refresh_token', res.data.data.refresh_token);
 
     return res;
   },

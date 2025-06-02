@@ -1,12 +1,11 @@
 export enum RelationshipStatus {
-  Rejected = 'Rejected',
-  Pending = 'Pending',
-  Accepted = 'Accepted',
+  Pending = 'pending',
+  Accepted = 'accepted',
 }
 
 export enum RelationshipType {
-  Block = 'Block',
-  Follow = 'Follow',
+  Block = 'block',
+  Follow = 'follow',
 }
 export enum Visibility {
   Public = 0, // Visible to everyone
