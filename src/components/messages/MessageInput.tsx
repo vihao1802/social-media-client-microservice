@@ -58,7 +58,6 @@ const MessageInput = ({
     } else {
       setSwitchIcon(true); // Change to send icon
     }
-    console.log(value);
   };
 
   const handleSendMessage = async () => {
@@ -92,7 +91,7 @@ const MessageInput = ({
         borderRadius: '25px',
         margin: '10px 14px',
         border: '2px solid #c7c5c5',
-        alignItems: 'end',
+        alignItems: 'center',
       }}
     >
       <Box
@@ -194,7 +193,7 @@ const MessageInput = ({
 
       {switchIcon || hasImage ? (
         isSending ? (
-          <GradientCircularProgress width={25} />
+          <GradientCircularProgress width={22} paddingRight={1} />
         ) : (
           <IconButton
             id="send-message-button"

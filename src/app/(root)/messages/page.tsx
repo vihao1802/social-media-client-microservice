@@ -10,6 +10,7 @@ const Messages = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginX: 'auto',
       }}
     >
       <Box
