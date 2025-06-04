@@ -3,16 +3,17 @@ export interface FollowUserRequest {
 }
 
 export interface Recommendation {
-  id: string;
-  userName: string;
-  profileImg: string;
   mutualFriends: number;
+  id: string;
+  username: string;
+  email: string;
+  profileImg: string;
 }
 
 export interface RecommendationPagination {
-  items: Recommendation[];
-  totalItems: number;
+  data: Recommendation[];
+  total: number;
   page: number;
   pageSize: number;
-  totalPages: number;
+  totalPage: number;
 }

@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { LoginRequest } from '@/models/auth-login';
 import toast from 'react-hot-toast';
 import GradientCircularProgress from '@/components/shared/Loader';
+import axios from 'axios';
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,21 +36,15 @@ const SignInPage = () => {
     setIsLogin(true);
     try {
       const res = await login(payload);
-      if (res && res.status === 200) {
+
+      if (res?.status === 200) {
         toast.success('Sign in successfully');
-
-        /* if (res.scope === "ADMIN") {
-          router.push("/dashboard");
-          return;
-        } */
-
         router.push('/');
-      } else {
-        toast.error('Sign in failed');
+      } else if (axios.isAxiosError(res)) {
+        toast.error(res.response?.data.message || 'Sign in failed !');
       }
     } catch (error) {
       toast.error('Sign in failed');
-      console.log(error);
     } finally {
       setIsLogin(false);
     }

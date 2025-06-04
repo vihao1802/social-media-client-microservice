@@ -128,7 +128,7 @@ const RightSideBar = () => {
                           fontWeight: 'bold',
                         }}
                       >
-                        {user.userName}
+                        {user.username}
                       </Typography>
                       <Typography
                         sx={{

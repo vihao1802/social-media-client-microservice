@@ -1,11 +1,11 @@
 import {
   FollowerQuantity,
-  RelationshipFollower,
+  RelationshipFollowerList,
 } from '@/models/relationship-follower';
 import axiosInstance from './axios-instance';
 import {
   FollowingQuantity,
-  RelationshipFollowing,
+  RelationshipFollowingList,
 } from '@/models/relationship-following';
 import { PersonalMessenger } from '@/models/personal-messenger';
 import { RecommendationPagination } from '@/models/relationship';
@@ -14,13 +14,13 @@ const prefix = '/relationship';
 
 export const relationshipApi = {
   async getRelationshipMeFollower() {
-    const res = await axiosInstance.get<RelationshipFollower[]>(
+    const res = await axiosInstance.get<RelationshipFollowerList>(
       `${prefix}/me/follower`
     );
     return res.data;
   },
   async getRelationshipMeFollowing() {
-    const res = await axiosInstance.get<RelationshipFollowing[]>(
+    const res = await axiosInstance.get<RelationshipFollowingList>(
       `${prefix}/me/following`
     );
     return res.data;
@@ -32,13 +32,13 @@ export const relationshipApi = {
     return res.data;
   },
   async getRelationshipByUserIdFollowing(userId: string) {
-    const res = await axiosInstance.get<RelationshipFollowing[]>(
+    const res = await axiosInstance.get<RelationshipFollowingList>(
       `${prefix}/${userId}/following`
     );
     return res.data;
   },
   async getRelationshipByUserIdFollower(userId: string) {
-    const res = await axiosInstance.get<RelationshipFollower[]>(
+    const res = await axiosInstance.get<RelationshipFollowerList>(
       `${prefix}/${userId}/follower`
     );
     return res.data;
@@ -60,16 +60,16 @@ export const relationshipApi = {
     return res;
   },
   async acceptFollower(user_id: string) {
-    const res = await axiosInstance.post(`${prefix}/follow/${user_id}/accept`);
+    const res = await axiosInstance.post(`${prefix}/accept/${user_id}`);
     return res;
   },
   async unfollowUser(user_id: string) {
-    const res = await axiosInstance.post(`${prefix}/${user_id}/unfollow`);
+    const res = await axiosInstance.post(`${prefix}/unfollow/${user_id}`);
     return res;
   },
   async getRecommendation() {
     const res = await axiosInstance.get<RecommendationPagination>(
-      `${prefix}/recommendation`
+      `${prefix}/me/recommendation`
     );
     return res.data;
   },

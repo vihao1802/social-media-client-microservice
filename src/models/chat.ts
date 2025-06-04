@@ -1,6 +1,5 @@
 import { ChatMember } from './chat-member';
 import { Message } from './message';
-import { User } from './user';
 
 export interface Chat {
   id: string;
