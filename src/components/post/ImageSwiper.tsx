@@ -101,7 +101,9 @@ const ImageSwiper = ({ postMedia, width }: ImageSwiperProps) => {
                   <Box
                     component={content.media_type === 'video' ? 'video' : 'img'}
                     controls
-                    src={content.media_Url}
+                    src={
+                      'http://localhost:9007/global-storage/' + content.mediaUrl
+                    }
                     height="100%"
                     width="100%"
                     maxHeight="600px"

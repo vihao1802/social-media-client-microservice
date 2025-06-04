@@ -38,14 +38,14 @@ const Profile = () => {
         <ProfileTopContent posts={postResponse.items} />
         <ProfileBottomContent
           posts={postResponse.items
-            .filter((item) => !item.is_story)
+            .filter((item) => !item.isStory)
             .sort(
               (a, b) =>
                 new Date(b.create_at).getTime() -
                 new Date(a.create_at).getTime()
             )}
           stories={postResponse.items
-            .filter((item) => item.is_story)
+            .filter((item) => item.isStory)
             .sort(
               (a, b) =>
                 new Date(b.create_at).getTime() -

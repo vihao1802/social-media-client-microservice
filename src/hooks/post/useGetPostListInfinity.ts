@@ -16,7 +16,7 @@ export function usePostListInfinity({
   enabled = true,
 }: UsePostListInfinityProps) {
   const swrResponse = useSWRInfinite<ListResponse<Post>>(
-    (index: number, previousPageData: any) => {
+    (index: number, previousPageData: any) => {      
       if (!enabled) return null;
 
       // index starts at 0
@@ -24,16 +24,17 @@ export function usePostListInfinity({
       const query: Partial<Pagination> = {
         ...params,
         page: page,
-        pageSize: 5,
+        size: 5,
       };
 
       // return null in case page > totalPages
       if (previousPageData) {
-        const totalPages = previousPageData?.totalPages || 0;
+        const totalPages = previousPageData?.pages || 0;
+        
         if (page > totalPages) return null;
       }
 
-      return `/post?${qs.stringify(query)}`;
+      return `/posts?${qs.stringify(query)}`;
     },
     async (url: string) => {
       const response = await axiosInstance.get(url);

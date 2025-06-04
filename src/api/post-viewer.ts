@@ -1,15 +1,15 @@
 import axiosInstance from '@/api/axios-instance';
 import { PostViewerRequest } from '@/models/post-viewer';
 
-const prefix = '/postViewer';
+const prefix = '/post_viewer';
 
 export const postViewerApi = {
-  async getPostViewerByPostId(postId: number) {
-    const res = await axiosInstance.get(`${prefix}/${postId}`, {
-      params: {
-        page: 1,
-        pageSize: 100,
-      },
+  async getPostViewerByPostId(postId: string) {
+    const res = await axiosInstance.get(`${prefix}/post/${postId}`, {
+      // params: {
+      //   page: 1,
+      //   size: 100,
+      // },
     });
     return res.data;
   },

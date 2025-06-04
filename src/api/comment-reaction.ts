@@ -4,7 +4,7 @@ import { CommentReactionRequest } from '@/models/comment-reaction';
 const prefix = '/commentReaction';
 
 export const commentReactionApi = {
-  async getCommentReaction(commentId: number) {
+  async getCommentReaction(commentId: string) {
     const res = await axiosInstance.get(`${prefix}/${commentId}`);
     return res.data;
   },
@@ -14,7 +14,7 @@ export const commentReactionApi = {
     return res.data;
   },
 
-  async deleteCommentReaction(commentReactionId: number) {
+  async deleteCommentReaction(commentReactionId: string) {
     const res = await axiosInstance.delete(`${prefix}/${commentReactionId}`);
     return res.data;
   },

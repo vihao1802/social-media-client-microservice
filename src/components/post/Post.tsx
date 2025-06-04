@@ -50,9 +50,6 @@ export default function PostComponent() {
     return null;
   }
 
-  const { data: postViewerData, isLoading: isPostViewerDataLoading } =
-    useGetPostViewerByPostId({ postId: post.id });
-
   const { data: mediaContentData, isLoading: isMediaContentDataLoading } =
     useGetMediaContentByPostId({ postId: post.id });
 
@@ -68,20 +65,9 @@ export default function PostComponent() {
     setCommentContent('');
   };
 
-  const [postViewerId, setPostViewerId] = useState(0);
+  const [postViewerId, setPostViewerId] = useState('');
   const createPostViewer = useCreatePostViewer();
   const deletePostViewer = useDeletePostViewer();
-
-  useEffect(() => {
-    if (postViewerData) {
-      const postViewer = postViewerData.items.find(
-        (item: PostViewer) => item.userId === currentUser.id
-      );
-      if (postViewer) {
-        setPostViewerId(postViewer.id);
-      }
-    }
-  }, [postViewerData]);
 
   const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorElMenu);
@@ -104,25 +90,18 @@ export default function PostComponent() {
 
   // const [muted, setMuted] = useState(true);
 
-  if (
-    isMediaContentDataLoading ||
-    !mediaContentData ||
-    isPostViewerDataLoading ||
-    !postViewerData
-  )
-    return <Skeleton />;
+  if (isMediaContentDataLoading || !mediaContentData)
+    return <Skeleton height={500} />;
 
   dayjs.extend(relativeTime);
 
-  const isLiked = postViewerData?.items.some(
-    (item: PostViewer) => item.userId === currentUser.id && item.liked === true
-  );
+  const isLiked = post?.liked || false;
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (isLiked) {
-      if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId, post.id);
+      if (postViewerId !== '') {
+        // await deletePostViewer(postViewerId, post.id);
       } else {
         toast.error('Post viewer not found!');
         return null;
@@ -213,7 +192,7 @@ export default function PostComponent() {
         </CardContent>
         <CardOverflow
           sx={
-            mediaContentData?.items.length > 1
+            mediaContentData?.length > 1
               ? {
                   display: 'flex',
                   alignItems: 'center',
@@ -222,15 +201,18 @@ export default function PostComponent() {
               : undefined
           }
         >
-          {mediaContentData?.items.length > 1 ? (
-            <ImageSwiper postMedia={mediaContentData?.items || []} />
+          {mediaContentData.length > 1 ? (
+            <ImageSwiper postMedia={mediaContentData || []} />
           ) : (
             <AspectRatio ratio="3/2">
-              {mediaContentData?.items[0].media_type === 'image' ? (
+              {mediaContentData[0].mediaType === 'IMAGE' ? (
                 <Box
                   component="img"
-                  src={mediaContentData?.items[0].media_Url}
-                  alt={mediaContentData?.items[0].media_type}
+                  src={
+                    'http://localhost:9007/global-storage/' +
+                    mediaContentData[0].mediaUrl
+                  }
+                  alt={mediaContentData[0].mediaType}
                   sx={{
                     width: '100%', // Đầy đủ chiều rộng
                     maxHeight: '500px', // Giữ tỷ lệ ảnh
@@ -241,7 +223,10 @@ export default function PostComponent() {
                   component="video"
                   controls
                   autoPlay
-                  src={mediaContentData?.items[0].media_Url}
+                  src={
+                    'http://localhost:9007/global-storage/' +
+                    mediaContentData[0].mediaUrl
+                  }
                   height="100%"
                   width="100%"
                   sx={{
@@ -252,25 +237,25 @@ export default function PostComponent() {
                 />
                 // <video autoPlay loop muted={muted}>
                 //   <source
-                //     src={mediaContentData?.items[0].media_Url}
+                //     src={"http://localhost:9007/global-storage/" + mediaContentData[0].mediaUrl}
                 //     type="video/mp4"
                 //   />
                 // </video>
               )}
-              {/* {mediaContentData?.items[0].media_type === "video" && (
+              {/* {mediaContentData[0].mediaType === 'video' && (
                 <Typography
                   sx={{
-                    position: "absolute",
+                    position: 'absolute',
                     bottom: 15,
                     right: 15,
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                   onClick={() => setMuted(!muted)}
                 >
                   {muted ? (
-                    <VolumeOff sx={{ color: "white" }} />
+                    <VolumeOff sx={{ color: 'white' }} />
                   ) : (
-                    <VolumeUp sx={{ color: "white" }} />
+                    <VolumeUp sx={{ color: 'white' }} />
                   )}
                 </Typography>
               )} */}
@@ -316,14 +301,7 @@ export default function PostComponent() {
           </Box>
         </CardContent>
         <CardContent>
-          <Typography>
-            {
-              postViewerData.items.filter(
-                (postViewer: PostViewer) => postViewer.liked === true
-              ).length
-            }{' '}
-            Likes
-          </Typography>
+          <Typography>{post?.likeCount || 0} Likes</Typography>
           <Typography sx={{ fontSize: 'sm' }}>
             <Typography>{post.creator.username}</Typography> {post.content}
           </Typography>
@@ -414,7 +392,7 @@ export default function PostComponent() {
       {/* Comment Modal */}
       {openComment && (
         <PostComment
-          postMedia={mediaContentData?.items || []}
+          postMedia={mediaContentData || []}
           isOpen={openComment}
           handleClose={() => setOpenComment(false)}
         />
@@ -424,7 +402,7 @@ export default function PostComponent() {
       {openPostForm && (
         <PostForm
           post={post}
-          postMedia={mediaContentData?.items || []}
+          postMedia={mediaContentData || []}
           open={openPostForm}
           handleClose={handleClosePostForm}
         />

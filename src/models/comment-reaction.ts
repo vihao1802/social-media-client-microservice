@@ -1,10 +1,10 @@
 interface CommentReactionBase {
   userId: string;
-  commentId: number;
+  commentId: string;
 }
 
 export interface CommentReaction extends CommentReactionBase {
-  id: number;
+  id: string;
   reaction_at: string;
 }
 
