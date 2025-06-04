@@ -7,10 +7,10 @@ export interface MediaContentBase {
 export interface MediaContent extends MediaContentBase {
   id: string;
   post: Post;
-  media_Url: string;
+  mediaUrl: string;
 }
 export interface MediaContentRequest extends MediaContentBase {
-  postId: number;
+  postId: string;
   mediaFile: File;
 }
 

@@ -3,24 +3,23 @@ import useSWR from 'swr';
 import { SWRConfiguration } from 'swr';
 import { commentApi } from '@/api/comment';
 
-export interface UseGetCommentByPostIdProps {
-  postId: string;
+export interface UseGetCommentRepliesProps {
+  commentId: string;
   options?: SWRConfiguration;
   enabled?: boolean;
 }
 
-export function useGetCommentByPostId({
-  postId,
+export function useGetCommentReplies({
+  commentId,
   options,
   enabled = true,
-}: UseGetCommentByPostIdProps) {
+}: UseGetCommentRepliesProps) {
   const swrResponse = useSWR(
-    enabled ? ['get_comment_by_post_id', postId] : null,
-    async () => await commentApi.getCommentByPostId(postId),
+    enabled ? ['get_comment_replies', commentId] : null,
+    async () => await commentApi.getCommentReplies(commentId),
     {
       // dedupingInterval: 30 * 1000, // 30s
       keepPreviousData: true,
-      revalidateOnMount: true,
       // fallbackData: null,
       ...options,
     }

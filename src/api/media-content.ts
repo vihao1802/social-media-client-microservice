@@ -2,12 +2,12 @@ import axiosInstance from '@/api/axios-instance';
 import { MediaContentPagination } from '@/models/media-content';
 import { MediaContentRequest } from '@/models/media-content';
 
-const prefix = '/mediaContent';
+const prefix = '/post_media';
 
 export const mediaContentApi = {
-  async getMediaContentByPostId(postId: number) {
-    const res = await axiosInstance.get<MediaContentPagination>(
-      `${prefix}/post/${postId}`
+  async getMediaContentByPostId(postId: string) {
+    const res = await axiosInstance.get(
+      `${prefix}/${postId}`
     );
     return res.data;
   },

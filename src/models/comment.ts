@@ -2,21 +2,23 @@ import { Post } from './post';
 import { User } from './user';
 
 export interface CommentBase {
-  content: string;
+  content?: string;
 }
 
 export interface Comment extends CommentBase {
-  id: number;
-  user: User;
-  post: Post;
-  content_gif: string;
+  id: string;
+  user: Partial<User>;
+  mediaUrl?: string;
   createdAt: string;
+  liked: boolean;
+  likeCount: number;
+  childCount: number;
   parentComment: Comment;
 }
 
 export interface CommentRequest extends CommentBase {
-  postId: number;
-  userId: number;
+  postId: string;
+  userId: string;
 }
 
 export interface GroupComment {

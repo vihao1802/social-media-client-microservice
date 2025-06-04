@@ -15,7 +15,7 @@ export const postApi = {
     return res.data;
   },
 
-  async updatePost(postId: number, postRequest: Partial<PostRequest>) {
+  async updatePost(postId: string, postRequest: Partial<PostRequest>) {
     const res = await axiosInstance.patch(`${prefix}/${postId}`, postRequest);
     return res.data;
   },

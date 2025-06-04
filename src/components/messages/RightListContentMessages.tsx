@@ -54,7 +54,6 @@ const RightListContentMessages = () => {
 
   // fetch for the first time render
   useEffect(() => {
-    console.log('[message]: chat id ', chat_id);
     fetchMessages();
   }, [chat_id]);
 
@@ -197,11 +196,13 @@ const RightListContentMessages = () => {
                     {item.senderName}
                   </Box>
                 )}
-                <MessageItemBox
-                  position={position}
-                  msgContent={item.msgContent}
-                  sentAt={DateTimeFormatting(item.sentAt)}
-                />
+                {item.msgContent !== '' && (
+                  <MessageItemBox
+                    position={position}
+                    msgContent={item.msgContent}
+                    sentAt={DateTimeFormatting(item.sentAt)}
+                  />
+                )}
                 {item.msgMediaContent.length > 0 && (
                   <MessageImageBox
                     position={position}

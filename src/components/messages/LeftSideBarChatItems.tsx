@@ -13,26 +13,29 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import LeftSideBarChatItemSkeleton from '../shared/LeftSideBarChatItemSkeleton';
 import ModalAddGroup from './ModalAddGroup';
-import { useGetChats } from '@/hooks/chat/useGetChats';
 import { ChatContext } from '@/context/chat-context';
-import { Chat } from '@/models/chat';
+import { Chat, ChatPagination } from '@/models/chat';
 import { PersonAddAlt } from '@mui/icons-material';
+import { WebSocketContext } from '@/context/web-socket-context';
+import { User } from '@/models/user';
 
 dayjs.extend(relativeTime);
 
-const LeftSideBarMessages = () => {
+const LeftSideBarMessages = ({
+  chats,
+  authenticatedUser,
+}: {
+  chats: ChatPagination;
+  authenticatedUser: User;
+}) => {
   const router = useRouter();
   const [openModalAddGroup, setOpenModalAddGroup] = useState(false);
 
   const { selectedChat, setSelectedChat } = useContext(ChatContext);
-  const { user: authenticatedUser } = useAuthenticatedUser();
+  const { onlineUsers } = useContext(WebSocketContext);
 
-  if (!authenticatedUser) return null;
-
-  const { data: chats } = useGetChats(authenticatedUser.id);
   const { chat_id } = useParams<{
     chat_id: string;
   }>();
@@ -73,12 +76,8 @@ const LeftSideBarMessages = () => {
         }}
       >
         <Tooltip title="Add chat" placement="right">
-          <IconButton>
-            <PersonAddAlt
-              onClick={toggleModalAddGroup}
-              fontSize="medium"
-              className="text-black"
-            />
+          <IconButton onClick={toggleModalAddGroup}>
+            <PersonAddAlt fontSize="medium" className="text-black" />
           </IconButton>
         </Tooltip>
       </Box>
@@ -133,6 +132,7 @@ const LeftSideBarMessages = () => {
                           xs: '0',
                           md: '0 10px',
                         },
+                        position: 'relative',
                       }}
                     >
                       <Avatar
@@ -149,6 +149,13 @@ const LeftSideBarMessages = () => {
                           },
                         }}
                       />
+                      {item.chatMemberIds.some(
+                        (id) =>
+                          onlineUsers.includes(id) &&
+                          id !== authenticatedUser.id
+                      ) && (
+                        <span className="absolute bottom-0 right-2 size-3 bg-green-500  rounded-full" />
+                      )}
                     </Box>
                     <Box
                       sx={{

@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 import { Arguments, mutate } from 'swr';
 
 export function usePatchPost() {
-  async function PatchPost(postId: number, postRequest: Partial<PostRequest>) {
+  async function PatchPost(postId: string, postRequest: Partial<PostRequest>) {
     try {
       const newPost = await postApi.updatePost(postId, postRequest);
 

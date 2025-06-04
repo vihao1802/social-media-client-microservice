@@ -73,7 +73,7 @@ const Explore = () => {
           }}
         >
           {postList
-            .filter((post) => post.is_story === false)
+            .filter((post) => post.isStory === false)
             .map((post: Post, index: number) => (
               <PostContext.Provider
                 key={index}

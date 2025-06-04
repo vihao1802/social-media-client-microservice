@@ -1,6 +1,6 @@
 'use client';
 
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 
 import RightSideBar from '@/components/shared/RightSideBar';
 import React, { useState } from 'react';
@@ -16,29 +16,26 @@ import { PostContext } from '@/context/post-context';
 export default function Home() {
   const { ref } = useInView({
     onChange(inView) {
-      if (inView) setSize((x) => x + 1);
+      if (inView) {
+        setSize((x) => x + 1);
+      }
     },
   });
   const filters: Partial<Pagination> = {
     page: 1,
-    pageSize: 5,
-    sort: '-id',
+    size: 5,
   };
 
   const { data, isLoading, isValidating, setSize } = usePostListInfinity({
     params: filters,
   });
 
-  if (!data || isLoading) return null;
+  if (!data || isLoading) return <GradientCircularProgress />;
 
-  const postList: Array<Post> =
-    data?.reduce((result: Array<Post>, currentPage: ListResponse<Post>) => {
-      if (currentPage && currentPage.items) result.push(...currentPage.items);
+  // Flatten the data to get a single list of posts
+  const postList: Array<Post> = data?.flatMap((page) => page?.items) || [];
 
-      return result;
-    }, []) || [];
-
-  const showLoadMore = (data?.[0]?.totalItems ?? 0) > postList.length;
+  const showLoadMore = (data?.[0]?.total ?? 0) > postList.length;
   const loadingMore = isValidating && postList.length > 0;
 
   return (
@@ -55,22 +52,25 @@ export default function Home() {
           flexDirection: 'column',
           padding: '10px',
           gap: '20px',
+          minWidth: '600px',
         }}
       >
-        <StoryBar />
+        {/* <StoryBar /> */}
 
         {postList
-          .filter((post) => post.is_story === false)
-          .map((post: Post, index: number) => (
-            <PostContext.Provider
-              key={index}
-              value={{
-                post: post || null,
-              }}
-            >
-              <PostComponent key={index} />
-            </PostContext.Provider>
-          ))}
+          .filter((post: Post) => post?.isStory === false)
+          .map((post: Post, index: number) => {
+            return (
+              <PostContext.Provider
+                key={index}
+                value={{
+                  post: post || null,
+                }}
+              >
+                <PostComponent key={index} />
+              </PostContext.Provider>
+            );
+          })}
 
         {showLoadMore && (
           <Box

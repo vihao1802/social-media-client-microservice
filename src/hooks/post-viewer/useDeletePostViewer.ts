@@ -12,7 +12,7 @@ export interface UseDeletePostViewerProps {
 export function useDeletePostViewer() {
   const { mutate } = useSWRConfig();
 
-  async function DeletePostViewer(postViewerId: number, postId: number) {
+  async function DeletePostViewer(postViewerId: number, postId: string) {
     try {
       await postViewerApi.deletePostViewer(postViewerId);
       await mutate([QueryKeys.GET_POST_VIEWER, postId]);

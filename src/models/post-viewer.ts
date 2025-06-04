@@ -1,11 +1,11 @@
 export interface PostViewerBase {
-  postId: number;
+  postId: string;
   userId: string;
   liked: boolean;
 }
 
 export interface PostViewer extends PostViewerBase {
-  id: number;
+  id: string;
 }
 
 export interface PostViewerRequest extends PostViewerBase {}
