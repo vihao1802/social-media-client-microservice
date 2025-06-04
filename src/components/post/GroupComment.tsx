@@ -6,6 +6,7 @@ import {
   Button,
   Collapse,
   IconButton,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
@@ -21,6 +22,7 @@ import { CommentContext } from '@/context/comment-context';
 import { usePostCommentReaction } from '@/hooks/comment-reaction/usePostCommentReaction';
 import { useDeleteCommentReaction } from '@/hooks/comment-reaction/useDeleteCommentReaction';
 import toast from 'react-hot-toast';
+import { useGetCommentReplies } from '@/hooks/comment/useGetCommentReplies';
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
   const { user: currentUser } = useAuthenticatedUser();
@@ -28,49 +30,47 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
 
   const { setParentCommentId, setCommentContent } = useContext(CommentContext);
 
-  const { data: commentReactionData, isLoading: isCommentReactionDataLoading } =
-    useGetCommentReaction({ commentId: comment.id });
+  // const { data: commentReactionData, isLoading: isCommentReactionDataLoading } =
+  //   useGetCommentReaction({ commentId: comment.id });
 
-  const [commentReactionId, setCommentReactionId] = useState(0);
-  const createCommentReaction = usePostCommentReaction();
-  const deleteCommentReaction = useDeleteCommentReaction();
+  // const [commentReactionId, setCommentReactionId] = useState('');
+  // const createCommentReaction = usePostCommentReaction();
+  // const deleteCommentReaction = useDeleteCommentReaction();
 
-  useEffect(() => {
-    if (commentReactionData) {
-      const commentReaction = commentReactionData.items.find(
-        (item: CommentReaction) => item.userId === currentUser.id
-      );
-      if (commentReaction) {
-        setCommentReactionId(commentReaction.id);
-      }
-    }
-  }, [commentReactionData]);
+  // useEffect(() => {
+  //   if (commentReactionData) {
+  //     const commentReaction = commentReactionData.items.find(
+  //       (item: CommentReaction) => item.userId === currentUser.id
+  //     );
+  //     if (commentReaction) {
+  //       setCommentReactionId(commentReaction.id);
+  //     }
+  //   }
+  // }, [commentReactionData]);
 
-  if (isCommentReactionDataLoading || !commentReactionData) return null;
+  // if (isCommentReactionDataLoading || !commentReactionData) return null;
 
-  const isLiked = commentReactionData.items.some(
-    (item: CommentReaction) => item.userId === currentUser.id
-  );
+  const isLiked = comment?.liked || false;
 
-  const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (isLiked) {
-      if (commentReactionId !== 0) {
-        await deleteCommentReaction(commentReactionId, comment.id);
-      } else {
-        toast.error('Comment Reaction not found!');
-        return null;
-      }
-    } else {
-      const commentReactionData: CommentReactionRequest = {
-        userId: currentUser.id,
-        commentId: comment.id,
-      };
-      const commentReactionResponse =
-        await createCommentReaction(commentReactionData);
-      setCommentReactionId(commentReactionResponse.id);
-    }
-  };
+  // const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   if (isLiked) {
+  //     if (commentReactionId !== '') {
+  //       await deleteCommentReaction(commentReactionId, comment.id);
+  //     } else {
+  //       toast.error('Comment Reaction not found!');
+  //       return null;
+  //     }
+  //   } else {
+  //     const commentReactionData: CommentReactionRequest = {
+  //       userId: currentUser.id,
+  //       commentId: comment.id,
+  //     };
+  //     const commentReactionResponse =
+  //       await createCommentReaction(commentReactionData);
+  //     setCommentReactionId(commentReactionResponse.id);
+  //   }
+  // };
 
   return (
     <Box
@@ -129,7 +129,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
                 height: '20px',
                 width: '20px',
               }}
-              onClick={handleClickLike}
+              // onClick={handleClickLike}
             >
               {isLiked ? (
                 <FavoriteRounded
@@ -161,7 +161,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
             {dayjs(comment.createdAt).fromNow()}
           </Typography>
           <Typography sx={{ fontSize: '12px', color: '#858585' }}>
-            {commentReactionData.totalItems} likes
+            {comment.likeCount || 0} likes
           </Typography>
           <Typography
             sx={{
@@ -184,37 +184,39 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   );
 };
 
-const GroupCommentComponent = ({
-  groupComment,
-}: {
-  groupComment: GroupComment;
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const GroupCommentComponent = ({ commentRoot }: { commentRoot: Comment }) => {
+  const [showReplies, setShowReplies] = useState(false);
 
-  const toggleSubComments = () => {
-    setIsExpanded((prev) => !prev);
+  const toggleShowReplies = () => {
+    setShowReplies((prev) => !prev);
   };
 
+  const { data: commentReplies, isLoading: isCommentRepliesLoading } =
+    useGetCommentReplies({
+      commentId: commentRoot.id,
+      enabled: showReplies,
+    });
+
   return (
-    <Box>
+    <Box key={commentRoot.id}>
       {/* Main Comment */}
-      <CommentComponent comment={groupComment.mainComment} />
+      <CommentComponent key={commentRoot.id} comment={commentRoot} />
 
       {/* Toggle Button */}
-      {groupComment.subComments && groupComment.subComments.length > 0 && (
+      {commentRoot.childCount > 0 && (
         <Button
-          onClick={toggleSubComments}
+          onClick={toggleShowReplies}
           variant="text"
           size="small"
           sx={{ mt: 1, ml: 4 }}
         >
-          {isExpanded ? 'Hide Replies' : 'Show Replies'} (
-          {groupComment.subComments.length})
+          {showReplies ? 'Hide Replies' : 'Show Replies'} (
+          {commentRoot.childCount})
         </Button>
       )}
 
       {/* Subcomments */}
-      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+      <Collapse in={showReplies} timeout="auto" unmountOnExit>
         <Box
           sx={{
             pl: 4, // Indentation for subcomments
@@ -225,10 +227,34 @@ const GroupCommentComponent = ({
             gap: 1, // Space between subcomments
           }}
         >
-          {groupComment.subComments?.map(
-            (subComment: Comment, index: number) => (
-              <CommentComponent key={index} comment={subComment} />
-            )
+          {showReplies &&
+            (isCommentRepliesLoading ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: '8px 16px',
+                  gap: '10px',
+                  borderRadius: '10px',
+                }}
+              >
+                <Skeleton
+                  variant="circular"
+                  width={40}
+                  height={40}
+                  sx={{ borderRadius: '50%' }}
+                />
+
+                <Skeleton variant="text" width={400} height={80} />
+              </Box>
+            ) : (
+              commentReplies?.items.map((reply: Comment) => (
+                <CommentComponent key={reply.id} comment={reply} />
+              ))
+            ))}
+          {showReplies && commentReplies?.items.length === 0 && (
+            <Typography sx={{ color: '#858585' }}>No replies yet.</Typography>
           )}
         </Box>
       </Collapse>

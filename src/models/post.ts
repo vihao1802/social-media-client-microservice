@@ -3,15 +3,17 @@ import { User } from './user';
 
 export interface PostBase {
   content: string;
-  is_story: boolean;
+  isStory: boolean;
   visibility: Visibility;
 }
 
 export interface Post extends PostBase {
-  id: number;
+  id: string;
   create_at: string;
-  creator: User;
+  creator: Partial<User>;
   postReactions: number;
+  liked: boolean;
+  likeCount: number;
 }
 
 export interface PostPagination {

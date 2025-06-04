@@ -4,7 +4,7 @@ import { SWRConfiguration } from 'swr';
 import { mediaContentApi } from '@/api/media-content';
 
 export interface UseGetMediaContentByPostIdProps {
-  postId: number;
+  postId: string;
   options?: SWRConfiguration;
   enabled?: boolean;
 }

@@ -4,7 +4,7 @@ import { SWRConfiguration } from 'swr';
 import { postViewerApi } from '@/api/post-viewer';
 
 export interface UseGetPostViewerByPostIdProps {
-  postId: number;
+  postId: string;
   options?: SWRConfiguration;
   enabled?: boolean;
 }

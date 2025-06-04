@@ -4,12 +4,15 @@ import {
   Avatar,
   Box,
   Button,
+  Collapse,
   Divider,
   IconButton,
   InputBase,
   Menu,
   MenuItem,
   Modal,
+  Skeleton,
+  Stack,
   Typography,
 } from '@mui/material';
 import {
@@ -67,11 +70,11 @@ const PostComment = ({
   const { post: contextPost } = useContext(PostContext);
   const post = propPost || contextPost;
 
-  const { data: commentData, isLoading: isCommentDataLoading } =
-    useGetCommentByPostId({ postId: post?.id ?? 0 });
+  const { data: commentRootData, isLoading: isCommentRootDataLoading } =
+    useGetCommentByPostId({ postId: post?.id ?? '' });
 
-  const { data: postViewerData, isLoading: isPostViewerDataLoading } =
-    useGetPostViewerByPostId({ postId: post?.id ?? 0 });
+  // const { data: postViewerData, isLoading: isPostViewerDataLoading } =
+  //   useGetPostViewerByPostId({ postId: post?.id ?? '' });
 
   const [commentContent, setCommentContent] = useState('');
   const [parentCommentId, setParentCommentId] = useState<number | null>(null);
@@ -106,16 +109,16 @@ const PostComment = ({
   const createPostViewer = useCreatePostViewer();
   const deletePostViewer = useDeletePostViewer();
 
-  useEffect(() => {
-    if (postViewerData) {
-      const postViewer = postViewerData.items.find(
-        (item: PostViewer) => item.userId === currentUser.id
-      );
-      if (postViewer) {
-        setPostViewerId(postViewer.id);
-      }
-    }
-  }, [postViewerData]);
+  // useEffect(() => {
+  //   if (postViewerData) {
+  //     const postViewer = postViewerData.items.find(
+  //       (item: PostViewer) => item.userId === currentUser.id
+  //     );
+  //     if (postViewer) {
+  //       setPostViewerId(postViewer.id);
+  //     }
+  //   }
+  // }, [postViewerData]);
 
   // Menu Widgets
   const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
@@ -138,24 +141,66 @@ const PostComment = ({
     setOpenPostForm(false);
   };
 
-  if (
-    isCommentDataLoading ||
-    !commentData ||
-    isPostViewerDataLoading ||
-    !postViewerData
-  )
-    return <GradientCircularProgress />;
+  if (isCommentRootDataLoading || !commentRootData)
+    return (
+      <Modal
+        open={isOpen}
+        onClose={handleClose}
+        sx={{
+          position: 'fixed',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+        }}
+      >
+        <Box
+          sx={{
+            width: '70%',
+            height: '95%',
+            bgcolor: 'white',
+            display: 'flex',
+            flexDirection: 'row',
+            borderRadius: '7px',
+            padding: 2,
+            gap: 2,
+          }}
+        >
+          {/* Ảnh bên trái */}
+          <Skeleton
+            variant="rectangular"
+            width="60%"
+            height="100%"
+            sx={{ borderRadius: 2 }}
+          />
+
+          {/* Các comment bên phải */}
+          <Box sx={{ flex: 1, overflowY: 'auto' }}>
+            {[1, 2, 3].map((_, i) => (
+              <Box key={i} sx={{ display: 'flex', mb: 2, gap: 2 }}>
+                <Skeleton variant="circular" width={40} height={40} />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton width="30%" height={20} />
+                  <Skeleton width="90%" height={20} />
+                  <Skeleton width="50%" height={20} />
+                </Box>
+                <Skeleton variant="circular" width={20} height={20} />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Modal>
+    );
   dayjs.extend(relativeTime);
 
-  const isLiked = postViewerData.items.some(
-    (item: PostViewer) => item.userId === currentUser.id && item.liked === true
-  );
+  const isLiked = post?.liked;
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (isLiked) {
       if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId, post?.id ?? 0);
+        await deletePostViewer(postViewerId, post?.id ?? '');
       } else {
         toast.error('Post viewer not found!');
         return null;
@@ -176,28 +221,28 @@ const PostComment = ({
   };
 
   // Nhóm các comment theo main comment và sub comment
-  const groupedComments = new Map();
-  commentData?.items.forEach((comment: Comment) => {
-    if (comment.parentComment === null) {
-      // Nếu là main comment, thêm vào map
-      groupedComments.set(comment.id, {
-        mainComment: comment,
-        subComments: [],
-      });
-    } else {
-      // Nếu là sub comment, thêm vào danh sách subComments của main comment tương ứng
-      const parentId = comment.parentComment.id;
-      if (!groupedComments.has(parentId)) {
-        groupedComments.set(parentId, { mainComment: null, subComments: [] });
-      }
-      groupedComments.get(parentId).subComments.push(comment);
-    }
-  });
+  // const groupedComments = new Map();
+  // commentRootData?.items.forEach((comment: Comment) => {
+  //   if (comment.parentComment === null) {
+  //     // Nếu là main comment, thêm vào map
+  //     groupedComments.set(comment.id, {
+  //       mainComment: comment,
+  //       subComments: [],
+  //     });
+  //   } else {
+  //     // Nếu là sub comment, thêm vào danh sách subComments của main comment tương ứng
+  //     const parentId = comment.parentComment.id;
+  //     if (!groupedComments.has(parentId)) {
+  //       groupedComments.set(parentId, { mainComment: null, subComments: [] });
+  //     }
+  //     groupedComments.get(parentId).subComments.push(comment);
+  //   }
+  // });
 
-  // Chuyển map thành array và lọc bỏ các nhóm không có main comment
-  const commentList = Array.from(groupedComments.values()).filter(
-    (group) => group.mainComment !== null
-  );
+  // // Chuyển map thành array và lọc bỏ các nhóm không có main comment
+  // const commentList = Array.from(groupedComments.values()).filter(
+  //   (group) => group.mainComment !== null
+  // );
 
   return (
     <>
@@ -279,7 +324,42 @@ const PostComment = ({
             </Box>
 
             {/* Show comment */}
-            <CommentContext.Provider
+
+            <Box
+              sx={{
+                height: 'calc(100% - 220px)',
+                overflowY: 'scroll',
+                padding: '10px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '15px',
+                '::-webkit-scrollbar': { width: 0 },
+              }}
+            >
+              {commentRootData.items.length > 0 ? (
+                commentRootData.items.map((commentRoot: Comment) => (
+                  <GroupCommentComponent
+                    key={commentRoot.id}
+                    commentRoot={commentRoot}
+                  />
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    fontSize: '18px',
+                    color: 'darkgray',
+                  }}
+                >
+                  No comment
+                </Box>
+              )}
+            </Box>
+
+            {/* <CommentContext.Provider
               value={{
                 parentCommentId,
                 commentContent,
@@ -326,7 +406,7 @@ const PostComment = ({
                   </Box>
                 )}
               </Box>
-            </CommentContext.Provider>
+            </CommentContext.Provider> */}
 
             {/* Comment Action */}
             <Box
@@ -359,12 +439,7 @@ const PostComment = ({
               </Box>
               <Box sx={{ padding: '0 20px' }}>
                 <Typography sx={{ fontSize: '14px', fontWeight: 'bold' }}>
-                  {
-                    postViewerData.items.filter(
-                      (postViewer: PostViewer) => postViewer.liked === true
-                    ).length
-                  }{' '}
-                  Likes
+                  {post?.likeCount || 0} Likes
                 </Typography>
                 <Typography sx={{ fontSize: '12px', color: '#858585 ' }}>
                   {dayjs(post?.create_at).fromNow()}

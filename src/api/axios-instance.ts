@@ -25,9 +25,9 @@ axiosInstance.interceptors.request.use(
       const currentTime = Math.floor(Date.now() / 1000); // get time in seconds
       const remainingTime = tokenPayload.exp - currentTime;
 
-      console.log('[config token] config.url:', config.url);
+      // console.log('[config token] config.url:', config.url);
       // console.log('[config token] Remaining time:', remainingTime);
-      console.log('[config token] token in config:', access_token);
+      // console.log('[config token] token in config:', access_token);
 
       if (remainingTime <= 20 && !isRefreshing) {
         isRefreshing = true;

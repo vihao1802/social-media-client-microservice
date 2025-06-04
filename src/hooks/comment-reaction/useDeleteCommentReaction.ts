@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 import { Arguments, useSWRConfig, SWRConfiguration } from 'swr';
 
 export interface UseDeleteCommentReactionProps {
-  commentReactionId: number;
+  commentReactionId: string;
   options?: SWRConfiguration;
   enabled?: boolean;
 }
@@ -13,8 +13,8 @@ export function useDeleteCommentReaction() {
   const { mutate } = useSWRConfig();
 
   async function DeleteCommentReaction(
-    CommentReactionId: number,
-    commentId: number
+    CommentReactionId: string,
+    commentId: string
   ) {
     try {
       await commentReactionApi.deleteCommentReaction(CommentReactionId);

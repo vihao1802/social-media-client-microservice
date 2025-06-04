@@ -1,6 +1,6 @@
 export interface Pagination {
   page: number;
-  pageSize: number;
+  size: number;
   sort?: string;
   includes?: string;
   [key: string]: any;
@@ -9,7 +9,7 @@ export interface Pagination {
 export interface ListResponse<T> {
   items: Array<T>;
   page: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
+  size: number;
+  total: number;
+  pages: number;
 }

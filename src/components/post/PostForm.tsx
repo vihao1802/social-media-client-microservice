@@ -87,7 +87,7 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
           const postRequest: PostRequest = {
             content: values.caption,
             visibility: values.visibility,
-            is_story: values.isStory,
+            isStory: values.isStory,
             creatorId: currentUser.id,
           };
           const postResponse = await createPost(postRequest);
@@ -119,7 +119,7 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
           const postRequest: Partial<PostRequest> = {
             content: values.caption,
             visibility: values.visibility,
-            is_story: values.isStory,
+            isStory: values.isStory,
           };
           await updatePost(post.id, postRequest);
 
@@ -142,7 +142,7 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
       postForm.setValues({
         caption: post.content,
         visibility: post.visibility,
-        isStory: post.is_story,
+        isStory: post.isStory,
       });
       setMediaContentList(postMedia);
       setActiveStep(1);

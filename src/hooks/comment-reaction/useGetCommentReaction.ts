@@ -4,7 +4,7 @@ import { SWRConfiguration } from 'swr';
 import { commentReactionApi } from '@/api/comment-reaction';
 
 export interface UseGetCommentReactionProps {
-  commentId: number;
+  commentId: string;
   options?: SWRConfiguration;
   enabled?: boolean;
 }

@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
 export const CommentContext = createContext<{
-  parentCommentId: number | null;
+  parentCommentId: string| null;
   commentContent: string;
-  setParentCommentId: React.Dispatch<React.SetStateAction<number | null>>;
+  setParentCommentId: React.Dispatch<React.SetStateAction<string| null>>;
   setCommentContent: React.Dispatch<React.SetStateAction<string>>;
 }>({
   parentCommentId: null,
