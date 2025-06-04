@@ -32,6 +32,8 @@
   --foreground: #0a0a0a;
   --buttonColor: #4491f5;
   --buttonHoverColor: #1877f2;
+  --warningColor: #ff9f29;
+  --dangerColor: #dc2626;
 }
 body {
   color: var(--foreground);
