@@ -30,7 +30,7 @@ function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
+function allyProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -54,7 +54,7 @@ const Friends = () => {
     >
       <Box
         sx={{
-          maxWidth: '720px',
+          maxWidth: '1000px',
           width: '100%',
           margin: '0 auto',
         }}
@@ -101,21 +101,21 @@ const Friends = () => {
             >
               <Tab
                 label="Followers"
-                {...a11yProps(0)}
+                {...allyProps(0)}
                 sx={{
                   padding: '12px 20px',
                 }}
               />
               <Tab
                 label="Following"
-                {...a11yProps(1)}
+                {...allyProps(1)}
                 sx={{
                   padding: '12px 20px',
                 }}
               />
               <Tab
                 label="Suggestions"
-                {...a11yProps(2)}
+                {...allyProps(2)}
                 sx={{
                   padding: '12px 20px',
                 }}

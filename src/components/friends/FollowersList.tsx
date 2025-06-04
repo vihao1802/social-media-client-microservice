@@ -17,12 +17,23 @@ const FollowersList = () => {
         toast.success('Accepted request');
         mutate('get_me_following');
         mutate('get_me_follower');
-        mutate('get_message_by_relationship_id');
-        mutate('get_follower_quantity');
-        mutate('get_following_quantity');
+        mutate('get_recommendation');
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    }
+  };
+  const handleDelete = async (senderId: string) => {
+    try {
+      const res = await relationshipApi.deleteFollower(senderId);
+      if (res) {
+        toast.success('Follower deleted');
+        mutate('get_me_following');
+        mutate('get_me_follower');
+        mutate('get_recommendation');
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -127,23 +138,42 @@ const FollowersList = () => {
                   </Button>
                 )}
                 {item?.Status === RelationshipStatus.Accepted && (
-                  <Link
-                    sx={{
-                      textTransform: 'none',
-                      height: '35px',
-                      padding: '6px 10px',
-                      color: 'black',
-                      borderRadius: '5px',
-                      textDecoration: 'none',
-                      gap: '15px',
-                      ':hover': {
-                        backgroundColor: '#DBDBDB',
-                      },
-                    }}
-                    href={`/messages/r/${item.Id}/u/${item.SenderId}`}
-                  >
-                    <Typography sx={{ fontSize: '14px' }}>Message</Typography>
-                  </Link>
+                  <>
+                    <Button
+                      sx={{
+                        color: 'var(--dangerColor)',
+                        border: '1px solid var(--dangerColor)',
+                        height: '35px',
+                        fontSize: '12px',
+                        textTransform: 'none',
+                        ':hover': {
+                          backgroundColor: 'var(--dangerColor)',
+                          color: 'white',
+                        },
+                      }}
+                      onClick={() => handleDelete(item.SenderId)}
+                    >
+                      Delete
+                    </Button>
+                    <Link
+                      sx={{
+                        textTransform: 'none',
+                        height: '35px',
+                        padding: '6px 10px',
+                        color: 'black',
+                        border: '1px solid #333',
+                        borderRadius: '5px',
+                        textDecoration: 'none',
+                        gap: '15px',
+                        ':hover': {
+                          backgroundColor: '#DBDBDB',
+                        },
+                      }}
+                      href={`/messages/r/${item.Id}/u/${item.SenderId}`}
+                    >
+                      <Typography sx={{ fontSize: '14px' }}>Message</Typography>
+                    </Link>
+                  </>
                 )}
               </Box>
             )

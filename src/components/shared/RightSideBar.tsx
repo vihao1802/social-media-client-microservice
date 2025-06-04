@@ -93,7 +93,7 @@ const RightSideBar = () => {
                 </Box>
               </Box>
             ))
-          : recommendations.items.slice(0, 5).map((user) => (
+          : recommendations.data.map((user) => (
               <Box
                 sx={{
                   display: 'flex',
