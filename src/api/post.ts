@@ -2,7 +2,7 @@ import axiosInstance from '@/api/axios-instance';
 import { PostPagination } from '@/models/post';
 import { PostRequest } from '@/models/post';
 
-const prefix = '/post';
+const prefix = '/posts';
 
 export const postApi = {
   async getFriendStories() {
@@ -10,8 +10,12 @@ export const postApi = {
     return res.data;
   },
 
-  async createPost(postRequest: PostRequest) {
-    const res = await axiosInstance.post(`${prefix}`, postRequest);
+  async createPost(postRequest: FormData) {
+    const res = await axiosInstance.post(prefix, postRequest, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return res.data;
   },
 

@@ -3,6 +3,8 @@ import { postViewerApi } from '@/api/post-viewer';
 import { AxiosError } from 'axios';
 import { Arguments, useSWRConfig, SWRConfiguration } from 'swr';
 import { PostViewerRequest } from '@/models/post-viewer';
+import { ListResponse } from '@/models/api';
+import { Post } from '@/models/post';
 
 export interface UseCreatePostViewerProps {
   request: PostViewerRequest;
@@ -10,13 +12,10 @@ export interface UseCreatePostViewerProps {
   enabled?: boolean;
 }
 
-export function useCreatePostViewer() {
-  const { mutate } = useSWRConfig();
-
+export function useCreatePostViewer() {  
   async function CreatePostViewer(request: PostViewerRequest) {
     try {
       const newPostViewer = await postViewerApi.createPostViewer(request);
-      await mutate([QueryKeys.GET_POST_VIEWER, request.postId]);
       return newPostViewer;
     } catch (error: AxiosError | any) {
       console.log('Failed to post viewer:', error);

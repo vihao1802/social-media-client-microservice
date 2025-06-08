@@ -16,9 +16,9 @@ export function usePostListInfinity({
   enabled = true,
 }: UsePostListInfinityProps) {
   const swrResponse = useSWRInfinite<ListResponse<Post>>(
-    (index: number, previousPageData: any) => {      
+    (index: number, previousPageData: ListResponse<Post> | null) => {
       if (!enabled) return null;
-
+      
       // index starts at 0
       const page = index + 1;
       const query: Partial<Pagination> = {

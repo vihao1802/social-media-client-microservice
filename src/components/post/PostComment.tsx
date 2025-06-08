@@ -48,6 +48,7 @@ import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import { Post } from '@/models/post';
 import PostForm from './PostForm';
 import { useRouter } from 'next/navigation';
+import { ListResponse } from '@/models/api';
 
 // Kích hoạt plugin
 
@@ -55,47 +56,42 @@ const PostComment = ({
   isOpen,
   postMedia,
   handleClose,
-  post: propPost = null,
 }: {
   isOpen: boolean;
   postMedia: MediaContent[];
   handleClose: () => void;
-  post?: Post | null;
 }) => {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
 
   const router = useRouter();
 
-  const { post: contextPost } = useContext(PostContext);
-  const post = propPost || contextPost;
+  const { post, mutatePosts } = useContext(PostContext);
+
+  if (!post) {
+    toast.error('Post not found!');
+    return null;
+  }
 
   const { data: commentRootData, isLoading: isCommentRootDataLoading } =
     useGetCommentByPostId({ postId: post?.id ?? '' });
 
-  // const { data: postViewerData, isLoading: isPostViewerDataLoading } =
-  //   useGetPostViewerByPostId({ postId: post?.id ?? '' });
-
   const [commentContent, setCommentContent] = useState('');
-  const [parentCommentId, setParentCommentId] = useState<number | null>(null);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const createComment = usePostComment();
   const handleClickComment = async () => {
-    if (post === null) {
-      toast.error('Post not found!');
-      return;
-    }
     const commentFormData = new FormData();
     commentFormData.append('content', commentContent);
-    commentFormData.append('postId', String(post.id));
-    commentFormData.append('userId', String(currentUser.id));
-    if (parentCommentId && commentContent.includes('@')) {
-      commentFormData.append('parentCommentId', String(parentCommentId));
+    commentFormData.append('post_id', String(post.id));
+    commentFormData.append('user_id', String(currentUser.id));
+    if (replyTo && commentContent.includes('@')) {
+      commentFormData.append('reply_to', String(replyTo));
     }
     const res = await createComment(commentFormData);
     if (res) {
       toast.success('Commented successfully!');
       setCommentContent('');
-      setParentCommentId(null);
+      setReplyTo(null);
     }
   };
 
@@ -105,20 +101,8 @@ const PostComment = ({
     }
   };
 
-  const [postViewerId, setPostViewerId] = useState(0);
   const createPostViewer = useCreatePostViewer();
   const deletePostViewer = useDeletePostViewer();
-
-  // useEffect(() => {
-  //   if (postViewerData) {
-  //     const postViewer = postViewerData.items.find(
-  //       (item: PostViewer) => item.userId === currentUser.id
-  //     );
-  //     if (postViewer) {
-  //       setPostViewerId(postViewer.id);
-  //     }
-  //   }
-  // }, [postViewerData]);
 
   // Menu Widgets
   const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
@@ -192,32 +176,39 @@ const PostComment = ({
         </Box>
       </Modal>
     );
+    
   dayjs.extend(relativeTime);
 
   const isLiked = post?.liked;
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!post ||!post.id || !currentUser.id) return;
+    const postViewerData: PostViewerRequest = {
+      postId: post.id,
+      userId: currentUser.id,
+    };  
     if (isLiked) {
-      if (postViewerId !== 0) {
-        await deletePostViewer(postViewerId, post?.id ?? '');
-      } else {
-        toast.error('Post viewer not found!');
-        return null;
-      }
+      await deletePostViewer(postViewerData);
     } else {
-      if (post === null) {
-        toast.error('Post or user not found!');
-        return null;
-      }
-      const postViewerData: PostViewerRequest = {
-        postId: post.id,
-        userId: currentUser.id,
-        liked: true,
-      };
-      const postViewerResponse = await createPostViewer(postViewerData);
-      setPostViewerId(postViewerResponse.id);
+      await createPostViewer(postViewerData);
     }
+
+    const isLiking = !isLiked;
+    await mutatePosts((pages: ListResponse<Post>[]) =>
+      pages.map((page: ListResponse<Post>) => ({
+        ...page,
+        items: page.items.map((p: Post) =>
+          p.id === post.id
+            ? {
+                ...p,
+                liked: isLiking ? true : false,
+                likeCount: (p.likeCount || 0) + (isLiking ? 1 : -1),
+              }
+            : p
+        ),
+      }))
+    );
   };
 
   // Nhóm các comment theo main comment và sub comment
@@ -324,12 +315,19 @@ const PostComment = ({
             </Box>
 
             {/* Show comment */}
-
-            <Box
-              sx={{
-                height: 'calc(100% - 220px)',
-                overflowY: 'scroll',
-                padding: '10px',
+            <CommentContext.Provider
+              value={{
+                replyTo,
+                commentContent,
+                setReplyTo,
+                setCommentContent,
+              }}
+            >
+              <Box
+                sx={{
+                  height: 'calc(100% - 220px)',
+                  overflowY: 'scroll',
+                  padding: '10px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '15px',
@@ -358,12 +356,12 @@ const PostComment = ({
                 </Box>
               )}
             </Box>
-
+            </CommentContext.Provider>
             {/* <CommentContext.Provider
               value={{
-                parentCommentId,
+                replyTo,
                 commentContent,
-                setParentCommentId,
+                setReplyTo,
                 setCommentContent,
               }}
             >
@@ -442,7 +440,7 @@ const PostComment = ({
                   {post?.likeCount || 0} Likes
                 </Typography>
                 <Typography sx={{ fontSize: '12px', color: '#858585 ' }}>
-                  {dayjs(post?.create_at).fromNow()}
+                  {post && dayjs.utc(post.createdAt).local().fromNow()}
                 </Typography>
               </Box>
             </Box>

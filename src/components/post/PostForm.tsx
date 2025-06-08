@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import React, { useState, MouseEvent, use, useEffect } from 'react';
+import React, { useState, MouseEvent, use, useEffect, useContext } from 'react';
 import ImagesUpload, { FileWithPreview } from '../shared/ImagesUpload';
 import { MediaContent } from '@/models/media-content';
 import ImageSwiper from './ImageSwiper';
@@ -28,11 +28,13 @@ import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import { useCreatePost } from '@/hooks/post/useCreatePost';
 import { Post, PostRequest } from '@/models/post';
 import toast from 'react-hot-toast';
-import { usePostMediaContent } from '@/hooks/media-content/usePostMediaContent';
 import { Arguments, useSWRConfig } from 'swr';
 import { QueryKeys } from '@/constants/query-keys';
 import { usePatchPost } from '@/hooks/post/usePatchPost';
 import { mutate as global_mutate } from 'swr';
+import { PostContext } from '@/context/post-context';
+import { ListResponse } from '@/models/api';
+import { User } from '@/models/user';
 
 const schema = yup.object({
   caption: yup.string().required('Caption is required'),
@@ -53,6 +55,8 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
 
+  const { mutatePosts } = useContext(PostContext);
+
   const [activeStep, setActiveStep] = useState(0);
   const [mediaContentList, setMediaContentList] = useState<
     (FileWithPreview | MediaContent)[]
@@ -70,7 +74,6 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
   const { mutate } = useSWRConfig();
   const createPost = useCreatePost();
   const updatePost = usePatchPost();
-  const createMediaContent = usePostMediaContent();
 
   const postForm = useFormik({
     enableReinitialize: true,
@@ -84,36 +87,61 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
       setIsSubmitting(true);
       try {
         if (!post) {
-          const postRequest: PostRequest = {
-            content: values.caption,
-            visibility: values.visibility,
-            isStory: values.isStory,
-            creatorId: currentUser.id,
-          };
-          const postResponse = await createPost(postRequest);
-          if (postResponse) {
-            mediaContentList.forEach(async (mediaContent) => {
-              const mediaContentData = new FormData();
-              if (mediaContent instanceof File) {
-                mediaContentData.append('mediaFile', mediaContent);
-                if (mediaContent.type.startsWith('image/'))
-                  mediaContentData.append('media_type', 'image');
-                else mediaContentData.append('media_type', 'video');
-                mediaContentData.append('postId', postResponse.id.toString());
-                await createMediaContent(mediaContentData);
-              } else {
-                toast.error('Media content is not a file');
-                return;
-              }
-            });
-            await mutate(
-              (key: Arguments) =>
-                Array.isArray(key) && key.includes(QueryKeys.GET_POST_LIST),
-              undefined,
-              { revalidate: true }
-            );
-            await global_mutate('get_posts_by_user_id');
+          const postData = new FormData();
+
+          postData.append('creator_id', currentUser.id);
+          postData.append('content', values.caption);
+          postData.append('visibility', values.visibility.toString());
+          postData.append('is_story', values.isStory.toString());
+          postData.append('is_deleted', 'false');
+
+          mediaContentList.forEach((mediaContent, index) => {
+            if (mediaContent instanceof File) {
+              postData.append('media_files', mediaContent);
+              if (mediaContent.type.startsWith('image/'))
+                postData.append('media_types', 'IMAGE');
+              else postData.append('media_types', 'VIDEO');
+            } else {
+              toast.error('Media content is not a file');
+              return;
+            }
+          });
+
+          const response = await createPost(postData);
+          if (response) {
+            await mutatePosts((pages: ListResponse<Post>[]) => {
+              if (!pages || pages.length === 0) return pages;
+            
+              const pageSize = pages[0].size;
+              const total = pages[0].total + 1;
+              const totalPages = Math.ceil(total / pageSize);
+            
+              const newPost: Post = {
+                ...response.post,
+                creator: {
+                  id: currentUser.id,
+                  username: currentUser.username,
+                  profileImg: currentUser.profileImg,
+                } as Partial<User>,
+              };
+              // Chèn post mới vào đầu trang đầu tiên
+              const newFirstItems = [newPost, ...pages[0].items].slice(0, pageSize);
+            
+              const updatedFirstPage: ListResponse<Post> = {
+                ...pages[0],
+                items: newFirstItems,
+                total,
+                pages: totalPages,
+              };
+              const listResponse: ListResponse<Post>[] = [updatedFirstPage, ...pages.slice(1)];
+              
+              console.log(listResponse);
+              
+              return listResponse;
+            }, false); // false = không revalidate
             toast.success('Post created successfully');
+          } else {
+            toast.error('Failed to create post');
           }
         } else {
           const postRequest: Partial<PostRequest> = {
@@ -126,7 +154,7 @@ const PostForm = ({ post, postMedia, open, handleClose }: PostFormProps) => {
           toast.success('Post updated successfully');
         }
       } catch (error: any) {
-        toast.error('Failed to create post');
+        toast.error('Failed to create post:', error.detail || error);
       } finally {
         setIsSubmitting(false);
         postForm.resetForm();

@@ -14,21 +14,22 @@ import dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from 'react';
 import { useGetCommentReaction } from '@/hooks/comment-reaction/useGetCommentReaction';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
+
 import {
   CommentReaction,
   CommentReactionRequest,
 } from '@/models/comment-reaction';
-import { CommentContext } from '@/context/comment-context';
 import { usePostCommentReaction } from '@/hooks/comment-reaction/usePostCommentReaction';
 import { useDeleteCommentReaction } from '@/hooks/comment-reaction/useDeleteCommentReaction';
 import toast from 'react-hot-toast';
 import { useGetCommentReplies } from '@/hooks/comment/useGetCommentReplies';
+import { CommentContext } from '@/context/comment-context';
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
 
-  const { setParentCommentId, setCommentContent } = useContext(CommentContext);
+  const { setReplyTo, setCommentContent } = useContext(CommentContext);
 
   // const { data: commentReactionData, isLoading: isCommentReactionDataLoading } =
   //   useGetCommentReaction({ commentId: comment.id });
@@ -158,7 +159,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
           }}
         >
           <Typography sx={{ fontSize: '12px', color: '#858585' }}>
-            {dayjs(comment.createdAt).fromNow()}
+            {dayjs.utc(comment.createdAt).local().fromNow()}
           </Typography>
           <Typography sx={{ fontSize: '12px', color: '#858585' }}>
             {comment.likeCount || 0} likes
@@ -170,9 +171,9 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
               ':hover': { color: '#000', cursor: 'pointer' },
             }}
             onClick={() => {
-              if (comment.parentComment) {
-                setParentCommentId(comment.parentComment.id);
-              } else setParentCommentId(comment.id);
+              if (comment.replyTo) {
+                setReplyTo(comment.replyTo);
+              } else setReplyTo(comment.id);
               setCommentContent('@' + comment.user.username + ' ');
             }}
           >
@@ -185,6 +186,8 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
 };
 
 const GroupCommentComponent = ({ commentRoot }: { commentRoot: Comment }) => {
+  if (!commentRoot) return null;
+
   const [showReplies, setShowReplies] = useState(false);
 
   const toggleShowReplies = () => {

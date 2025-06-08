@@ -5,11 +5,12 @@ export interface PostBase {
   content: string;
   isStory: boolean;
   visibility: Visibility;
+  isDeleted: boolean;
 }
 
 export interface Post extends PostBase {
   id: string;
-  create_at: string;
+  createdAt: string;
   creator: Partial<User>;
   postReactions: number;
   liked: boolean;

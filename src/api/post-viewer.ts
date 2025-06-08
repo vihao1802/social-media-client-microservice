@@ -19,8 +19,8 @@ export const postViewerApi = {
     return res.data;
   },
 
-  async deletePostViewer(postViewerId: number) {
-    const res = await axiosInstance.delete(`${prefix}/${postViewerId}`);
+  async deletePostViewer(request: PostViewerRequest) {
+    const res = await axiosInstance.delete(`${prefix}/post/${request.postId}/user/${request.userId}`);
     return res.data;
   },
 };

@@ -154,7 +154,7 @@ const StoryCard = ({
               {story.creator.username}
             </Typography>
             <Typography variant="caption">
-              {dayjs(story.create_at).fromNow()}
+              {dayjs(story.createdAt).fromNow()}
             </Typography>
           </Box>
         </Box>

@@ -17,7 +17,7 @@ export const mediaContentApi = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    });
+    });    
     return res.data;
   },
 };

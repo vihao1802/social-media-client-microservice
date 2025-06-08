@@ -68,7 +68,7 @@ const RightSideBar = () => {
             <CachedRounded />
           </IconButton> */}
         </Box>
-        {!recommendations
+        {/* {!recommendations
           ? Array.from({ length: 5 }).map((_, index) => (
               <Box
                 key={index}
@@ -154,7 +154,7 @@ const RightSideBar = () => {
                   </Button>
                 </Box>
               </Box>
-            ))}
+            ))} */}
       </Paper>
     </Box>
   );

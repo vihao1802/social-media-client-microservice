@@ -37,12 +37,15 @@ import { useCreatePostViewer } from '@/hooks/post-viewer/useCreatePostViewer';
 import { useDeletePostViewer } from '@/hooks/post-viewer/useDeletePostViewer';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import PostForm from './PostForm';
+import { log } from 'console';
+import { ListResponse } from '@/models/api';
+import { Post } from '@/models/post';
 
 export default function PostComponent() {
   const { user: currentUser } = useAuthenticatedUser();
   if (!currentUser) return null;
 
-  const { post } = useContext(PostContext);
+  const { post, mutatePosts } = useContext(PostContext);
   const [openComment, setOpenComment] = useState(false);
 
   if (!post) {
@@ -58,14 +61,13 @@ export default function PostComponent() {
   const handleClickComment = async () => {
     const commentData = new FormData();
     commentData.append('content', commentContent);
-    commentData.append('postId', String(post.id));
-    commentData.append('userId', String(currentUser.id));
+    commentData.append('post_id', String(post.id));
+    commentData.append('user_id', String(currentUser.id));
     await createComment(commentData);
     toast.success('Commented successfully!');
     setCommentContent('');
   };
 
-  const [postViewerId, setPostViewerId] = useState('');
   const createPostViewer = useCreatePostViewer();
   const deletePostViewer = useDeletePostViewer();
 
@@ -93,28 +95,35 @@ export default function PostComponent() {
   if (isMediaContentDataLoading || !mediaContentData)
     return <Skeleton height={500} />;
 
-  dayjs.extend(relativeTime);
-
   const isLiked = post?.liked || false;
 
   const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const postViewerData: PostViewerRequest = {
+      postId: post.id,
+      userId: currentUser.id,
+    };
     if (isLiked) {
-      if (postViewerId !== '') {
-        // await deletePostViewer(postViewerId, post.id);
-      } else {
-        toast.error('Post viewer not found!');
-        return null;
-      }
+      await deletePostViewer(postViewerData);
     } else {
-      const postViewerData: PostViewerRequest = {
-        postId: post.id,
-        userId: currentUser.id,
-        liked: true,
-      };
-      const postViewerResponse = await createPostViewer(postViewerData);
-      setPostViewerId(postViewerResponse.id);
+      await createPostViewer(postViewerData);
     }
+
+    const isLiking = !isLiked;
+    await mutatePosts((pages: ListResponse<Post>[]) =>
+      pages.map((page: ListResponse<Post>) => ({
+        ...page,
+        items: page.items.map((p: Post) =>
+          p.id === post.id
+            ? {
+                ...p,
+                liked: isLiking ? true : false,
+                likeCount: (p.likeCount || 0) + (isLiking ? 1 : -1),
+              }
+            : p
+        ),
+      }))
+    );
   };
 
   return (
@@ -308,7 +317,7 @@ export default function PostComponent() {
           <Typography
             sx={{ fontSize: '12px', color: 'text.tertiary', my: 0.5 }}
           >
-            {dayjs(post.create_at).fromNow()}
+            {dayjs.utc(post.createdAt).local().fromNow()}
           </Typography>
         </CardContent>
         <CardContent orientation="horizontal" sx={{ gap: 1 }}>
