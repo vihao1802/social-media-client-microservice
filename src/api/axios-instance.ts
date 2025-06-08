@@ -54,6 +54,9 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const res = JSON.parse(error.request.response);
       console.log('[axios] API Error:', res);
+      toast.error(res.detail || res, {
+        duration: 7000,
+      });
 
       // if (error.response.status === 400) {
       //   toast.error('Bad request, please try again');

@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 import { mutate } from 'swr';
 
 export function useCreatePost() {
-  async function CreatePost(postRequest: PostRequest) {
+  async function CreatePost(postRequest: FormData) {
     try {
       const newPost = await postApi.createPost(postRequest);
       return newPost;

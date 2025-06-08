@@ -13,7 +13,7 @@ export interface Comment extends CommentBase {
   liked: boolean;
   likeCount: number;
   childCount: number;
-  parentComment: Comment;
+  replyTo: string;
 }
 
 export interface CommentRequest extends CommentBase {

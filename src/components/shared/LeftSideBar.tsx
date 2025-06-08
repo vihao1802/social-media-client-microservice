@@ -129,7 +129,7 @@ const LeftSideBar = () => {
                   fontWeight="bold"
                   fontFamily={dacingScript.style.fontFamily}
                 >
-                  Ninstagram
+                  Instagram
                 </Typography>
               </FadeComponent>
             ) : (

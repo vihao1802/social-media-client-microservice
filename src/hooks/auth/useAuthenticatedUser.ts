@@ -25,7 +25,7 @@ export function useAuthenticatedUser(options?: Partial<SWRConfiguration>) {
     async () => {
       try {
         if (!cookies.get('access_token')) return null;
-        return getUserFromStorage() ?? (await authApi.getAuthenticatedUser());
+        return await authApi.getAuthenticatedUser();
       } catch (error) {
         throw error;
       }

@@ -26,7 +26,13 @@ export default function Home() {
     size: 5,
   };
 
-  const { data, isLoading, isValidating, setSize } = usePostListInfinity({
+  const {
+    data,
+    isLoading,
+    isValidating,
+    setSize,
+    mutate: mutatePosts,
+  } = usePostListInfinity({
     params: filters,
   });
 
@@ -65,6 +71,7 @@ export default function Home() {
                 key={index}
                 value={{
                   post: post || null,
+                  mutatePosts,
                 }}
               >
                 <PostComponent key={index} />

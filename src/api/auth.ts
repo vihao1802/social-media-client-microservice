@@ -86,7 +86,7 @@ export const authApi = {
       this.getAuthenticatedUser();
     }
 
-    console.clear();
+    // console.clear();
 
     localStorage.setItem('user', JSON.stringify(res.data));
 
