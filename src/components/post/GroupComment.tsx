@@ -53,6 +53,38 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
 
   const isLiked = comment?.liked || false;
 
+  const createCommentReaction = usePostCommentReaction();
+  const deleteCommentReaction = useDeleteCommentReaction();
+  
+  const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      const commentReactionData: CommentReactionRequest = {
+        commentId: comment.id,
+        userId: currentUser.id,
+      };
+      if (isLiked) {
+        await deleteCommentReaction(commentReactionData);
+      } else {
+        await createCommentReaction(commentReactionData);
+      }
+  
+      // const isLiking = !isLiked;
+      // await mutatePosts((pages: ListResponse<Post>[]) =>
+      //   pages.map((page: ListResponse<Post>) => ({
+      //     ...page,
+      //     items: page.items.map((p: Post) =>
+      //       p.id === post.id
+      //         ? {
+      //             ...p,
+      //             liked: isLiking ? true : false,
+      //             likeCount: (p.likeCount || 0) + (isLiking ? 1 : -1),
+      //           }
+      //         : p
+      //     ),
+      //   }))
+      // );
+  };
+
   // const handleClickLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
   //   e.preventDefault();
   //   if (isLiked) {
@@ -130,7 +162,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
                 height: '20px',
                 width: '20px',
               }}
-              // onClick={handleClickLike}
+              onClick={handleClickLike}
             >
               {isLiked ? (
                 <FavoriteRounded

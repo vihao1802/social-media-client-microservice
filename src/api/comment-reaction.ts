@@ -1,7 +1,7 @@
 import axiosInstance from '@/api/axios-instance';
 import { CommentReactionRequest } from '@/models/comment-reaction';
 
-const prefix = '/commentReaction';
+const prefix = '/comment_reaction';
 
 export const commentReactionApi = {
   async getCommentReaction(commentId: string) {
@@ -11,11 +11,11 @@ export const commentReactionApi = {
 
   async createCommentReaction(request: CommentReactionRequest) {
     const res = await axiosInstance.post(`${prefix}`, request);
-    return res.data;
+    return res.status === 201 ? res.data : null;
   },
 
-  async deleteCommentReaction(commentReactionId: string) {
-    const res = await axiosInstance.delete(`${prefix}/${commentReactionId}`);
-    return res.data;
+  async deleteCommentReaction(request: CommentReactionRequest) {
+    const res = await axiosInstance.delete(`${prefix}/comment/${request.commentId}/user/${request.userId}`);    
+    return res.status === 200 ? res.data : null;
   },
 };
